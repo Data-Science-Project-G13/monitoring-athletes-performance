@@ -28,6 +28,13 @@ class DataPreprocessor():
         print(tss_col)
         return tss_col
 
+    def get_valid_data(self):
+        '''
+        Get rows that contains TSS or contains enough values for calculating TSS
+        :return:
+        '''
+        pass
+
     def clean_numerical_columns(self, df, columns):
         pass
 
