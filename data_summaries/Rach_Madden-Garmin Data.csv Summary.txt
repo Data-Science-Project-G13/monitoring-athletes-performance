@@ -1,0 +1,159 @@
+====== Titles and Activity Types ======
+('Melbourne Running', 'Running')
+('Lap Swimming', 'Pool Swimming')
+('Melbourne Cycling', 'Cycling')
+('Port Phillip Bay Open Water Swimming', 'Open Water Swimming')
+('Zwift - Watopia', 'Virtual Cycling')
+('Maroochydore Cycling', 'Cycling')
+('Zwift - London', 'Virtual Cycling')
+('Hawaii County Running', 'Running')
+('Maroochydore Running', 'Running')
+('Hawaii County Open Water Swimming', 'Open Water Swimming')
+('Zwift - NYC', 'Virtual Cycling')
+('Queensland Open Water Swimming', 'Open Water Swimming')
+('Pool Swimming', 'Pool Swimming')
+('Zwift', 'Virtual Cycling')
+('Geelong Multi-Sport', 'Multisport')
+('Geelong Cycling', 'Cycling')
+('Zwift - Tour de Zwift: Stage 1 Long Distance', 'Virtual Cycling')
+('Indoor Cycling', 'Indoor Cycling')
+('Zwift - Innsbruck', 'Virtual Cycling')
+('Treadmill Running', 'Treadmill Running')
+('Geelong Running', 'Running')
+('Port Phillip Bay Multi-Sport', 'Multisport')
+("Zwift - Rachel Madden's Meetup - 2018 UCI Worlds Short Lap", 'Virtual Cycling')
+
+
+====== Activity Type and Counts ======
+Running                59
+Cycling                38
+Pool Swimming          35
+Virtual Cycling        16
+Open Water Swimming    11
+Multisport              2
+Treadmill Running       1
+Indoor Cycling          1
+Name: Activity Type, dtype: int64
+
+
+====== Running ====== 
+--- Date Summary ---
+--- Workout Time Summary ---
+Max workout time: 6460.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 1206 seconds
+Median workout time: 63.0 seconds
+--- Distance Summary ---
+Max Distance: 21.03
+Min Distance: 2.04
+Mean Distance: 11
+Median Distance: 11.63
+--- Avg HR Summary ---
+Max Avg HR: 162.0
+Min Avg HR: 140.0
+Mean Avg HR: 153
+Median Avg HR: 154.0
+--- Calories Summary ---
+Max Calories: 961.0
+Min Calories: 124.0
+Mean Calories: 623
+Median Calories: 663.0
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 0.0
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 0
+Median Training Stress Score®: 0.0
+
+
+====== Cycling ====== 
+--- Date Summary ---
+--- Workout Time Summary ---
+Max workout time: 16874.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 3163 seconds
+Median workout time: 167.5 seconds
+--- Distance Summary ---
+Max Distance: 141.47
+Min Distance: 23.98
+Mean Distance: 77
+Median Distance: 82.795
+--- Avg HR Summary ---
+Max Avg HR: 156.0
+Min Avg HR: 109.0
+Mean Avg HR: 136
+Median Avg HR: 138.0
+--- Avg Speed Summary ---
+Max Avg Speed: 32.0
+Min Avg Speed: 21.5
+Mean Avg Speed: 30
+Median Avg Speed: 30.05
+--- Calories Summary ---
+Max Calories: 996.0
+Min Calories: 395.0
+Mean Calories: 756
+Median Calories: 793.5
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 0.0
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 0
+Median Training Stress Score®: 0.0
+
+
+====== Pool Swimming ====== 
+--- Date Summary ---
+--- Workout Time Summary ---
+Max workout time: 4823.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 1465 seconds
+Median workout time: 74.0 seconds
+--- Distance Summary ---
+Max Distance: 375.0
+Min Distance: 375.0
+Mean Distance: 375
+Median Distance: 375.0
+--- Calories Summary ---
+Max Calories: 975.0
+Min Calories: 61.0
+Mean Calories: 675
+Median Calories: 691.0
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 0.0
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 0
+Median Training Stress Score®: 0.0
+
+
+====== Virtual Cycling ====== 
+--- Date Summary ---
+--- Workout Time Summary ---
+Max workout time: 8379.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 1353 seconds
+Median workout time: 62.5 seconds
+--- Distance Summary ---
+Max Distance: 72.48
+Min Distance: 5.91
+Mean Distance: 33
+Median Distance: 31.96
+--- Avg Speed Summary ---
+Max Avg Speed: 32.7
+Min Avg Speed: 22.5
+Mean Avg Speed: 29
+Median Avg Speed: 29.6
+--- Calories Summary ---
+Max Calories: 795.0
+Min Calories: 86.0
+Mean Calories: 531
+Median Calories: 561.0
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 0.0
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 0
+Median Training Stress Score®: 0.0
+--- Avg Power Summary ---
+Max Avg Power: 168.0
+Min Avg Power: 98.0
+Mean Avg Power: 148
+Median Avg Power: 152.5
+
+

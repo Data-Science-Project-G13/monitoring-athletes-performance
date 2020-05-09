@@ -1,0 +1,320 @@
+====== Titles and Activity Types ======
+('Lap Swimming', 'Pool Swimming')
+('Melbourne Running', 'Running')
+('Strength', 'Strength Training')
+('Melbourne Road Cycling', 'Road Cycling')
+('Indoor Cycling', 'Indoor Cycling')
+('Elwood Running', 'Running')
+('Melbourne Cycling', 'Cycling')
+('Elwood Cycling', 'Cycling')
+('Port Phillip Bay Open Water Swimming', 'Open Water Swimming')
+('Elwood Open Water Swimming', 'Open Water Swimming')
+('University Of Melbourne Running', 'Running')
+('Evening Run', 'Running')
+('Middle Park Cycling', 'Cycling')
+('Middle Park Running', 'Running')
+('Treadmill Running', 'Treadmill Running')
+('Zwift - FTP Builder - Foundation', 'Virtual Cycling')
+('Afternoon Run', 'Running')
+('Zwift - NYC', 'Virtual Cycling')
+('Melbourne - Running', 'Running')
+('Port Phillip Bay Running', 'Running')
+('Flemington Running', 'Running')
+('Ride', 'Cycling')
+('Queenscliff Road Cycling', 'Road Cycling')
+('Zwift - TBR Get Fried Fenced Sprint / Spin (D)', 'Virtual Cycling')
+('Zwift - FTP Builder - Intermittent', 'Virtual Cycling')
+('Lorne Cycling', 'Cycling')
+('Thalang Cycling', 'Cycling')
+('Thalang Running', 'Running')
+('Morning Run', 'Running')
+('St Kilda Road Running', 'Running')
+('Afternoon Ride', 'Cycling')
+('Huyen Bo Trach Cycling', 'Cycling')
+('Mordialloc Cycling', 'Cycling')
+('Zwift - London', 'Virtual Cycling')
+('Lorne Running', 'Running')
+('Treadmill ', 'Running')
+('Running', 'Running')
+('Zwift - SZR Sunrise Ride (C)', 'Virtual Cycling')
+('Geelong Running', 'Running')
+('Melbourne - Road Cycling', 'Road Cycling')
+('Queenscliff Running', 'Running')
+('Thanh Pho Hoi An Cycling', 'Cycling')
+('Busselton Multi-Sport', 'Multisport')
+('Huyen Sa Pa Hiking', 'Hiking')
+('Zwift - Watopia', 'Virtual Cycling')
+("Zwift - The Herd's Friday Social Group Ride (D)", 'Virtual Cycling')
+('Zwift - Yorkshire', 'Virtual Cycling')
+('Treadmill Run', 'Running')
+('Zwift - Richmond', 'Virtual Cycling')
+('Kensington Running', 'Running')
+('Cycling', 'Cycling')
+('Zwift - Vikings Valhalla Fatburn Ride (D)', 'Virtual Cycling')
+('Pyrmont Running', 'Running')
+('St Kilda West Running', 'Running')
+('Torquay Road Cycling', 'Road Cycling')
+('Zwift - TBR Knights of Suburbia (D)', 'Virtual Cycling')
+('Morning Ride', 'Cycling')
+('Busselton Running', 'Running')
+('Abu Dhabi Open Water Swimming', 'Open Water Swimming')
+('Zwift - FTP Builder - Threshold Development', 'Virtual Cycling')
+('Carlton North Running', 'Running')
+('St Kilda West Multi-Sport', 'Multisport')
+('Busselton Road Cycling', 'Road Cycling')
+('Pool Swimming', 'Pool Swimming')
+('Evening run', 'Running')
+("Zwift - The Herd's Wednesday Social Down Under Group Ride (D)", 'Virtual Cycling')
+('Busselton Open Water Swimming', 'Open Water Swimming')
+('Zwift - USMES Turn It Up Tuesday Ride  (C)', 'Virtual Cycling')
+('Zwift - ZER North American & Aussie Style with Geoff (Est. Av. 1.2 - 1.5 w/kg) (D)', 'Virtual Cycling')
+('Parkville Running', 'Running')
+('Zwift - AHDR BBQ (D)', 'Virtual Cycling')
+('Brighton Cycling', 'Cycling')
+('Tidal River Hiking', 'Hiking')
+('Collins Street East Running', 'Running')
+('Evening run ', 'Running')
+('Geelong Road Cycling', 'Road Cycling')
+('Evening Ride', 'Cycling')
+('Cairns Road Cycling', 'Road Cycling')
+('Abu Dhabi Running', 'Running')
+('Zwift - SZR Beginners Ride (D)', 'Virtual Cycling')
+('Pentland Hills Hiking', 'Hiking')
+('Geelong Multi-Sport', 'Multisport')
+('Dinner Plain Running', 'Running')
+('Edithvale Open Water Swimming', 'Open Water Swimming')
+('Zwift - Dutch Diesel Cycling Group Ride (C)', 'Virtual Cycling')
+('Western Australia Open Water Swimming', 'Open Water Swimming')
+('Upper Plenty Running', 'Running')
+('Melbourne - Cycling', 'Cycling')
+("Zwift - Eduardo Oliveira's Meetup - Volcano Flat", 'Virtual Cycling')
+('Mount Macedon Running', 'Running')
+('Zwift - 3R Park Perimeter Loop Flat Race - 3 Laps (29.1km/18mi 378m) (D)', 'Virtual Cycling')
+('Marysville Running', 'Running')
+('Richmond Cycling', 'Cycling')
+('Brighton Running', 'Running')
+('Wantirna Cycling', 'Cycling')
+('Zwift - Poggio MSR Sim', 'Virtual Cycling')
+('Zwift Academy 2019 Semi-Finals Workout #2: Phosphate Sprints', 'Virtual Cycling')
+('Zwift - PACK SUB2 Breakfast Ride - The Classique! (D)', 'Virtual Cycling')
+('Zwift - ASIA 120km Endurance Ride (C)', 'Virtual Cycling')
+('Shepparton Running', 'Running')
+('Zwift - TBR Crikey Down Under - Galahs vs Wombats (D)', 'Virtual Cycling')
+('Upper Ferntree Gully Running', 'Running')
+("Zwift - The Herd's Monday Morning Coffee Crew (M2C2) Group Ride (D)", 'Virtual Cycling')
+('Zwift - 3R Endurance Steady Ride [~3.0/2.5w/kg avg]', 'Virtual Cycling')
+('Run', 'Running')
+('Huyen Bo Trach Hiking', 'Hiking')
+('Wilsons Promontory Hiking', 'Hiking')
+('ROTB', 'Running')
+('East Geelong Cycling', 'Cycling')
+('Portarlington Cycling', 'Cycling')
+('Morning run', 'Running')
+('Thanh Pho Ha Long Open Water Swimming', 'Open Water Swimming')
+('Huyen Long Ho Cycling', 'Cycling')
+('Open Water Swimming', 'Open Water Swimming')
+('Busselton Cycling', 'Cycling')
+("Zwift - Mink's Centurions p/b TBR (C)", 'Virtual Cycling')
+('Evening Ride ', 'Cycling')
+('CrossFit ', 'Strength Training')
+('Zwift - ZHCC SUB 2.0 Ride (D)', 'Virtual Cycling')
+('Hotham Hill Cycling', 'Cycling')
+('Leopold Road Cycling', 'Road Cycling')
+('Huyen Cai Be Cycling', 'Cycling')
+("Zwift - Scott D'Aucourt's Meetup - Tick Tock", 'Virtual Cycling')
+('Portarlington - Road Cycling', 'Road Cycling')
+('Geelong Cycling', 'Cycling')
+('Point Lonsdale Cycling', 'Cycling')
+("Zwift - Scott D'Aucourt's Meetup - Greater London 8", 'Virtual Cycling')
+('Melbourne Hiking', 'Hiking')
+('Rottnest Island Cycling', 'Cycling')
+('Parkville Cycling', 'Cycling')
+('Hawthorn North Running', 'Running')
+('East Geelong Running', 'Running')
+('Melbourne Open Water Swimming', 'Open Water Swimming')
+('Shepparton Multi-Sport', 'Multisport')
+('Zwift - FTP Builder - Optional: Active Recovery', 'Virtual Cycling')
+('Zwift - Stage 1 Race (D) - Tour of Watopia 2020', 'Virtual Cycling')
+('Indoor Rowing', 'Indoor Rowing')
+('Morning Run ', 'Running')
+('Zwift - Team Dimension Data Zwift Academy Group Ride (D)', 'Virtual Cycling')
+('Da Nang Cycling', 'Cycling')
+('Abbotsford Cycling', 'Cycling')
+('Zwift - SZR Morning Ride (D)', 'Virtual Cycling')
+('Workout ', 'Strength Training')
+('Portarlington Multi-Sport', 'Multisport')
+('Heathcote Running', 'Running')
+('Zwift - Vikings Valhalla 100 series (C)', 'Virtual Cycling')
+('Zwift - SAS - Beginners 1.5 Ride (D)', 'Virtual Cycling')
+('St Leonards Open Water Swimming', 'Open Water Swimming')
+('Afternoon run', 'Running')
+('Lunch Swim', 'Swimming')
+('Portarlington Open Water Swimming', 'Open Water Swimming')
+('Shepparton Open Water Swimming', 'Open Water Swimming')
+('Zwift -  Haute Route Watopia Stage 1 (E)', 'Virtual Cycling')
+('Melbourne Indoor Cycling', 'Indoor Cycling')
+('Evening Swim', 'Swimming')
+('Zwift - TBR 101 - Endurance (C)', 'Virtual Cycling')
+('Shepparton Cycling', 'Cycling')
+('Zwift - FTP Builder - Tempo', 'Virtual Cycling')
+('Long run on the treadmill ', 'Running')
+('Lorne Open Water Swimming', 'Open Water Swimming')
+('Afternoon Swim', 'Swimming')
+('Cairns Multi-Sport', 'Multisport')
+('Recife Running', 'Running')
+('Cairns Open Water Swimming', 'Open Water Swimming')
+('Sao Paulo Running', 'Running')
+('Portarlington - Cycling', 'Cycling')
+('Princes Hill Running', 'Running')
+('Zwift - FTP Builder - Strength', 'Virtual Cycling')
+('Zwift - EVO CC Flux Ride [1.5 - 2.0w/kg avg] (D)', 'Virtual Cycling')
+('Ride :: WT', 'Cycling')
+('Zwift - 3R Endurance Steady Ride [~3.0/2.5w/kg avg] (C)', 'Virtual Cycling')
+('Zwift - Innsbruck', 'Virtual Cycling')
+('South Melbourne Dc Running', 'Running')
+("Zwift - The Herd's Wednesday Wanderings Social Group Ride (D)", 'Virtual Cycling')
+
+
+====== Activity Type and Counts ======
+Running                347
+Pool Swimming          230
+Cycling                133
+Strength Training      107
+Road Cycling            86
+Virtual Cycling         85
+Indoor Cycling          65
+Open Water Swimming     55
+Treadmill Running       10
+Hiking                   9
+Multisport               8
+Swimming                 4
+Indoor Rowing            1
+Name: Activity Type, dtype: int64
+
+
+====== Running ====== 
+--- Date Summary ---
+--- Workout Time Summary ---
+Max workout time: 12435.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 1052 seconds
+Median workout time: 44.0 seconds
+--- Distance Summary ---
+Max Distance: 36.02
+Min Distance: 1.11
+Mean Distance: 10
+Median Distance: 8.35
+--- Avg HR Summary ---
+Max Avg HR: 183.0
+Min Avg HR: 129.0
+Mean Avg HR: 154
+Median Avg HR: 153.0
+--- Calories Summary ---
+Max Calories: 999.0
+Min Calories: 79.0
+Mean Calories: 542
+Median Calories: 543.0
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 0.0
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 0
+Median Training Stress Score®: 0.0
+
+
+====== Pool Swimming ====== 
+--- Date Summary ---
+--- Workout Time Summary ---
+Max workout time: 7084.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 1161 seconds
+Median workout time: 59.5 seconds
+--- Distance Summary ---
+Max Distance: 900.0
+Min Distance: 250.0
+Mean Distance: 575
+Median Distance: 575.0
+--- Avg HR Summary ---
+Max Avg HR: 141.0
+Min Avg HR: 141.0
+Mean Avg HR: 141
+Median Avg HR: 141.0
+--- Calories Summary ---
+Max Calories: 999.0
+Min Calories: 55.0
+Mean Calories: 695
+Median Calories: 733.0
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 0.0
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 0
+Median Training Stress Score®: 0.0
+
+
+====== Cycling ====== 
+--- Date Summary ---
+--- Workout Time Summary ---
+Max workout time: 25233.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 2793 seconds
+Median workout time: 120.0 seconds
+--- Distance Summary ---
+Max Distance: 201.38
+Min Distance: 0.0
+Mean Distance: 63
+Median Distance: 52.45
+--- Avg HR Summary ---
+Max Avg HR: 170.0
+Min Avg HR: 113.0
+Mean Avg HR: 140
+Median Avg HR: 141.0
+--- Avg Speed Summary ---
+Max Avg Speed: 35.7
+Min Avg Speed: 9.9
+Mean Avg Speed: 27
+Median Avg Speed: 28.3
+--- Calories Summary ---
+Max Calories: 942.0
+Min Calories: 26.0
+Mean Calories: 494
+Median Calories: 508.5
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 71.8
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 1
+Median Training Stress Score®: 0.0
+--- Avg Power Summary ---
+Max Avg Power: 176.0
+Min Avg Power: 14.0
+Mean Avg Power: 85
+Median Avg Power: 95.5
+
+
+====== Strength Training ====== 
+--- Date Summary ---
+--- Workout Time Summary ---
+Max workout time: 6995.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 1014 seconds
+Median workout time: 49.0 seconds
+--- Distance Summary ---
+Max Distance: 0.0
+Min Distance: 0.0
+Mean Distance: 0
+Median Distance: 0.0
+--- Avg HR Summary ---
+Max Avg HR: 122.0
+Min Avg HR: 63.0
+Mean Avg HR: 96
+Median Avg HR: 97.0
+--- Calories Summary ---
+Max Calories: 521.0
+Min Calories: 72.0
+Mean Calories: 233
+Median Calories: 226.0
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 0.0
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 0
+Median Training Stress Score®: 0.0
+
+

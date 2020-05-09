@@ -1,0 +1,212 @@
+====== Titles and Activity Types ======
+('Melbourne Running', 'Running')
+('Lap Swimming', 'Pool Swimming')
+('Indoor Cycling', 'Indoor Cycling')
+('Melbourne Road Cycling', 'Road Cycling')
+('Road Cycling', 'Road Cycling')
+('Albury Running', 'Running')
+('Treadmill Running', 'Treadmill Running')
+('Elwood Running', 'Running')
+('St Kilda West Running', 'Running')
+('Hawthorn Running', 'Running')
+('Albury Road Cycling', 'Road Cycling')
+('Hawksburn Running', 'Running')
+('Thurgoona Running', 'Running')
+('Port Phillip Bay Running', 'Running')
+('Middle Park Running', 'Running')
+('South Yarra Running', 'Running')
+('Pool Swimming', 'Pool Swimming')
+('Torquay Road Cycling', 'Road Cycling')
+('Torquay Running', 'Running')
+('Running', 'Running')
+('Armadale Running', 'Running')
+('South Melbourne Road Cycling', 'Road Cycling')
+('Queenscliff Road Cycling', 'Road Cycling')
+('Queenscliff Running', 'Running')
+('Portarlington Road Cycling', 'Road Cycling')
+('Elwood Road Cycling', 'Road Cycling')
+('Bulleen Running', 'Running')
+('Tortolì Running', 'Running')
+('Portarlington Running', 'Running')
+('Byron Bay Road Cycling', 'Road Cycling')
+('South Melbourne Running', 'Running')
+('Loiri Porto San Paolo Running', 'Running')
+('Hawksburn Road Cycling', 'Road Cycling')
+('Byron Bay Running', 'Running')
+('Wodonga Running', 'Running')
+('Gold Coast Running', 'Running')
+('Albury Cycling', 'Cycling')
+('St Kilda West Road Cycling', 'Road Cycling')
+('Albert park lake fartlek', 'Running')
+('Bendigo Running', 'Running')
+('Bairnsdale Road Cycling', 'Road Cycling')
+('Burnley Road Cycling', 'Road Cycling')
+('Kew East Running', 'Running')
+('Southbank Running', 'Running')
+('Cape Schanck Road Cycling', 'Road Cycling')
+('Blairgowrie Road Cycling', 'Road Cycling')
+('Wagga Wagga Road Cycling', 'Road Cycling')
+('Fairfield Running', 'Running')
+('Bellevue Hill Running', 'Running')
+('Run from home to city ', 'Running')
+('East Geelong Road Cycling', 'Road Cycling')
+('Home to wattle glen', 'Road Cycling')
+('Ilbono Running', 'Running')
+('Burnley Running', 'Running')
+('Lap Swimming ', 'Swimming')
+('Abbotsford Running', 'Running')
+('Florence Running', 'Running')
+('Albert Park Running', 'Running')
+('Anglesea Running', 'Running')
+('Wodonga Road Cycling', 'Road Cycling')
+('Ivanhoe East Running', 'Running')
+('Docklands Running', 'Running')
+('Bondi Beach Running', 'Running')
+('Middle Park Road Cycling', 'Road Cycling')
+('Newtown Running', 'Running')
+('Armadale Road Cycling', 'Road Cycling')
+('Melbourne Cycling', 'Cycling')
+('Port Phillip Bay Road Cycling', 'Road Cycling')
+('Geelong Running', 'Running')
+('Mona Fartlek 4.85km', 'Running')
+('Bacchus Marsh Running', 'Running')
+('North Bondi Running', 'Running')
+
+
+====== Activity Type and Counts ======
+Running              448
+Road Cycling         210
+Pool Swimming        171
+Indoor Cycling       143
+Treadmill Running     24
+Cycling                3
+Swimming               1
+Name: Activity Type, dtype: int64
+
+
+====== Running ====== 
+--- Date Summary ---
+--- Workout Time Summary ---
+Max workout time: 5809.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 371 seconds
+Median workout time: 10.0 seconds
+--- Distance Summary ---
+Max Distance: 42.19
+Min Distance: 0.03
+Mean Distance: 4
+Median Distance: 1.96
+--- Avg HR Summary ---
+Max Avg HR: 177.0
+Min Avg HR: 145.0
+Mean Avg HR: 163
+Median Avg HR: 164.0
+--- Calories Summary ---
+Max Calories: 993.0
+Min Calories: 1.0
+Mean Calories: 220
+Median Calories: 124.0
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 0.0
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 0
+Median Training Stress Score®: 0.0
+
+
+====== Road Cycling ====== 
+--- Date Summary ---
+--- Workout Time Summary ---
+Max workout time: 19599.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 2305 seconds
+Median workout time: 96.0 seconds
+--- Distance Summary ---
+Max Distance: 153.97
+Min Distance: 0.0
+Mean Distance: 48
+Median Distance: 46.135000000000005
+--- Avg HR Summary ---
+Max Avg HR: 147.0
+Min Avg HR: 110.0
+Mean Avg HR: 133
+Median Avg HR: 134.0
+--- Avg Speed Summary ---
+Max Avg Speed: 36.6
+Min Avg Speed: 10.8
+Mean Avg Speed: 28
+Median Avg Speed: 28.4
+--- Calories Summary ---
+Max Calories: 945.0
+Min Calories: 10.0
+Mean Calories: 516
+Median Calories: 476.0
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 431.8
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 54
+Median Training Stress Score®: 0.0
+--- Avg Power Summary ---
+Max Avg Power: 196.0
+Min Avg Power: 16.0
+Mean Avg Power: 136
+Median Avg Power: 138.0
+
+
+====== Pool Swimming ====== 
+--- Date Summary ---
+--- Workout Time Summary ---
+Max workout time: 6262.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 1144 seconds
+Median workout time: 69.0 seconds
+--- Distance Summary ---
+Max Distance: 950.0
+Min Distance: 200.0
+Mean Distance: 561
+Median Distance: 550.0
+--- Calories Summary ---
+Max Calories: 973.0
+Min Calories: 36.0
+Mean Calories: 587
+Median Calories: 676.0
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 0.0
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 0
+Median Training Stress Score®: 0.0
+
+
+====== Indoor Cycling ====== 
+--- Date Summary ---
+--- Workout Time Summary ---
+Max workout time: 10824.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 1286 seconds
+Median workout time: 65.0 seconds
+--- Distance Summary ---
+Max Distance: 0.0
+Min Distance: 0.0
+Mean Distance: 0
+Median Distance: 0.0
+--- Avg HR Summary ---
+Max Avg HR: 178.0
+Min Avg HR: 108.0
+Mean Avg HR: 141
+Median Avg HR: 140.0
+--- Calories Summary ---
+Max Calories: 984.0
+Min Calories: 35.0
+Mean Calories: 553
+Median Calories: 601.0
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 251.2
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 54
+Median Training Stress Score®: 38.8
+--- Avg Power Summary ---
+Max Avg Power: 298.0
+Min Avg Power: 118.0
+Mean Avg Power: 161
+Median Avg Power: 158.5
+
+

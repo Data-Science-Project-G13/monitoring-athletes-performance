@@ -1,0 +1,235 @@
+====== Titles and Activity Types ======
+('Lap Swimming', 'Pool Swimming')
+('Melbourne Running', 'Running')
+('Melbourne Cycling', 'Cycling')
+('Indoor Cycling', 'Indoor Cycling')
+('Port Phillip Bay Open Water Swimming', 'Open Water Swimming')
+('Pool Swimming', 'Pool Swimming')
+('Melbourne - Running', 'Running')
+('Port Phillip Bay Running', 'Running')
+('Queenscliff Running', 'Running')
+('Raymond Island Running', 'Running')
+('Queenscliff Cycling', 'Cycling')
+('Melbourne - Cycling', 'Cycling')
+('Hawaii County Running', 'Running')
+('Badung Running', 'Running')
+('Noosa Running', 'Running')
+('Port Phillip Bay - Open Water Swimming', 'Open Water Swimming')
+('Bali Running', 'Running')
+('Port Macquarie Open Water Swimming', 'Open Water Swimming')
+('Zwift - NYC', 'Virtual Cycling')
+('Swimming', 'Swimming')
+('Hawaii County Open Water Swimming', 'Open Water Swimming')
+('Melbourne Hiking', 'Hiking')
+('Zwift - Yorkshire', 'Virtual Cycling')
+('Zwift - FTP Test', 'Virtual Cycling')
+('Somers Running', 'Running')
+('Raymond Island Open Water Swimming', 'Open Water Swimming')
+('Zwift - Watopia', 'Virtual Cycling')
+('Zwift - 3. FTP Development', 'Virtual Cycling')
+('Noosa Cycling', 'Cycling')
+('Melbourne Road Cycling', 'Road Cycling')
+('Hawaii County Cycling', 'Cycling')
+('Barwon Heads Running', 'Running')
+("Zwift - Scott D'Aucourt's Meetup - Greatest London Flat", 'Virtual Cycling')
+('Portarlington Cycling', 'Cycling')
+('Zwift Academy 2018 Workout #1: Over Ones', 'Virtual Cycling')
+('Noosa Open Water Swimming', 'Open Water Swimming')
+('Zwift Academy 2018 Workout #6: Max Aerobic', 'Virtual Cycling')
+("Zwift - Mink's Centurions p/b TBR (C)", 'Virtual Cycling')
+('Port Macquarie Running', 'Running')
+('Portarlington Open Water Swimming', 'Open Water Swimming')
+('Bangli Cycling', 'Cycling')
+('Port Phillip Bay - Running', 'Running')
+('Shepparton Open Water Swimming', 'Open Water Swimming')
+('Street Running', 'Street Running')
+('Zwift - Zwift Academy 2016 Month 3 Session 21: Over Under Session', 'Virtual Cycling')
+('Zwift Academy 2019 Workout #2: Race Practice', 'Virtual Cycling')
+('Torquay Cycling', 'Cycling')
+('Zwift - 1. Strength Development', 'Virtual Cycling')
+('Zwift - 2. Half-Distance Power Development', 'Virtual Cycling')
+('Open Water Swimming', 'Open Water Swimming')
+('Sorrento Running', 'Running')
+('Port Macquarie Cycling', 'Cycling')
+("Zwift - Men's Hellingen Royal Classic Workout", 'Virtual Cycling')
+('Hawaii County Multi-Sport', 'Multisport')
+('Port Macquarie Multi-Sport', 'Multisport')
+('Raymond Island - Open Water Swimming', 'Open Water Swimming')
+('Rosebud Running', 'Running')
+('Zwift - 4. Endurance Stimulation', 'Virtual Cycling')
+('Zwift - London', 'Virtual Cycling')
+('Gold Coast Running', 'Running')
+('Zwift Academy 2018 Workout #8: Lactate Shuttling', 'Virtual Cycling')
+('Zwift Academy 2019 Workout #1: Threshold Development', 'Virtual Cycling')
+('Zwift Academy 2018 Workout #10: Capacity Reloaded', 'Virtual Cycling')
+('Zwift Academy 2019 Workout #6: Chase The Breakaway!', 'Virtual Cycling')
+('Zwift - Richmond', 'Virtual Cycling')
+('Geelong Open Water Swimming', 'Open Water Swimming')
+('Inverloch Cycling', 'Cycling')
+('Flinders Running', 'Running')
+('Noosa Multi-Sport', 'Multisport')
+('Port Phillip Bay Multi-Sport', 'Multisport')
+('Shepparton Multi-Sport', 'Multisport')
+('Geelong Running', 'Running')
+('Paynesville Cycling', 'Cycling')
+('Paynesville - Running', 'Running')
+('Zwift Academy 2018 Workout #3: Under Ones', 'Virtual Cycling')
+('Shepparton Cycling', 'Cycling')
+('Raymond Island Cycling', 'Cycling')
+("Zwift - Samantha Woodland's Meetup - Hilly Route", 'Virtual Cycling')
+('Zwift Academy 2019 Workout #7: VO2max Development', 'Virtual Cycling')
+('Shepparton Running', 'Running')
+('Zwift Academy 2019 Workout #5: 1min Power Duration', 'Virtual Cycling')
+('Zwift - Windtrainer 27/8/19', 'Virtual Cycling')
+('Zwift Academy 2018 Workout #2: Strength Reloaded', 'Virtual Cycling')
+('Apollo Bay Running', 'Running')
+("Zwift - Anthony Cuzzupe's Meetup - Muir And The Mountain", 'Virtual Cycling')
+('Zwift Academy 2019 Workout #8: 4min Power Duration', 'Virtual Cycling')
+
+
+====== Activity Type and Counts ======
+Running                251
+Pool Swimming          226
+Cycling                147
+Indoor Cycling          53
+Open Water Swimming     37
+Virtual Cycling         34
+Multisport               5
+Hiking                   2
+Road Cycling             2
+Swimming                 2
+Street Running           1
+Name: Activity Type, dtype: int64
+
+
+====== Running ====== 
+--- Date Summary ---
+--- Workout Time Summary ---
+Max workout time: 10834.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 1259 seconds
+Median workout time: 62.0 seconds
+--- Distance Summary ---
+Max Distance: 36.02
+Min Distance: 0.69
+Mean Distance: 12
+Median Distance: 12.02
+--- Avg HR Summary ---
+Max Avg HR: 168.0
+Min Avg HR: 127.0
+Mean Avg HR: 147
+Median Avg HR: 147.0
+--- Calories Summary ---
+Max Calories: 991.0
+Min Calories: 41.0
+Mean Calories: 619
+Median Calories: 661.5
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 0.0
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 0
+Median Training Stress Score®: 0.0
+
+
+====== Pool Swimming ====== 
+--- Date Summary ---
+--- Workout Time Summary ---
+Max workout time: 5296.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 1270 seconds
+Median workout time: 63.0 seconds
+--- Distance Summary ---
+Max Distance: 200.0
+Min Distance: 200.0
+Mean Distance: 200
+Median Distance: 200.0
+--- Calories Summary ---
+Max Calories: 886.0
+Min Calories: 32.0
+Mean Calories: 589
+Median Calories: 614.0
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 0.0
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 0
+Median Training Stress Score®: 0.0
+
+
+====== Cycling ====== 
+--- Date Summary ---
+--- Workout Time Summary ---
+Max workout time: 26058.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 3434 seconds
+Median workout time: 110.0 seconds
+--- Distance Summary ---
+Max Distance: 201.55
+Min Distance: 5.1
+Mean Distance: 78
+Median Distance: 52.68
+--- Avg HR Summary ---
+Max Avg HR: 145.0
+Min Avg HR: 113.0
+Mean Avg HR: 130
+Median Avg HR: 130.0
+--- Avg Speed Summary ---
+Max Avg Speed: 34.1
+Min Avg Speed: 11.1
+Mean Avg Speed: 28
+Median Avg Speed: 28.3
+--- Calories Summary ---
+Max Calories: 998.0
+Min Calories: 6.0
+Mean Calories: 675
+Median Calories: 688.0
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 466.0
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 41
+Median Training Stress Score®: 0.0
+--- Avg Power Summary ---
+Max Avg Power: 166.0
+Min Avg Power: 85.0
+Mean Avg Power: 131
+Median Avg Power: 130.0
+
+
+====== Indoor Cycling ====== 
+--- Date Summary ---
+--- Workout Time Summary ---
+Max workout time: 14701.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 1795 seconds
+Median workout time: 87.0 seconds
+--- Distance Summary ---
+Max Distance: 55.77
+Min Distance: 0.0
+Mean Distance: 32
+Median Distance: 34.72
+--- Avg HR Summary ---
+Max Avg HR: 142.0
+Min Avg HR: 106.0
+Mean Avg HR: 125
+Median Avg HR: 124.0
+--- Avg Speed Summary ---
+Max Avg Speed: 29.7
+Min Avg Speed: 19.9
+Mean Avg Speed: 25
+Median Avg Speed: 24.6
+--- Calories Summary ---
+Max Calories: 836.0
+Min Calories: 260.0
+Mean Calories: 612
+Median Calories: 625.0
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 135.2
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 11
+Median Training Stress Score®: 0.0
+--- Avg Power Summary ---
+Max Avg Power: 161.0
+Min Avg Power: 109.0
+Mean Avg Power: 137
+Median Avg Power: 141.5
+
+

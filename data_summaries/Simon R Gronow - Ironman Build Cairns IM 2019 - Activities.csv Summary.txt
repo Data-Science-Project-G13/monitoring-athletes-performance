@@ -1,0 +1,168 @@
+====== Titles and Activity Types ======
+('Melbourne Running', 'Running')
+('Port Phillip Bay Open Water Swimming', 'Open Water Swimming')
+('Melbourne Cycling', 'Cycling')
+('Treadmill Running', 'Treadmill Running')
+('Lap Swimming', 'Pool Swimming')
+('Melbourne - Cycling', 'Cycling')
+('Melbourne - Running', 'Running')
+('Melbourne Walking', 'Walking')
+('Cairns Cycling', 'Cycling')
+('Lorne Open Water Swimming', 'Open Water Swimming')
+('Port Phillip Bay - Open Water Swimming', 'Open Water Swimming')
+('Port Phillip Bay Running', 'Running')
+('Cairns Running', 'Running')
+('Cairns Open Water Swimming', 'Open Water Swimming')
+('Cycling', 'Cycling')
+('Cairns Multi-Sport', 'Multisport')
+('Point Leo Open Water Swimming', 'Open Water Swimming')
+('Indoor Cycling', 'Indoor Cycling')
+('Melbourne Road Cycling', 'Road Cycling')
+('Port Phillip Bay - Running', 'Running')
+('DYN', 'Other')
+
+
+====== Activity Type and Counts ======
+Running                67
+Open Water Swimming    48
+Cycling                45
+Treadmill Running      39
+Pool Swimming           7
+Walking                 2
+Road Cycling            1
+Other                   1
+Indoor Cycling          1
+Multisport              1
+Name: Activity Type, dtype: int64
+
+
+====== Running ====== 
+--- Date Summary ---
+Record from 22-12-18 05:46 to 07-06-19 10:22
+--- Workout Time Summary ---
+Max workout time: 15421.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 1186 seconds
+Median workout time: 35.5 seconds
+--- Distance Summary ---
+Max Distance: 34.11
+Min Distance: 1.03
+Mean Distance: 8
+Median Distance: 5.07
+--- Avg HR Summary ---
+Max Avg HR: 154.0
+Min Avg HR: 111.0
+Mean Avg HR: 138
+Median Avg HR: 139.0
+--- Calories Summary ---
+Max Calories: 902.0
+Min Calories: 67.0
+Mean Calories: 364
+Median Calories: 341.5
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 0.0
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 0
+Median Training Stress Score®: 0.0
+
+
+====== Open Water Swimming ====== 
+--- Date Summary ---
+Record from 19-12-18 05:46 to 08-06-19 11:27
+--- Workout Time Summary ---
+Max workout time: 6395.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 880 seconds
+Median workout time: 39.0 seconds
+--- Distance Summary ---
+Max Distance: 930.0
+Min Distance: 214.0
+Mean Distance: 588
+Median Distance: 619.0
+--- Avg HR Summary ---
+Max Avg HR: 123.0
+Min Avg HR: 111.0
+Mean Avg HR: 118
+Median Avg HR: 118.5
+--- Calories Summary ---
+Max Calories: 882.0
+Min Calories: 47.0
+Mean Calories: 436
+Median Calories: 454.5
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 0.0
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 0
+Median Training Stress Score®: 0.0
+
+
+====== Cycling ====== 
+--- Date Summary ---
+Record from 23-12-18 06:00 to 20-07-19 07:35
+--- Workout Time Summary ---
+Max workout time: 27599.0 seconds
+Min workout time: 1.0 seconds
+Mean workout time: 3935 seconds
+Median workout time: 142.0 seconds
+--- Distance Summary ---
+Max Distance: 202.09
+Min Distance: 0.0
+Mean Distance: 83
+Median Distance: 60.94
+--- Avg HR Summary ---
+Max Avg HR: 146.0
+Min Avg HR: 108.0
+Mean Avg HR: 129
+Median Avg HR: 129.0
+--- Avg Speed Summary ---
+Max Avg Speed: 30.0
+Min Avg Speed: 19.9
+Mean Avg Speed: 26
+Median Avg Speed: 26.5
+--- Calories Summary ---
+Max Calories: 930.0
+Min Calories: 310.0
+Mean Calories: 559
+Median Calories: 541.5
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 381.9
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 143
+Median Training Stress Score®: 124.1
+--- Avg Power Summary ---
+Max Avg Power: 142.0
+Min Avg Power: 79.0
+Mean Avg Power: 117
+Median Avg Power: 117.0
+
+
+====== Treadmill Running ====== 
+--- Date Summary ---
+Record from 09-01-19 11:45 to 05-06-19 13:23
+--- Workout Time Summary ---
+Max workout time: 2450.0 seconds
+Min workout time: 0.0 seconds
+Mean workout time: 689 seconds
+Median workout time: 33.0 seconds
+--- Distance Summary ---
+Max Distance: 6.1
+Min Distance: 5.03
+Mean Distance: 5
+Median Distance: 5.05
+--- Avg HR Summary ---
+Max Avg HR: 151.0
+Min Avg HR: 123.0
+Mean Avg HR: 138
+Median Avg HR: 139.0
+--- Calories Summary ---
+Max Calories: 458.0
+Min Calories: 315.0
+Mean Calories: 387
+Median Calories: 391.0
+--- Training Stress Score® Summary ---
+Max Training Stress Score®: 0.0
+Min Training Stress Score®: 0.0
+Mean Training Stress Score®: 0
+Median Training Stress Score®: 0.0
+
+
