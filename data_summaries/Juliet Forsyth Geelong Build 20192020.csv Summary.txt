@@ -4,22 +4,24 @@
 ('Melbourne Cycling', 'Cycling')
 ('Melbourne Road Cycling', 'Road Cycling')
 ('Portarlington Running', 'Running')
-('Melbourne Multi-Sport', 'Multisport')
 ('Lap Swimming', 'Pool Swimming')
-('Geelong Multi-Sport', 'Multisport')
+('Melbourne Multi-Sport', 'Multisport')
 ('Port Phillip Bay Open Water Swimming', 'Open Water Swimming')
+('Geelong Multi-Sport', 'Multisport')
 ('Port Phillip Bay Multi-Sport', 'Multisport')
 
 
-====== Activity Type and Counts ======
+====== Activity Types and Counts ======
 Running                41
 Indoor Cycling         18
 Cycling                 9
-Road Cycling            4
 Multisport              4
+Road Cycling            4
 Pool Swimming           2
 Open Water Swimming     1
 Name: Activity Type, dtype: int64
+====== Shape of the Dataset ======
+The dataset has 79 rows and 42 columns
 
 
 ====== Running ====== 
@@ -30,26 +32,43 @@ Max workout time: 6925.0 seconds
 Min workout time: 0.0 seconds
 Mean workout time: 888 seconds
 Median workout time: 33.0 seconds
+Standard deviation of workout time: 1514.1629376774576
 --- Distance Summary ---
 Max Distance: 24.01
 Min Distance: 0.82
 Mean Distance: 9
 Median Distance: 6.01
+Standard deviation of Distance: 5.367361417877962
+Covariance for Distance and TSS: [[29.5287828  0.       ]
+ [ 0.         0.       ]]
+Correlation for Distance and TSS: [[ 1. nan]
+ [nan nan]]
 --- Avg HR Summary ---
 Max Avg HR: 172.0
 Min Avg HR: 130.0
 Mean Avg HR: 147
 Median Avg HR: 146.0
+Standard deviation of Avg HR: 8.111653913278369
+Covariance for Avg HR and TSS: [[67.44390244  0.        ]
+ [ 0.          0.        ]]
+Correlation for Avg HR and TSS: [[ 1. nan]
+ [nan nan]]
 --- Calories Summary ---
 Max Calories: 897.0
 Min Calories: 41.0
 Mean Calories: 386
 Median Calories: 317.5
+Standard deviation of Calories: 212.58279416500292
 --- Training Stress Score® Summary ---
 Max Training Stress Score®: 0.0
 Min Training Stress Score®: 0.0
 Mean Training Stress Score®: 0
 Median Training Stress Score®: 0.0
+Standard deviation of Training Stress Score®: 0.0
+Covariance for Training Stress Score® and TSS: [[0. 0.]
+ [0. 0.]]
+Correlation for Training Stress Score® and TSS: [[nan nan]
+ [nan nan]]
 
 
 ====== Indoor Cycling ====== 
@@ -60,26 +79,47 @@ Max workout time: 7551.0 seconds
 Min workout time: 0.0 seconds
 Mean workout time: 1412 seconds
 Median workout time: 65.5 seconds
+Standard deviation of workout time: 2198.4578699238027
 --- Distance Summary ---
 Max Distance: 0.0
 Min Distance: 0.0
 Mean Distance: 0
 Median Distance: 0.0
+Standard deviation of Distance: 0.0
+Covariance for Distance and TSS: [[0. 0.]
+ [0. 0.]]
+Correlation for Distance and TSS: [[nan nan]
+ [nan nan]]
 --- Avg HR Summary ---
 Max Avg HR: 144.0
 Min Avg HR: 122.0
 Mean Avg HR: 134
 Median Avg HR: 133.0
+Standard deviation of Avg HR: 6.489307444643928
+Covariance for Avg HR and TSS: [[44.58823529  0.        ]
+ [ 0.          0.        ]]
+Correlation for Avg HR and TSS: [[ 1. nan]
+ [nan nan]]
 --- Calories Summary ---
 Max Calories: 928.0
 Min Calories: 94.0
 Mean Calories: 521
 Median Calories: 520.0
+Standard deviation of Calories: 208.24181693643487
+Covariance for Calories and TSS: [[45915.51633987     0.        ]
+ [    0.             0.        ]]
+Correlation for Calories and TSS: [[ 1. nan]
+ [nan nan]]
 --- Training Stress Score® Summary ---
 Max Training Stress Score®: 0.0
 Min Training Stress Score®: 0.0
 Mean Training Stress Score®: 0
 Median Training Stress Score®: 0.0
+Standard deviation of Training Stress Score®: 0.0
+Covariance for Training Stress Score® and TSS: [[0. 0.]
+ [0. 0.]]
+Correlation for Training Stress Score® and TSS: [[nan nan]
+ [nan nan]]
 
 
 ====== Cycling ====== 
@@ -90,45 +130,79 @@ Max workout time: 15790.0 seconds
 Min workout time: 1.0 seconds
 Mean workout time: 3913 seconds
 Median workout time: 188.0 seconds
+Standard deviation of workout time: 5621.305365391026
 --- Distance Summary ---
 Max Distance: 129.98
 Min Distance: 46.42
 Mean Distance: 93
 Median Distance: 95.01
+Standard deviation of Distance: 24.789871139461596
+Covariance for Distance and TSS: [[691.354925   0.      ]
+ [  0.         0.      ]]
+Correlation for Distance and TSS: [[ 1. nan]
+ [nan nan]]
 --- Avg HR Summary ---
 Max Avg HR: 136.0
 Min Avg HR: 120.0
 Mean Avg HR: 128
 Median Avg HR: 127.0
+Standard deviation of Avg HR: 5.0356751971665155
+Covariance for Avg HR and TSS: [[28.52777778  0.        ]
+ [ 0.          0.        ]]
+Correlation for Avg HR and TSS: [[ 1. nan]
+ [nan nan]]
 --- Calories Summary ---
 Max Calories: 729.0
 Min Calories: 670.0
 Mean Calories: 700
 Median Calories: 699.5
+Standard deviation of Calories: 29.5
 --- Training Stress Score® Summary ---
 Max Training Stress Score®: 0.0
 Min Training Stress Score®: 0.0
 Mean Training Stress Score®: 0
 Median Training Stress Score®: 0.0
+Standard deviation of Training Stress Score®: 0.0
+Covariance for Training Stress Score® and TSS: [[0. 0.]
+ [0. 0.]]
+Correlation for Training Stress Score® and TSS: [[nan nan]
+ [nan nan]]
 
 
-====== Road Cycling ====== 
+====== Multisport ====== 
 --- Date Summary ---
-Record from 01-02-20 20:52 to 15-02-20 07:28
+Record from 08-12-19 09:04 to 23-02-20 07:22
 --- Workout Time Summary ---
-Max workout time: 15308.0 seconds
-Min workout time: 0.0 seconds
-Mean workout time: 3237 seconds
-Median workout time: 124.0 seconds
+Max workout time: 17859.0 seconds
+Min workout time: 1.0 seconds
+Mean workout time: 2625 seconds
+Median workout time: 76.5 seconds
+Standard deviation of workout time: 4951.712438782051
 --- Distance Summary ---
-Max Distance: 130.03
-Min Distance: 0.01
-Mean Distance: 73
-Median Distance: 81.26
+Max Distance: 113.43
+Min Distance: 26.53
+Mean Distance: 50
+Median Distance: 29.985
+Standard deviation of Distance: 36.716479525548195
+Covariance for Distance and TSS: [[1797.46649167    0.        ]
+ [   0.            0.        ]]
+Correlation for Distance and TSS: [[ 1. nan]
+ [nan nan]]
+--- Calories Summary ---
+Max Calories: 929.0
+Min Calories: 793.0
+Mean Calories: 851
+Median Calories: 832.0
+Standard deviation of Calories: 57.18002759316889
 --- Training Stress Score® Summary ---
 Max Training Stress Score®: 0.0
 Min Training Stress Score®: 0.0
 Mean Training Stress Score®: 0
 Median Training Stress Score®: 0.0
+Standard deviation of Training Stress Score®: 0.0
+Covariance for Training Stress Score® and TSS: [[0. 0.]
+ [0. 0.]]
+Correlation for Training Stress Score® and TSS: [[nan nan]
+ [nan nan]]
 
 

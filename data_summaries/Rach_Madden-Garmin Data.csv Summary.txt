@@ -8,23 +8,23 @@
 ('Zwift - London', 'Virtual Cycling')
 ('Hawaii County Running', 'Running')
 ('Maroochydore Running', 'Running')
-('Hawaii County Open Water Swimming', 'Open Water Swimming')
 ('Zwift - NYC', 'Virtual Cycling')
-('Queensland Open Water Swimming', 'Open Water Swimming')
-('Pool Swimming', 'Pool Swimming')
-('Zwift', 'Virtual Cycling')
-('Geelong Multi-Sport', 'Multisport')
-('Geelong Cycling', 'Cycling')
+('Hawaii County Open Water Swimming', 'Open Water Swimming')
+('Port Phillip Bay Multi-Sport', 'Multisport')
 ('Zwift - Tour de Zwift: Stage 1 Long Distance', 'Virtual Cycling')
+('Geelong Cycling', 'Cycling')
+('Geelong Running', 'Running')
+('Queensland Open Water Swimming', 'Open Water Swimming')
+('Geelong Multi-Sport', 'Multisport')
+('Zwift', 'Virtual Cycling')
+('Treadmill Running', 'Treadmill Running')
 ('Indoor Cycling', 'Indoor Cycling')
 ('Zwift - Innsbruck', 'Virtual Cycling')
-('Treadmill Running', 'Treadmill Running')
-('Geelong Running', 'Running')
-('Port Phillip Bay Multi-Sport', 'Multisport')
 ("Zwift - Rachel Madden's Meetup - 2018 UCI Worlds Short Lap", 'Virtual Cycling')
+('Pool Swimming', 'Pool Swimming')
 
 
-====== Activity Type and Counts ======
+====== Activity Types and Counts ======
 Running                59
 Cycling                38
 Pool Swimming          35
@@ -34,6 +34,8 @@ Multisport              2
 Treadmill Running       1
 Indoor Cycling          1
 Name: Activity Type, dtype: int64
+====== Shape of the Dataset ======
+The dataset has 163 rows and 40 columns
 
 
 ====== Running ====== 
@@ -43,26 +45,43 @@ Max workout time: 6460.0 seconds
 Min workout time: 0.0 seconds
 Mean workout time: 1206 seconds
 Median workout time: 63.0 seconds
+Standard deviation of workout time: 1851.7733539605704
 --- Distance Summary ---
 Max Distance: 21.03
 Min Distance: 2.04
 Mean Distance: 11
 Median Distance: 11.63
+Standard deviation of Distance: 4.350787927200643
+Covariance for Distance and TSS: [[19.25572379  0.        ]
+ [ 0.          0.        ]]
+Correlation for Distance and TSS: [[ 1. nan]
+ [nan nan]]
 --- Avg HR Summary ---
 Max Avg HR: 162.0
 Min Avg HR: 140.0
 Mean Avg HR: 153
 Median Avg HR: 154.0
+Standard deviation of Avg HR: 5.185831358912433
+Covariance for Avg HR and TSS: [[27.35651666  0.        ]
+ [ 0.          0.        ]]
+Correlation for Avg HR and TSS: [[ 1. nan]
+ [nan nan]]
 --- Calories Summary ---
 Max Calories: 961.0
 Min Calories: 124.0
 Mean Calories: 623
 Median Calories: 663.0
+Standard deviation of Calories: 230.27209901992393
 --- Training Stress Score® Summary ---
 Max Training Stress Score®: 0.0
 Min Training Stress Score®: 0.0
 Mean Training Stress Score®: 0
 Median Training Stress Score®: 0.0
+Standard deviation of Training Stress Score®: 0.0
+Covariance for Training Stress Score® and TSS: [[0. 0.]
+ [0. 0.]]
+Correlation for Training Stress Score® and TSS: [[nan nan]
+ [nan nan]]
 
 
 ====== Cycling ====== 
@@ -72,31 +91,53 @@ Max workout time: 16874.0 seconds
 Min workout time: 0.0 seconds
 Mean workout time: 3163 seconds
 Median workout time: 167.5 seconds
+Standard deviation of workout time: 4938.862137226177
 --- Distance Summary ---
 Max Distance: 141.47
 Min Distance: 23.98
 Mean Distance: 77
 Median Distance: 82.795
+Standard deviation of Distance: 33.48302295251702
+Covariance for Distance and TSS: [[1151.41317269    0.        ]
+ [   0.            0.        ]]
+Correlation for Distance and TSS: [[ 1. nan]
+ [nan nan]]
 --- Avg HR Summary ---
 Max Avg HR: 156.0
 Min Avg HR: 109.0
 Mean Avg HR: 136
 Median Avg HR: 138.0
+Standard deviation of Avg HR: 9.66119261060868
+Covariance for Avg HR and TSS: [[95.86130868  0.        ]
+ [ 0.          0.        ]]
+Correlation for Avg HR and TSS: [[ 1. nan]
+ [nan nan]]
 --- Avg Speed Summary ---
 Max Avg Speed: 32.0
 Min Avg Speed: 21.5
 Mean Avg Speed: 30
 Median Avg Speed: 30.05
+Standard deviation of Avg Speed: 1.9693021529285664
+Covariance for Avg Speed and TSS: [[3.98296586 0.        ]
+ [0.         0.        ]]
+Correlation for Avg Speed and TSS: [[ 1. nan]
+ [nan nan]]
 --- Calories Summary ---
 Max Calories: 996.0
 Min Calories: 395.0
 Mean Calories: 756
 Median Calories: 793.5
+Standard deviation of Calories: 178.3383262054178
 --- Training Stress Score® Summary ---
 Max Training Stress Score®: 0.0
 Min Training Stress Score®: 0.0
 Mean Training Stress Score®: 0
 Median Training Stress Score®: 0.0
+Standard deviation of Training Stress Score®: 0.0
+Covariance for Training Stress Score® and TSS: [[0. 0.]
+ [0. 0.]]
+Correlation for Training Stress Score® and TSS: [[nan nan]
+ [nan nan]]
 
 
 ====== Pool Swimming ====== 
@@ -106,21 +147,33 @@ Max workout time: 4823.0 seconds
 Min workout time: 0.0 seconds
 Mean workout time: 1465 seconds
 Median workout time: 74.0 seconds
+Standard deviation of workout time: 2058.660165872151
 --- Distance Summary ---
 Max Distance: 375.0
 Min Distance: 375.0
 Mean Distance: 375
 Median Distance: 375.0
+Standard deviation of Distance: 0.0
 --- Calories Summary ---
 Max Calories: 975.0
 Min Calories: 61.0
 Mean Calories: 675
 Median Calories: 691.0
+Standard deviation of Calories: 172.62715751064223
+Covariance for Calories and TSS: [[30676.61008403     0.        ]
+ [    0.             0.        ]]
+Correlation for Calories and TSS: [[ 1. nan]
+ [nan nan]]
 --- Training Stress Score® Summary ---
 Max Training Stress Score®: 0.0
 Min Training Stress Score®: 0.0
 Mean Training Stress Score®: 0
 Median Training Stress Score®: 0.0
+Standard deviation of Training Stress Score®: 0.0
+Covariance for Training Stress Score® and TSS: [[0. 0.]
+ [0. 0.]]
+Correlation for Training Stress Score® and TSS: [[nan nan]
+ [nan nan]]
 
 
 ====== Virtual Cycling ====== 
@@ -130,30 +183,52 @@ Max workout time: 8379.0 seconds
 Min workout time: 0.0 seconds
 Mean workout time: 1353 seconds
 Median workout time: 62.5 seconds
+Standard deviation of workout time: 2076.0395989076505
 --- Distance Summary ---
 Max Distance: 72.48
 Min Distance: 5.91
 Mean Distance: 33
 Median Distance: 31.96
+Standard deviation of Distance: 14.524860369380493
+Covariance for Distance and TSS: [[225.03634   0.     ]
+ [  0.        0.     ]]
+Correlation for Distance and TSS: [[ 1. nan]
+ [nan nan]]
 --- Avg Speed Summary ---
 Max Avg Speed: 32.7
 Min Avg Speed: 22.5
 Mean Avg Speed: 29
 Median Avg Speed: 29.6
+Standard deviation of Avg Speed: 3.224297404086664
+Covariance for Avg Speed and TSS: [[11.08916667  0.        ]
+ [ 0.          0.        ]]
+Correlation for Avg Speed and TSS: [[ 1. nan]
+ [nan nan]]
 --- Calories Summary ---
 Max Calories: 795.0
 Min Calories: 86.0
 Mean Calories: 531
 Median Calories: 561.0
+Standard deviation of Calories: 189.41200243560772
 --- Training Stress Score® Summary ---
 Max Training Stress Score®: 0.0
 Min Training Stress Score®: 0.0
 Mean Training Stress Score®: 0
 Median Training Stress Score®: 0.0
+Standard deviation of Training Stress Score®: 0.0
+Covariance for Training Stress Score® and TSS: [[0. 0.]
+ [0. 0.]]
+Correlation for Training Stress Score® and TSS: [[nan nan]
+ [nan nan]]
 --- Avg Power Summary ---
 Max Avg Power: 168.0
 Min Avg Power: 98.0
 Mean Avg Power: 148
 Median Avg Power: 152.5
+Standard deviation of Avg Power: 18.76155893709262
+Covariance for Avg Power and TSS: [[375.4625   0.    ]
+ [  0.       0.    ]]
+Correlation for Avg Power and TSS: [[ 1. nan]
+ [nan nan]]
 
 

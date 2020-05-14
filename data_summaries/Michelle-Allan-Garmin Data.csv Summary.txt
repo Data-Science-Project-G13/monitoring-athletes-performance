@@ -10,94 +10,94 @@
 ('Middle Park Running', 'Running')
 ('Thalang Running', 'Running')
 ('Middle Park Indoor Cycling', 'Indoor Cycling')
-('Melbourne Walking', 'Walking')
 ('Elwood Open Water Swimming', 'Open Water Swimming')
-('Thalang Cycling', 'Cycling')
+('Melbourne Walking', 'Walking')
 ('Middle Park Cycling', 'Cycling')
+('Thalang Cycling', 'Cycling')
 ('Cairns Running', 'Running')
 ('Indoor Cycling', 'Indoor Cycling')
-('Highett Running', 'Running')
 ('Port Phillip Bay Open Water Swimming', 'Open Water Swimming')
-('Melbourne Road Cycling', 'Road Cycling')
+('Highett Running', 'Running')
 ('Sandringham Running', 'Running')
+('Melbourne Road Cycling', 'Road Cycling')
 ('Black Rock North Open Water Swimming', 'Open Water Swimming')
 ('Cairns Cycling', 'Cycling')
-('Portarlington Running', 'Running')
 ('Kailua Kona Open Water Swimming', 'Open Water Swimming')
-('Swan Bay Cycling', 'Cycling')
-('Melbourne - Multi-Sport', 'Multisport')
+('Portarlington Running', 'Running')
 ('Swan Bay Running', 'Running')
 ('Kailua Kona Running', 'Running')
-('Melbourne - Running', 'Running')
 ('Melbourne Indoor Cycling', 'Indoor Cycling')
-('Kailua Kona Cycling', 'Cycling')
+('Swan Bay Cycling', 'Cycling')
+('Melbourne - Multi-Sport', 'Multisport')
+('Melbourne - Running', 'Running')
 ('Noosa Heads Open Water Swimming', 'Open Water Swimming')
 ('Brisbane Walking', 'Walking')
+('Kailua Kona Cycling', 'Cycling')
 ('Pool Swimming', 'Pool Swimming')
-('Port Phillip Bay Running', 'Running')
 ('Glenferrie South Multi-Sport', 'Multisport')
-('Melbourne Mountain Biking', 'Mountain Biking')
-('Melbourne Incident Detected', 'Incident Detected')
-('St Kilda Road Running', 'Running')
+('Port Phillip Bay Running', 'Running')
 ('Elsternwick Running', 'Running')
-('Abbotsford Cycling', 'Cycling')
-('Portarlington - Running', 'Running')
 ('Lorne Cycling', 'Cycling')
-('Portarlington Open Water Swimming', 'Open Water Swimming')
-('Thalang Indoor Cycling', 'Indoor Cycling')
-('Elwood Indoor Cycling', 'Indoor Cycling')
+('St Kilda Road Running', 'Running')
+('Melbourne Incident Detected', 'Incident Detected')
 ('St Kilda West Cycling', 'Cycling')
+('Abbotsford Cycling', 'Cycling')
+('Elwood Indoor Cycling', 'Indoor Cycling')
+('Portarlington - Running', 'Running')
+('Lorne Road Cycling', 'Road Cycling')
 ('St Kilda West Multi-Sport', 'Multisport')
 ('Portarlington Cycling', 'Cycling')
-('Hawthorn West Running', 'Running')
 ('South Melbourne Running', 'Running')
+('Portarlington Open Water Swimming', 'Open Water Swimming')
+('Hawthorn West Running', 'Running')
+('Thalang Indoor Cycling', 'Indoor Cycling')
+('Melbourne Mountain Biking', 'Mountain Biking')
 ('Cairns North Running', 'Running')
-('Portarlington - Cycling', 'Cycling')
 ('MSAC Swimming', 'Swimming')
-('Lorne Road Cycling', 'Road Cycling')
-('Busselton Open Water Swimming', 'Open Water Swimming')
-('Geelong West Cycling', 'Cycling')
-('Lorne Running', 'Running')
-('Hampton Cycling', 'Cycling')
-('Dingley Village Running', 'Running')
-('Open Water Swimming', 'Open Water Swimming')
-('Collins Street West Running', 'Running')
-('Running', 'Running')
-('Port Phillip Bay - Open Water Swimming', 'Open Water Swimming')
-('Queenscliff Cycling', 'Cycling')
-('South Yarra Running', 'Running')
-('Silverleaves Cycling', 'Cycling')
-('Abeckett Street Running', 'Running')
-('St Kilda West Open Water Swimming', 'Open Water Swimming')
-('Geelong Walking', 'Walking')
-('Shepparton Cycling', 'Cycling')
-('Shepparton Open Water Swimming', 'Open Water Swimming')
-('Noosa Heads Cycling', 'Cycling')
-('Cairns North Cycling', 'Cycling')
-('Burnley Running', 'Running')
-('Palm Cove Open Water Swimming', 'Open Water Swimming')
-('Broadwater Cycling', 'Cycling')
-('Bulla Cycling', 'Cycling')
-('Palm Cove Multi-Sport', 'Multisport')
-('Geelong Running', 'Running')
-('Broadwater Running', 'Running')
-('Red Hill Loop', 'Cycling')
-('Shepparton Running', 'Running')
-('Port Phillip Bay Cycling', 'Cycling')
-('Busselton Multi-Sport', 'Multisport')
-('Badung Running', 'Running')
+('Portarlington - Cycling', 'Cycling')
 ('Noosa Running', 'Running')
-('Kailua Kona Multi-Sport', 'Multisport')
-('Grovedale Cycling', 'Cycling')
-('Mordialloc Cycling', 'Cycling')
-('Assistance', 'Assistance Requested')
-('World Trade Centre Running', 'Running')
-('Silverleaves Open Water Swimming', 'Open Water Swimming')
-('Sandringham Multi-Sport', 'Multisport')
+('South Yarra Running', 'Running')
 ('Mordialloc Multi-Sport', 'Multisport')
+('Silverleaves Cycling', 'Cycling')
+('Port Phillip Bay - Open Water Swimming', 'Open Water Swimming')
+('Shepparton Open Water Swimming', 'Open Water Swimming')
+('St Kilda West Open Water Swimming', 'Open Water Swimming')
+('Bulla Cycling', 'Cycling')
+('World Trade Centre Running', 'Running')
+('Badung Running', 'Running')
+('Cairns North Cycling', 'Cycling')
+('Shepparton Running', 'Running')
+('Hampton Cycling', 'Cycling')
+('Burnley Running', 'Running')
+('Kailua Kona Multi-Sport', 'Multisport')
+('Assistance', 'Assistance Requested')
+('Lorne Running', 'Running')
+('Noosa Heads Cycling', 'Cycling')
+('Open Water Swimming', 'Open Water Swimming')
+('Mordialloc Cycling', 'Cycling')
+('Grovedale Cycling', 'Cycling')
+('Palm Cove Multi-Sport', 'Multisport')
+('Broadwater Running', 'Running')
+('Running', 'Running')
+('Red Hill Loop', 'Cycling')
+('Abeckett Street Running', 'Running')
+('Shepparton Cycling', 'Cycling')
+('Silverleaves Open Water Swimming', 'Open Water Swimming')
+('Queenscliff Cycling', 'Cycling')
+('Dingley Village Running', 'Running')
+('Geelong Running', 'Running')
+('Busselton Multi-Sport', 'Multisport')
+('Busselton Open Water Swimming', 'Open Water Swimming')
+('Sandringham Multi-Sport', 'Multisport')
+('Palm Cove Open Water Swimming', 'Open Water Swimming')
+('Port Phillip Bay Cycling', 'Cycling')
+('Broadwater Cycling', 'Cycling')
+('Geelong Walking', 'Walking')
+('Collins Street West Running', 'Running')
+('Geelong West Cycling', 'Cycling')
 
 
-====== Activity Type and Counts ======
+====== Activity Types and Counts ======
 Running                 263
 Pool Swimming           195
 Cycling                 165
@@ -109,9 +109,11 @@ Multisport               14
 Road Cycling             10
 Incident Detected         2
 Mountain Biking           2
-Assistance Requested      1
 Swimming                  1
+Assistance Requested      1
 Name: Activity Type, dtype: int64
+====== Shape of the Dataset ======
+The dataset has 900 rows and 44 columns
 
 
 ====== Running ====== 
@@ -121,26 +123,31 @@ Max workout time: 11057.0 seconds
 Min workout time: 0.0 seconds
 Mean workout time: 951 seconds
 Median workout time: 39.0 seconds
+Standard deviation of workout time: 1712.0072125480376
 --- Distance Summary ---
 Max Distance: 36.08
 Min Distance: 0.54
 Mean Distance: 9
 Median Distance: 6.98
+Standard deviation of Distance: 6.355910345431275
 --- Avg HR Summary ---
 Max Avg HR: 190.0
 Min Avg HR: 120.0
 Mean Avg HR: 156
 Median Avg HR: 157.0
+Standard deviation of Avg HR: 10.038158836584664
 --- Calories Summary ---
 Max Calories: 920.0
 Min Calories: 29.0
 Mean Calories: 389
 Median Calories: 345.0
+Standard deviation of Calories: 180.23997913652147
 --- Training Stress Score® Summary ---
 Max Training Stress Score®: 0.0
 Min Training Stress Score®: 0.0
 Mean Training Stress Score®: 0
 Median Training Stress Score®: 0.0
+Standard deviation of Training Stress Score®: 0.0
 
 
 ====== Pool Swimming ====== 
@@ -150,26 +157,31 @@ Max workout time: 6115.0 seconds
 Min workout time: 0.0 seconds
 Mean workout time: 1295 seconds
 Median workout time: 66.0 seconds
+Standard deviation of workout time: 1854.7752402082788
 --- Distance Summary ---
 Max Distance: 975.0
 Min Distance: 450.0
 Mean Distance: 712
 Median Distance: 712.5
+Standard deviation of Distance: 262.5
 --- Avg HR Summary ---
 Max Avg HR: 152.0
 Min Avg HR: 117.0
 Mean Avg HR: 129
 Median Avg HR: 127.0
+Standard deviation of Avg HR: 8.621678104251709
 --- Calories Summary ---
 Max Calories: 955.0
 Min Calories: 71.0
 Mean Calories: 595
 Median Calories: 608.0
+Standard deviation of Calories: 162.32647811242614
 --- Training Stress Score® Summary ---
 Max Training Stress Score®: 0.0
 Min Training Stress Score®: 0.0
 Mean Training Stress Score®: 0
 Median Training Stress Score®: 0.0
+Standard deviation of Training Stress Score®: 0.0
 
 
 ====== Cycling ====== 
@@ -179,31 +191,37 @@ Max workout time: 24690.0 seconds
 Min workout time: 0.0 seconds
 Mean workout time: 3241 seconds
 Median workout time: 128.5 seconds
+Standard deviation of workout time: 5738.490930365155
 --- Distance Summary ---
 Max Distance: 204.34
 Min Distance: 0.24
 Mean Distance: 70
 Median Distance: 53.98
+Standard deviation of Distance: 49.152132625124175
 --- Avg HR Summary ---
 Max Avg HR: 160.0
 Min Avg HR: 97.0
 Mean Avg HR: 138
 Median Avg HR: 137.0
+Standard deviation of Avg HR: 10.83104425478827
 --- Calories Summary ---
 Max Calories: 999.0
 Min Calories: 4.0
 Mean Calories: 622
 Median Calories: 655.0
+Standard deviation of Calories: 219.66001793246397
 --- Training Stress Score® Summary ---
 Max Training Stress Score®: 331.2
 Min Training Stress Score®: 0.0
 Mean Training Stress Score®: 16
 Median Training Stress Score®: 0.0
+Standard deviation of Training Stress Score®: 49.89975791426091
 --- Avg Power Summary ---
 Max Avg Power: 944.0
 Min Avg Power: 35.0
 Mean Avg Power: 129
 Median Avg Power: 98.0
+Standard deviation of Avg Power: 171.203988141502
 
 
 ====== Treadmill Running ====== 
@@ -213,25 +231,30 @@ Max workout time: 5486.0 seconds
 Min workout time: 0.0 seconds
 Mean workout time: 937 seconds
 Median workout time: 46.0 seconds
+Standard deviation of workout time: 1425.2596772207878
 --- Distance Summary ---
 Max Distance: 18.03
 Min Distance: 2.01
 Mean Distance: 8
 Median Distance: 8.465
+Standard deviation of Distance: 3.2982717902667047
 --- Avg HR Summary ---
 Max Avg HR: 179.0
 Min Avg HR: 114.0
 Mean Avg HR: 146
 Median Avg HR: 145.5
+Standard deviation of Avg HR: 9.17213711048596
 --- Calories Summary ---
 Max Calories: 822.0
 Min Calories: 83.0
 Mean Calories: 403
 Median Calories: 427.0
+Standard deviation of Calories: 153.5971968783574
 --- Training Stress Score® Summary ---
 Max Training Stress Score®: 0.0
 Min Training Stress Score®: 0.0
 Mean Training Stress Score®: 0
 Median Training Stress Score®: 0.0
+Standard deviation of Training Stress Score®: 0.0
 
 

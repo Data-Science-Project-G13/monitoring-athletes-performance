@@ -6,61 +6,61 @@
 ('Port Phillip Bay Open Water Swimming', 'Open Water Swimming')
 ('Port Phillip Bay Multi-Sport', 'Multisport')
 ('Oslo Running', 'Running')
-('Port Phillip Bay Running', 'Running')
 ('Melbourne - Running', 'Running')
+('Port Phillip Bay Running', 'Running')
+('Queenscliff Cycling', 'Cycling')
 ('Melbourne - Cycling', 'Cycling')
 ('Pool Swimming', 'Pool Swimming')
-('Queenscliff Cycling', 'Cycling')
 ('Queenscliff Running', 'Running')
 ('Lorne Cycling', 'Cycling')
+('Oslo Cycling', 'Cycling')
 ('Port Phillip Bay - Multi-Sport', 'Multisport')
 ('Lorne Running', 'Running')
 ('Bærum Cycling', 'Cycling')
-('Oslo Cycling', 'Cycling')
 ('Sölvesborg Running', 'Running')
+('Silvan Running', 'Running')
 ('Port Phillip Bay - Open Water Swimming', 'Open Water Swimming')
 ('Smiths Gully Running', 'Running')
-('Silvan Running', 'Running')
-('Port Phillip Bay Cycling', 'Cycling')
 ('Geelong Cycling', 'Cycling')
 ('Bærum Running', 'Running')
-('Melbourne Indoor Cycling', 'Indoor Cycling')
 ('Sölvesborg Cycling', 'Cycling')
+('Melbourne Indoor Cycling', 'Indoor Cycling')
+('Port Phillip Bay Cycling', 'Cycling')
 ('Noosa Cycling', 'Cycling')
-('Port Fairy Running', 'Running')
-('Macedon Cycling', 'Cycling')
-('Pully Running', 'Running')
-('Portarlington - Running', 'Running')
-('Ruatapu Running', 'Running')
 ('Sölvesborg Open Water Swimming', 'Open Water Swimming')
-('Lorne Open Water Swimming', 'Open Water Swimming')
-('Sydney Running', 'Running')
-('Cape Otway Hiking', 'Hiking')
-('Wilsons Promontory Hiking', 'Hiking')
-('Melbourne Open Water Swimming', 'Open Water Swimming')
-('Barwon Downs Running', 'Running')
-('Geelong Running', 'Running')
-('Noosa Multi-Sport', 'Multisport')
-('Bærum Roller Ski Cl', 'Cross Country Classic Skiing')
-('Kungsbacka Running', 'Running')
-('Anglesea Running', 'Running')
-('Portarlington Cycling', 'Cycling')
-('Lausanne Open Water Swimming', 'Open Water Swimming')
-('Tekapo Open Water Swimming', 'Open Water Swimming')
-('Tekapo Running', 'Running')
-('Noosa Running', 'Running')
-('Taupo Open Water Swimming', 'Open Water Swimming')
-('Melbourne Multi-Sport', 'Multisport')
-('Inverloch Running', 'Running')
-('Oslo Roller Ski Cl', 'Cross Country Classic Skiing')
-('Portarlington Open Water Swimming', 'Open Water Swimming')
-('Treadmill Running', 'Treadmill Running')
 ('Lausanne Multi-Sport', 'Multisport')
+('Inverloch Running', 'Running')
+('Lorne Open Water Swimming', 'Open Water Swimming')
+('Tekapo Open Water Swimming', 'Open Water Swimming')
+('Melbourne Open Water Swimming', 'Open Water Swimming')
+('Portarlington - Running', 'Running')
+('Lausanne Open Water Swimming', 'Open Water Swimming')
+('Cape Otway Hiking', 'Hiking')
+('Tekapo Running', 'Running')
 ('Bærum Open Water Swimming', 'Open Water Swimming')
+('Treadmill Running', 'Treadmill Running')
+('Kungsbacka Running', 'Running')
+('Taupo Open Water Swimming', 'Open Water Swimming')
+('Barwon Downs Running', 'Running')
+('Ruatapu Running', 'Running')
+('Sydney Running', 'Running')
+('Noosa Running', 'Running')
+('Macedon Cycling', 'Cycling')
+('Portarlington Cycling', 'Cycling')
+('Oslo Roller Ski Cl', 'Cross Country Classic Skiing')
+('Melbourne Multi-Sport', 'Multisport')
+('Pully Running', 'Running')
 ('Woodend Cycling', 'Cycling')
+('Port Fairy Running', 'Running')
+('Geelong Running', 'Running')
+('Anglesea Running', 'Running')
+('Portarlington Open Water Swimming', 'Open Water Swimming')
+('Wilsons Promontory Hiking', 'Hiking')
+('Bærum Roller Ski Cl', 'Cross Country Classic Skiing')
+('Noosa Multi-Sport', 'Multisport')
 
 
-====== Activity Type and Counts ======
+====== Activity Types and Counts ======
 Running                         187
 Pool Swimming                   180
 Cycling                         140
@@ -71,6 +71,8 @@ Hiking                            2
 Cross Country Classic Skiing      2
 Treadmill Running                 1
 Name: Activity Type, dtype: int64
+====== Shape of the Dataset ======
+The dataset has 620 rows and 36 columns
 
 
 ====== Running ====== 
@@ -81,11 +83,13 @@ Max Avg HR: 194.0
 Min Avg HR: 108.0
 Mean Avg HR: 157
 Median Avg HR: 160.0
+Standard deviation of Avg HR: 15.31614374271298
 --- Calories Summary ---
 Max Calories: 966.0
 Min Calories: 1.088
 Mean Calories: 487
 Median Calories: 537.0
+Standard deviation of Calories: 256.8606581955522
 
 
 ====== Pool Swimming ====== 
@@ -96,11 +100,13 @@ Max Distance: 950.0
 Min Distance: 1.08
 Mean Distance: 25
 Median Distance: 3.275
+Standard deviation of Distance: 118.72092833970692
 --- Calories Summary ---
 Max Calories: 992.0
 Min Calories: 1.001
 Mean Calories: 579
 Median Calories: 633.0
+Standard deviation of Calories: 275.1485605815713
 
 
 ====== Cycling ====== 
@@ -111,11 +117,13 @@ Max Avg HR: 179.0
 Min Avg HR: 83.0
 Mean Avg HR: 140
 Median Avg HR: 141.0
+Standard deviation of Avg HR: 14.302666450380581
 --- Calories Summary ---
 Max Calories: 989.0
 Min Calories: 1.014
 Mean Calories: 344
 Median Calories: 294.0
+Standard deviation of Calories: 311.4470571879746
 
 
 ====== Indoor Cycling ====== 
@@ -126,10 +134,12 @@ Max Avg HR: 168.0
 Min Avg HR: 107.0
 Mean Avg HR: 152
 Median Avg HR: 153.0
+Standard deviation of Avg HR: 11.523341072171307
 --- Calories Summary ---
 Max Calories: 957.0
 Min Calories: 61.0
 Mean Calories: 613
 Median Calories: 613.0
+Standard deviation of Calories: 169.44767567865725
 
 
