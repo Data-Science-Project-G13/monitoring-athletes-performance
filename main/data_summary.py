@@ -3,7 +3,6 @@ import sys
 import re
 import datetime
 import logging
-import matplotlib.pyplot as plt
 import statistics
 import numpy as np
 from data_loader import DataLoader
@@ -59,7 +58,7 @@ class SummaryGenerater():
                 total_seconds = 0
                 for t in h_m_s:
                     total_seconds = total_seconds*60 + float(t)
-                    total_seconds_list.append(total_seconds)
+                total_seconds_list.append(total_seconds)
             print('Max workout time: {} seconds'.format(max(total_seconds_list)))
             print('Min workout time: {} seconds'.format(min(total_seconds_list)))
             print('Mean workout time: {} seconds'.format(round(statistics.mean(total_seconds_list)), 2))
