@@ -5,23 +5,23 @@
 ('Port Phillip Bay Open Water Swimming', 'Open Water Swimming')
 ('Zwift - Watopia', 'Virtual Cycling')
 ('Maroochydore Cycling', 'Cycling')
-('Zwift - London', 'Virtual Cycling')
 ('Hawaii County Running', 'Running')
+('Zwift - London', 'Virtual Cycling')
 ('Maroochydore Running', 'Running')
-('Zwift - NYC', 'Virtual Cycling')
 ('Hawaii County Open Water Swimming', 'Open Water Swimming')
-('Port Phillip Bay Multi-Sport', 'Multisport')
-('Zwift - Tour de Zwift: Stage 1 Long Distance', 'Virtual Cycling')
+('Zwift - NYC', 'Virtual Cycling')
 ('Geelong Cycling', 'Cycling')
-('Geelong Running', 'Running')
+('Treadmill Running', 'Treadmill Running')
+('Pool Swimming', 'Pool Swimming')
+('Port Phillip Bay Multi-Sport', 'Multisport')
+('Zwift - Innsbruck', 'Virtual Cycling')
+('Indoor Cycling', 'Indoor Cycling')
 ('Queensland Open Water Swimming', 'Open Water Swimming')
 ('Geelong Multi-Sport', 'Multisport')
 ('Zwift', 'Virtual Cycling')
-('Treadmill Running', 'Treadmill Running')
-('Indoor Cycling', 'Indoor Cycling')
-('Zwift - Innsbruck', 'Virtual Cycling')
 ("Zwift - Rachel Madden's Meetup - 2018 UCI Worlds Short Lap", 'Virtual Cycling')
-('Pool Swimming', 'Pool Swimming')
+('Zwift - Tour de Zwift: Stage 1 Long Distance', 'Virtual Cycling')
+('Geelong Running', 'Running')
 
 
 ====== Activity Types and Counts ======
@@ -31,8 +31,8 @@ Pool Swimming          35
 Virtual Cycling        16
 Open Water Swimming    11
 Multisport              2
-Treadmill Running       1
 Indoor Cycling          1
+Treadmill Running       1
 Name: Activity Type, dtype: int64
 ====== Shape of the Dataset ======
 The dataset has 163 rows and 40 columns
@@ -42,10 +42,10 @@ The dataset has 163 rows and 40 columns
 --- Date Summary ---
 --- Workout Time Summary ---
 Max workout time: 6460.0 seconds
-Min workout time: 0.0 seconds
-Mean workout time: 1206 seconds
-Median workout time: 63.0 seconds
-Standard deviation of workout time: 1851.7733539605704
+Min workout time: 624.0 seconds
+Mean workout time: 3560 seconds
+Median workout time: 3794.0 seconds
+Standard deviation of workout time: 1405.9002299160577
 --- Distance Summary ---
 Max Distance: 21.03
 Min Distance: 2.04
@@ -88,10 +88,10 @@ Correlation for Training Stress Score® and TSS: [[nan nan]
 --- Date Summary ---
 --- Workout Time Summary ---
 Max workout time: 16874.0 seconds
-Min workout time: 0.0 seconds
-Mean workout time: 3163 seconds
-Median workout time: 167.5 seconds
-Standard deviation of workout time: 4938.862137226177
+Min workout time: 3272.0 seconds
+Mean workout time: 9332 seconds
+Median workout time: 10084.5 seconds
+Standard deviation of workout time: 4009.800350529691
 --- Distance Summary ---
 Max Distance: 141.47
 Min Distance: 23.98
@@ -144,10 +144,10 @@ Correlation for Training Stress Score® and TSS: [[nan nan]
 --- Date Summary ---
 --- Workout Time Summary ---
 Max workout time: 4823.0 seconds
-Min workout time: 0.0 seconds
-Mean workout time: 1465 seconds
-Median workout time: 74.0 seconds
-Standard deviation of workout time: 2058.660165872151
+Min workout time: 731.0 seconds
+Mean workout time: 4323 seconds
+Median workout time: 4452.0 seconds
+Standard deviation of workout time: 676.9869115184923
 --- Distance Summary ---
 Max Distance: 375.0
 Min Distance: 375.0
@@ -180,10 +180,10 @@ Correlation for Training Stress Score® and TSS: [[nan nan]
 --- Date Summary ---
 --- Workout Time Summary ---
 Max workout time: 8379.0 seconds
-Min workout time: 0.0 seconds
-Mean workout time: 1353 seconds
-Median workout time: 62.5 seconds
-Standard deviation of workout time: 2076.0395989076505
+Min workout time: 946.0 seconds
+Mean workout time: 3991 seconds
+Median workout time: 3767.5 seconds
+Standard deviation of workout time: 1576.5857840203305
 --- Distance Summary ---
 Max Distance: 72.48
 Min Distance: 5.91

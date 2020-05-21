@@ -3,12 +3,12 @@
 ('Indoor Cycling', 'Indoor Cycling')
 ('Melbourne Cycling', 'Cycling')
 ('Melbourne Road Cycling', 'Road Cycling')
-('Portarlington Running', 'Running')
 ('Lap Swimming', 'Pool Swimming')
 ('Melbourne Multi-Sport', 'Multisport')
-('Port Phillip Bay Open Water Swimming', 'Open Water Swimming')
+('Portarlington Running', 'Running')
 ('Geelong Multi-Sport', 'Multisport')
 ('Port Phillip Bay Multi-Sport', 'Multisport')
+('Port Phillip Bay Open Water Swimming', 'Open Water Swimming')
 
 
 ====== Activity Types and Counts ======
@@ -29,10 +29,10 @@ The dataset has 79 rows and 42 columns
 Record from 11-12-19 07:32 to 20-02-20 06:37
 --- Workout Time Summary ---
 Max workout time: 6925.0 seconds
-Min workout time: 0.0 seconds
-Mean workout time: 888 seconds
-Median workout time: 33.0 seconds
-Standard deviation of workout time: 1514.1629376774576
+Min workout time: 277.9 seconds
+Mean workout time: 2536 seconds
+Median workout time: 1758.0 seconds
+Standard deviation of workout time: 1583.9864678372392
 --- Distance Summary ---
 Max Distance: 24.01
 Min Distance: 0.82
@@ -76,10 +76,10 @@ Correlation for Training Stress Score® and TSS: [[nan nan]
 Record from 12-12-19 11:53 to 18-02-20 06:11
 --- Workout Time Summary ---
 Max workout time: 7551.0 seconds
-Min workout time: 0.0 seconds
-Mean workout time: 1412 seconds
-Median workout time: 65.5 seconds
-Standard deviation of workout time: 2198.4578699238027
+Min workout time: 652.0 seconds
+Mean workout time: 4167 seconds
+Median workout time: 3933.0 seconds
+Standard deviation of workout time: 1763.963214532044
 --- Distance Summary ---
 Max Distance: 0.0
 Min Distance: 0.0
@@ -127,10 +127,10 @@ Correlation for Training Stress Score® and TSS: [[nan nan]
 Record from 21-12-19 06:02 to 15-02-20 07:30
 --- Workout Time Summary ---
 Max workout time: 15790.0 seconds
-Min workout time: 1.0 seconds
-Mean workout time: 3913 seconds
-Median workout time: 188.0 seconds
-Standard deviation of workout time: 5621.305365391026
+Min workout time: 7015.0 seconds
+Mean workout time: 11545 seconds
+Median workout time: 11295.0 seconds
+Standard deviation of workout time: 2722.0439533465687
 --- Distance Summary ---
 Max Distance: 129.98
 Min Distance: 46.42
@@ -174,10 +174,10 @@ Correlation for Training Stress Score® and TSS: [[nan nan]
 Record from 08-12-19 09:04 to 23-02-20 07:22
 --- Workout Time Summary ---
 Max workout time: 17859.0 seconds
-Min workout time: 1.0 seconds
-Mean workout time: 2625 seconds
-Median workout time: 76.5 seconds
-Standard deviation of workout time: 4951.712438782051
+Min workout time: 3882.0 seconds
+Mean workout time: 7744 seconds
+Median workout time: 4618.5 seconds
+Standard deviation of workout time: 5850.267793015974
 --- Distance Summary ---
 Max Distance: 113.43
 Min Distance: 26.53

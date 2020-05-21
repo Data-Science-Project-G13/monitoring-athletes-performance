@@ -20,57 +20,57 @@
 ('Torquay Running', 'Running')
 ('Armadale Running', 'Running')
 ('Running', 'Running')
-('Queenscliff Road Cycling', 'Road Cycling')
-('Queenscliff Running', 'Running')
-('Elwood Road Cycling', 'Road Cycling')
 ('Portarlington Road Cycling', 'Road Cycling')
 ('South Melbourne Road Cycling', 'Road Cycling')
+('Queenscliff Running', 'Running')
+('Queenscliff Road Cycling', 'Road Cycling')
+('Elwood Road Cycling', 'Road Cycling')
 ('Bulleen Running', 'Running')
+('Loiri Porto San Paolo Running', 'Running')
+('South Melbourne Running', 'Running')
+('Tortolì Running', 'Running')
 ('Byron Bay Road Cycling', 'Road Cycling')
 ('Portarlington Running', 'Running')
-('Loiri Porto San Paolo Running', 'Running')
-('Tortolì Running', 'Running')
-('South Melbourne Running', 'Running')
-('St Kilda West Road Cycling', 'Road Cycling')
-('Gold Coast Running', 'Running')
-('Albury Cycling', 'Cycling')
 ('Hawksburn Road Cycling', 'Road Cycling')
-('Wodonga Running', 'Running')
 ('Byron Bay Running', 'Running')
-('Mona Fartlek 4.85km', 'Running')
-('Armadale Road Cycling', 'Road Cycling')
-('Florence Running', 'Running')
-('Burnley Running', 'Running')
-('Wagga Wagga Road Cycling', 'Road Cycling')
-('Kew East Running', 'Running')
-('Fairfield Running', 'Running')
-('Ivanhoe East Running', 'Running')
-('Bellevue Hill Running', 'Running')
-('Home to wattle glen', 'Road Cycling')
-('East Geelong Road Cycling', 'Road Cycling')
-('Southbank Running', 'Running')
+('St Kilda West Road Cycling', 'Road Cycling')
+('Albury Cycling', 'Cycling')
+('Wodonga Running', 'Running')
+('Gold Coast Running', 'Running')
 ('Newtown Running', 'Running')
-('Abbotsford Running', 'Running')
-('Melbourne Cycling', 'Cycling')
-('Cape Schanck Road Cycling', 'Road Cycling')
-('Bendigo Running', 'Running')
-('Docklands Running', 'Running')
-('Ilbono Running', 'Running')
-('Bacchus Marsh Running', 'Running')
+('Burnley Road Cycling', 'Road Cycling')
+('Bondi Beach Running', 'Running')
 ('Blairgowrie Road Cycling', 'Road Cycling')
 ('Albert Park Running', 'Running')
-('Bairnsdale Road Cycling', 'Road Cycling')
-('North Bondi Running', 'Running')
-('Lap Swimming ', 'Swimming')
-('Run from home to city ', 'Running')
-('Wodonga Road Cycling', 'Road Cycling')
-('Geelong Running', 'Running')
-('Albert park lake fartlek', 'Running')
+('Bendigo Running', 'Running')
+('Home to wattle glen', 'Road Cycling')
+('Armadale Road Cycling', 'Road Cycling')
 ('Anglesea Running', 'Running')
-('Bondi Beach Running', 'Running')
 ('Port Phillip Bay Road Cycling', 'Road Cycling')
-('Burnley Road Cycling', 'Road Cycling')
+('Mona Fartlek 4.85km', 'Running')
+('Wagga Wagga Road Cycling', 'Road Cycling')
+('Cape Schanck Road Cycling', 'Road Cycling')
+('Melbourne Cycling', 'Cycling')
+('Kew East Running', 'Running')
+('Fairfield Running', 'Running')
+('Albert park lake fartlek', 'Running')
+('Ilbono Running', 'Running')
+('Geelong Running', 'Running')
+('Docklands Running', 'Running')
+('Run from home to city ', 'Running')
+('Burnley Running', 'Running')
+('Ivanhoe East Running', 'Running')
+('Bacchus Marsh Running', 'Running')
+('North Bondi Running', 'Running')
+('Bellevue Hill Running', 'Running')
+('Florence Running', 'Running')
 ('Middle Park Road Cycling', 'Road Cycling')
+('Abbotsford Running', 'Running')
+('Wodonga Road Cycling', 'Road Cycling')
+('Lap Swimming ', 'Swimming')
+('East Geelong Road Cycling', 'Road Cycling')
+('Southbank Running', 'Running')
+('Bairnsdale Road Cycling', 'Road Cycling')
 
 
 ====== Activity Types and Counts ======
@@ -90,10 +90,10 @@ The dataset has 1000 rows and 38 columns
 --- Date Summary ---
 --- Workout Time Summary ---
 Max workout time: 5809.0 seconds
-Min workout time: 0.0 seconds
-Mean workout time: 371 seconds
-Median workout time: 10.0 seconds
-Standard deviation of workout time: 838.2699732188213
+Min workout time: 32.1 seconds
+Mean workout time: 1095 seconds
+Median workout time: 622.5 seconds
+Standard deviation of workout time: 1149.5878621955635
 --- Distance Summary ---
 Max Distance: 42.19
 Min Distance: 0.03
@@ -132,10 +132,10 @@ Correlation for Training Stress Score® and TSS: [[nan nan]
 --- Date Summary ---
 --- Workout Time Summary ---
 Max workout time: 19599.0 seconds
-Min workout time: 0.0 seconds
-Mean workout time: 2305 seconds
-Median workout time: 96.0 seconds
-Standard deviation of workout time: 3975.610713617774
+Min workout time: 1.2 seconds
+Mean workout time: 6802 seconds
+Median workout time: 6038.5 seconds
+Standard deviation of workout time: 4132.737373431348
 --- Distance Summary ---
 Max Distance: 153.97
 Min Distance: 0.0
@@ -186,10 +186,10 @@ Standard deviation of Avg Power: 30.626218796609187
 --- Date Summary ---
 --- Workout Time Summary ---
 Max workout time: 6262.0 seconds
-Min workout time: 0.0 seconds
-Mean workout time: 1144 seconds
-Median workout time: 69.0 seconds
-Standard deviation of workout time: 1804.9581751707701
+Min workout time: 206.5 seconds
+Mean workout time: 3374 seconds
+Median workout time: 4148.0 seconds
+Standard deviation of workout time: 1518.8379429772822
 --- Distance Summary ---
 Max Distance: 950.0
 Min Distance: 200.0
@@ -218,10 +218,10 @@ Correlation for Training Stress Score® and TSS: [[nan nan]
 --- Date Summary ---
 --- Workout Time Summary ---
 Max workout time: 10824.0 seconds
-Min workout time: 0.0 seconds
-Mean workout time: 1286 seconds
-Median workout time: 65.0 seconds
-Standard deviation of workout time: 2059.206753242252
+Min workout time: 253.9 seconds
+Mean workout time: 3794 seconds
+Median workout time: 3906.0 seconds
+Standard deviation of workout time: 1812.1506222389628
 --- Distance Summary ---
 Max Distance: 0.0
 Min Distance: 0.0

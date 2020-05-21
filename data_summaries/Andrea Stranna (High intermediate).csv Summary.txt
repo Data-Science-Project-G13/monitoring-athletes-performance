@@ -8,56 +8,56 @@
 ('Oslo Running', 'Running')
 ('Melbourne - Running', 'Running')
 ('Port Phillip Bay Running', 'Running')
+('Lorne Cycling', 'Cycling')
+('Pool Swimming', 'Pool Swimming')
 ('Queenscliff Cycling', 'Cycling')
 ('Melbourne - Cycling', 'Cycling')
-('Pool Swimming', 'Pool Swimming')
 ('Queenscliff Running', 'Running')
-('Lorne Cycling', 'Cycling')
-('Oslo Cycling', 'Cycling')
 ('Port Phillip Bay - Multi-Sport', 'Multisport')
 ('Lorne Running', 'Running')
+('Oslo Cycling', 'Cycling')
 ('Bærum Cycling', 'Cycling')
-('Sölvesborg Running', 'Running')
-('Silvan Running', 'Running')
 ('Port Phillip Bay - Open Water Swimming', 'Open Water Swimming')
+('Silvan Running', 'Running')
+('Sölvesborg Running', 'Running')
 ('Smiths Gully Running', 'Running')
+('Melbourne Indoor Cycling', 'Indoor Cycling')
 ('Geelong Cycling', 'Cycling')
+('Port Phillip Bay Cycling', 'Cycling')
 ('Bærum Running', 'Running')
 ('Sölvesborg Cycling', 'Cycling')
-('Melbourne Indoor Cycling', 'Indoor Cycling')
-('Port Phillip Bay Cycling', 'Cycling')
 ('Noosa Cycling', 'Cycling')
-('Sölvesborg Open Water Swimming', 'Open Water Swimming')
-('Lausanne Multi-Sport', 'Multisport')
-('Inverloch Running', 'Running')
-('Lorne Open Water Swimming', 'Open Water Swimming')
+('Wilsons Promontory Hiking', 'Hiking')
+('Lausanne Open Water Swimming', 'Open Water Swimming')
+('Noosa Running', 'Running')
+('Woodend Cycling', 'Cycling')
+('Sydney Running', 'Running')
+('Anglesea Running', 'Running')
+('Oslo Roller Ski Cl', 'Cross Country Classic Skiing')
+('Taupo Open Water Swimming', 'Open Water Swimming')
 ('Tekapo Open Water Swimming', 'Open Water Swimming')
 ('Melbourne Open Water Swimming', 'Open Water Swimming')
+('Geelong Running', 'Running')
+('Pully Running', 'Running')
+('Melbourne Multi-Sport', 'Multisport')
+('Portarlington Cycling', 'Cycling')
+('Port Fairy Running', 'Running')
+('Noosa Multi-Sport', 'Multisport')
+('Portarlington Open Water Swimming', 'Open Water Swimming')
+('Lorne Open Water Swimming', 'Open Water Swimming')
 ('Portarlington - Running', 'Running')
-('Lausanne Open Water Swimming', 'Open Water Swimming')
 ('Cape Otway Hiking', 'Hiking')
+('Bærum Roller Ski Cl', 'Cross Country Classic Skiing')
+('Sölvesborg Open Water Swimming', 'Open Water Swimming')
+('Barwon Downs Running', 'Running')
+('Kungsbacka Running', 'Running')
+('Inverloch Running', 'Running')
 ('Tekapo Running', 'Running')
+('Ruatapu Running', 'Running')
+('Lausanne Multi-Sport', 'Multisport')
+('Macedon Cycling', 'Cycling')
 ('Bærum Open Water Swimming', 'Open Water Swimming')
 ('Treadmill Running', 'Treadmill Running')
-('Kungsbacka Running', 'Running')
-('Taupo Open Water Swimming', 'Open Water Swimming')
-('Barwon Downs Running', 'Running')
-('Ruatapu Running', 'Running')
-('Sydney Running', 'Running')
-('Noosa Running', 'Running')
-('Macedon Cycling', 'Cycling')
-('Portarlington Cycling', 'Cycling')
-('Oslo Roller Ski Cl', 'Cross Country Classic Skiing')
-('Melbourne Multi-Sport', 'Multisport')
-('Pully Running', 'Running')
-('Woodend Cycling', 'Cycling')
-('Port Fairy Running', 'Running')
-('Geelong Running', 'Running')
-('Anglesea Running', 'Running')
-('Portarlington Open Water Swimming', 'Open Water Swimming')
-('Wilsons Promontory Hiking', 'Hiking')
-('Bærum Roller Ski Cl', 'Cross Country Classic Skiing')
-('Noosa Multi-Sport', 'Multisport')
 
 
 ====== Activity Types and Counts ======
@@ -112,6 +112,11 @@ Standard deviation of Calories: 275.1485605815713
 ====== Cycling ====== 
 --- Date Summary ---
 --- Workout Time Summary ---
+Max workout time: 22885.0 seconds
+Min workout time: 405.4 seconds
+Mean workout time: 6527 seconds
+Median workout time: 4969.5 seconds
+Standard deviation of workout time: 4706.911525984573
 --- Avg HR Summary ---
 Max Avg HR: 179.0
 Min Avg HR: 83.0
@@ -129,6 +134,11 @@ Standard deviation of Calories: 311.4470571879746
 ====== Indoor Cycling ====== 
 --- Date Summary ---
 --- Workout Time Summary ---
+Max workout time: 5713.0 seconds
+Min workout time: 434.0 seconds
+Mean workout time: 3813 seconds
+Median workout time: 3981.5 seconds
+Standard deviation of workout time: 1032.605756830002
 --- Avg HR Summary ---
 Max Avg HR: 168.0
 Min Avg HR: 107.0

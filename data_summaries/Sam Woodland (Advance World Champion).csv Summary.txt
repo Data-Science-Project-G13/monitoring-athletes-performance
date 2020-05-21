@@ -5,86 +5,86 @@
 ('Indoor Cycling', 'Indoor Cycling')
 ('Port Phillip Bay Open Water Swimming', 'Open Water Swimming')
 ('Pool Swimming', 'Pool Swimming')
-('Melbourne - Running', 'Running')
 ('Port Phillip Bay Running', 'Running')
-('Raymond Island Running', 'Running')
+('Melbourne - Running', 'Running')
 ('Queenscliff Running', 'Running')
+('Raymond Island Running', 'Running')
 ('Melbourne - Cycling', 'Cycling')
-('Queenscliff Cycling', 'Cycling')
 ('Hawaii County Running', 'Running')
-('Badung Running', 'Running')
-('Bali Running', 'Running')
+('Queenscliff Cycling', 'Cycling')
 ('Port Phillip Bay - Open Water Swimming', 'Open Water Swimming')
+('Badung Running', 'Running')
 ('Noosa Running', 'Running')
-('Port Macquarie Open Water Swimming', 'Open Water Swimming')
+('Bali Running', 'Running')
 ('Hawaii County Cycling', 'Cycling')
-('Zwift - Watopia', 'Virtual Cycling')
+('Port Macquarie Open Water Swimming', 'Open Water Swimming')
+('Zwift - 3. FTP Development', 'Virtual Cycling')
+('Zwift - NYC', 'Virtual Cycling')
+('Melbourne Road Cycling', 'Road Cycling')
 ('Noosa Cycling', 'Cycling')
-('Melbourne Hiking', 'Hiking')
+('Raymond Island Open Water Swimming', 'Open Water Swimming')
+('Somers Running', 'Running')
 ('Hawaii County Open Water Swimming', 'Open Water Swimming')
 ('Zwift - Yorkshire', 'Virtual Cycling')
 ('Swimming', 'Swimming')
-('Melbourne Road Cycling', 'Road Cycling')
-('Somers Running', 'Running')
+('Melbourne Hiking', 'Hiking')
 ('Zwift - FTP Test', 'Virtual Cycling')
-('Raymond Island Open Water Swimming', 'Open Water Swimming')
-('Zwift - NYC', 'Virtual Cycling')
-('Zwift - 3. FTP Development', 'Virtual Cycling')
-('Shepparton Open Water Swimming', 'Open Water Swimming')
-('Flinders Running', 'Running')
-('Sorrento Running', 'Running')
-('Geelong Running', 'Running')
-('Street Running', 'Street Running')
-('Zwift Academy 2018 Workout #6: Max Aerobic', 'Virtual Cycling')
-('Hawaii County Multi-Sport', 'Multisport')
-("Zwift - Scott D'Aucourt's Meetup - Greatest London Flat", 'Virtual Cycling')
-('Zwift - Windtrainer 27/8/19', 'Virtual Cycling')
-('Zwift - 4. Endurance Stimulation', 'Virtual Cycling')
-('Zwift Academy 2018 Workout #2: Strength Reloaded', 'Virtual Cycling')
-('Geelong Open Water Swimming', 'Open Water Swimming')
-('Port Macquarie Running', 'Running')
-('Port Macquarie Multi-Sport', 'Multisport')
-('Zwift Academy 2018 Workout #3: Under Ones', 'Virtual Cycling')
-('Zwift - 2. Half-Distance Power Development', 'Virtual Cycling')
-("Zwift - Men's Hellingen Royal Classic Workout", 'Virtual Cycling')
-('Noosa Multi-Sport', 'Multisport')
-('Zwift Academy 2019 Workout #7: VO2max Development', 'Virtual Cycling')
-('Shepparton Cycling', 'Cycling')
-('Zwift Academy 2018 Workout #8: Lactate Shuttling', 'Virtual Cycling')
+('Zwift - Watopia', 'Virtual Cycling')
+('Port Macquarie Cycling', 'Cycling')
 ('Zwift Academy 2019 Workout #6: Chase The Breakaway!', 'Virtual Cycling')
 ('Shepparton Running', 'Running')
-('Zwift Academy 2019 Workout #5: 1min Power Duration', 'Virtual Cycling')
-('Port Phillip Bay Multi-Sport', 'Multisport')
+('Noosa Open Water Swimming', 'Open Water Swimming')
+('Raymond Island Cycling', 'Cycling')
+('Shepparton Open Water Swimming', 'Open Water Swimming')
 ("Zwift - Anthony Cuzzupe's Meetup - Muir And The Mountain", 'Virtual Cycling')
 ("Zwift - Mink's Centurions p/b TBR (C)", 'Virtual Cycling')
-('Zwift - 1. Strength Development', 'Virtual Cycling')
 ('Zwift Academy 2019 Workout #1: Threshold Development', 'Virtual Cycling')
-('Open Water Swimming', 'Open Water Swimming')
-('Zwift - London', 'Virtual Cycling')
-('Zwift - Zwift Academy 2016 Month 3 Session 21: Over Under Session', 'Virtual Cycling')
-('Noosa Open Water Swimming', 'Open Water Swimming')
-('Barwon Heads Running', 'Running')
-('Zwift Academy 2019 Workout #8: 4min Power Duration', 'Virtual Cycling')
-('Paynesville - Running', 'Running')
-('Zwift - Richmond', 'Virtual Cycling')
-('Raymond Island - Open Water Swimming', 'Open Water Swimming')
-('Bangli Cycling', 'Cycling')
-('Inverloch Cycling', 'Cycling')
-('Shepparton Multi-Sport', 'Multisport')
-('Zwift Academy 2018 Workout #10: Capacity Reloaded', 'Virtual Cycling')
+('Zwift Academy 2018 Workout #8: Lactate Shuttling', 'Virtual Cycling')
 ('Paynesville Cycling', 'Cycling')
-("Zwift - Samantha Woodland's Meetup - Hilly Route", 'Virtual Cycling')
-('Portarlington Cycling', 'Cycling')
+('Zwift Academy 2019 Workout #7: VO2max Development', 'Virtual Cycling')
+('Sorrento Running', 'Running')
+('Barwon Heads Running', 'Running')
+('Portarlington Open Water Swimming', 'Open Water Swimming')
+('Bangli Cycling', 'Cycling')
 ('Zwift Academy 2018 Workout #1: Over Ones', 'Virtual Cycling')
 ('Port Phillip Bay - Running', 'Running')
-('Port Macquarie Cycling', 'Cycling')
-('Apollo Bay Running', 'Running')
-('Raymond Island Cycling', 'Cycling')
-('Torquay Cycling', 'Cycling')
+('Inverloch Cycling', 'Cycling')
+('Port Phillip Bay Multi-Sport', 'Multisport')
+('Portarlington Cycling', 'Cycling')
+('Zwift - Zwift Academy 2016 Month 3 Session 21: Over Under Session', 'Virtual Cycling')
+("Zwift - Men's Hellingen Royal Classic Workout", 'Virtual Cycling')
+('Zwift - 2. Half-Distance Power Development', 'Virtual Cycling')
+('Raymond Island - Open Water Swimming', 'Open Water Swimming')
+('Flinders Running', 'Running')
 ('Zwift Academy 2019 Workout #2: Race Practice', 'Virtual Cycling')
-('Gold Coast Running', 'Running')
+('Street Running', 'Street Running')
+('Zwift Academy 2018 Workout #10: Capacity Reloaded', 'Virtual Cycling')
+('Torquay Cycling', 'Cycling')
+('Noosa Multi-Sport', 'Multisport')
+('Port Macquarie Running', 'Running')
+('Shepparton Multi-Sport', 'Multisport')
+("Zwift - Scott D'Aucourt's Meetup - Greatest London Flat", 'Virtual Cycling')
+('Zwift - London', 'Virtual Cycling')
+('Hawaii County Multi-Sport', 'Multisport')
 ('Rosebud Running', 'Running')
-('Portarlington Open Water Swimming', 'Open Water Swimming')
+('Shepparton Cycling', 'Cycling')
+('Zwift Academy 2018 Workout #6: Max Aerobic', 'Virtual Cycling')
+('Apollo Bay Running', 'Running')
+('Paynesville - Running', 'Running')
+('Zwift Academy 2019 Workout #5: 1min Power Duration', 'Virtual Cycling')
+('Zwift - Richmond', 'Virtual Cycling')
+("Zwift - Samantha Woodland's Meetup - Hilly Route", 'Virtual Cycling')
+('Gold Coast Running', 'Running')
+('Open Water Swimming', 'Open Water Swimming')
+('Zwift Academy 2019 Workout #8: 4min Power Duration', 'Virtual Cycling')
+('Port Macquarie Multi-Sport', 'Multisport')
+('Zwift Academy 2018 Workout #2: Strength Reloaded', 'Virtual Cycling')
+('Zwift - 1. Strength Development', 'Virtual Cycling')
+('Zwift - Windtrainer 27/8/19', 'Virtual Cycling')
+('Zwift Academy 2018 Workout #3: Under Ones', 'Virtual Cycling')
+('Geelong Open Water Swimming', 'Open Water Swimming')
+('Geelong Running', 'Running')
+('Zwift - 4. Endurance Stimulation', 'Virtual Cycling')
 
 
 ====== Activity Types and Counts ======
@@ -96,8 +96,8 @@ Open Water Swimming     37
 Virtual Cycling         34
 Multisport               5
 Swimming                 2
-Road Cycling             2
 Hiking                   2
+Road Cycling             2
 Street Running           1
 Name: Activity Type, dtype: int64
 ====== Shape of the Dataset ======
@@ -108,10 +108,10 @@ The dataset has 760 rows and 41 columns
 --- Date Summary ---
 --- Workout Time Summary ---
 Max workout time: 10834.0 seconds
-Min workout time: 0.0 seconds
-Mean workout time: 1259 seconds
-Median workout time: 62.0 seconds
-Standard deviation of workout time: 2015.8994611003948
+Min workout time: 216.6 seconds
+Mean workout time: 3689 seconds
+Median workout time: 3754.0 seconds
+Standard deviation of workout time: 1793.1691492103357
 --- Distance Summary ---
 Max Distance: 36.02
 Min Distance: 0.69
@@ -150,10 +150,10 @@ Correlation for Training Stress Score® and TSS: [[nan nan]
 --- Date Summary ---
 --- Workout Time Summary ---
 Max workout time: 5296.0 seconds
-Min workout time: 0.0 seconds
-Mean workout time: 1270 seconds
-Median workout time: 63.0 seconds
-Standard deviation of workout time: 1782.6372079510388
+Min workout time: 7.5 seconds
+Mean workout time: 3735 seconds
+Median workout time: 3787.5 seconds
+Standard deviation of workout time: 610.427713337229
 --- Distance Summary ---
 Max Distance: 200.0
 Min Distance: 200.0
@@ -182,10 +182,10 @@ Correlation for Training Stress Score® and TSS: [[nan nan]
 --- Date Summary ---
 --- Workout Time Summary ---
 Max workout time: 26058.0 seconds
-Min workout time: 0.0 seconds
-Mean workout time: 3434 seconds
-Median workout time: 110.0 seconds
-Standard deviation of workout time: 5941.9722111651745
+Min workout time: 1654.0 seconds
+Mean workout time: 10130 seconds
+Median workout time: 6631.0 seconds
+Standard deviation of workout time: 6215.181277343494
 --- Distance Summary ---
 Max Distance: 201.55
 Min Distance: 5.1
@@ -240,10 +240,10 @@ Standard deviation of Avg Power: 14.056275783040432
 --- Date Summary ---
 --- Workout Time Summary ---
 Max workout time: 14701.0 seconds
-Min workout time: 0.0 seconds
-Mean workout time: 1795 seconds
-Median workout time: 87.0 seconds
-Standard deviation of workout time: 2683.365770032297
+Min workout time: 2513.0 seconds
+Mean workout time: 5295 seconds
+Median workout time: 5239.0 seconds
+Standard deviation of workout time: 1793.2290305475692
 --- Distance Summary ---
 Max Distance: 55.77
 Min Distance: 0.0
