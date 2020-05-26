@@ -5,7 +5,10 @@ import datetime
 import logging
 import statistics
 import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
 from data_loader import DataLoader
+from data_preprocess import DataPreprocessor
 
 
 def _setup_logger():
@@ -20,6 +23,13 @@ class SummaryGenerater():
     def __init__(self, file_name, athlete_dataframe):
         self.athlete_dataframe = athlete_dataframe
         self.file_name = file_name
+
+    def check_valid_data(self, athlete_dataframe):
+        athlete_dataframe = athlete_dataframe[athlete_dataframe['Training Stress Score®'].apply(lambda x: str(x).replace(',', ''))]
+        tss_num_nonzeros = athlete_dataframe[athlete_dataframe['Training Stress Score®'].astype(float) != 0].shape[0]
+        tss_nonzero_perc = tss_num_nonzeros / athlete_dataframe.shape[0]
+        hr_num_nonzeros = athlete_dataframe.fillna(0).astype(bool).sum(axis=0)['Avg HR']
+        hr_nonzero_perc = hr_num_nonzeros / athlete_dataframe.shape[0]
 
     def summarize_sport_categories(self):
         print('====== Titles and Activity Types ======')
@@ -124,6 +134,13 @@ if __name__ == '__main__':
             _process_summarizing(file_name)
             sys.stdout.close()
     sys.stdout.close()
+
+
+
+
+
+
+
 
 
 

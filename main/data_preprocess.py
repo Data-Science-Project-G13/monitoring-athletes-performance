@@ -90,7 +90,8 @@ class DataPreprocessor():
                 ttss = pd.DataFrame(self.reg.predict(pd.DataFrame(trimp)), columns=['Training Stress Score®'])
                 return ttss
         except Exception as e:
-            raise e
+            print(e)
+            # raise e
 
     def fill_out_tss(self, activity_type):
         activity_df = self.athlete_dataframe[self.athlete_dataframe['Activity Type'] == activity_type]
