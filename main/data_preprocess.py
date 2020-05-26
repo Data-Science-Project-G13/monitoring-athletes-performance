@@ -8,7 +8,7 @@ from data_loader import DataLoader
 
 pd.set_option('display.max_row', 100)
 pd.set_option('display.max_columns', 50)
-data_integrity_baseline = 0.9
+data_integrity_baseline = 0.8
 minimum_num_rows_for_calculate_trimp_tss_coef = 30
 
 
@@ -17,6 +17,7 @@ class DataPreprocessor():
     def __init__(self, athlete_dataframe):
         self.athlete_dataframe = athlete_dataframe
         self.reg = self.get_trimp_tss_reg_for_this_athlete()
+
 
     def view_data(self):
         print(self.athlete_dataframe)
@@ -31,6 +32,7 @@ class DataPreprocessor():
             h_m_s = time.split(':')
             total_seconds = 0
             for t in h_m_s:
+                t = t.replace(',', '.')
                 total_seconds = total_seconds * 60 + float(t)
             total_minutes_list.append(total_seconds / 60)
         activity_df.insert(3, 'Time in Minutes', total_minutes_list, True)
@@ -111,8 +113,7 @@ class DataPreprocessor():
         elif ttss_requirements_satisfied:
             tss = self.calculate_ttss(activity_df)
             if tss is not None:
-                print(self.athlete_dataframe[self.athlete_dataframe['Activity Type'] == activity_type].shape)
-                print(tss.shape)
+                # Update TSS with estimated ones. Important.
                 self.athlete_dataframe.loc[(self.athlete_dataframe['Activity Type'] == activity_type)
                                            & (self.athlete_dataframe['Avg HR'] != '--')
                                            & (self.athlete_dataframe['Max HR'] != '--'),
@@ -144,14 +145,15 @@ class DataPreprocessor():
 
 
 if __name__ == '__main__':
-    file_name = 'Simon R Gronow (Novice).csv'
+    file_name = 'Ollie Allan (Advance).csv'
     athlete_dataframe = DataLoader(file_name).load_athlete_dataframe()
     preprocessor = DataPreprocessor(athlete_dataframe)
     # preprocessor.view_data()
     activity_types = preprocessor.get_activity_types()
     for activity_type in activity_types:
-        print(activity_type)
         preprocessor.fill_out_tss(activity_type)
     print(preprocessor.athlete_dataframe)
+
+
 
 
