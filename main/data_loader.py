@@ -19,20 +19,14 @@ import pandas as pd
 
 
 def check_valid_tss_perc():
-    """Gets and prints the spreadsheet's header columns
+    """Check the proportion of valid TSS
 
     Parameters
     ----------
-    file_loc : str
-        The file location of the spreadsheet
-    print_cols : bool, optional
-        A flag used to print the columns to the console (default is
-        False)
 
     Returns
     -------
-    list
-        a list of strings used that are the header columns
+
     """
     data_path = '{}/data'.format(os.path.pardir)
     dirs = os.listdir(data_path)
