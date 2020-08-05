@@ -84,8 +84,8 @@ def plot_PMC():
             plotter.plot_fatigue_and_fitness()
             plt.title('Performance Management Chart - {}'.format(file_name.split('.')[0]))
             plt.legend()
-            plt.show()
-            # plt.savefig('{}/plots/PMC - {}.jpg'.format(os.path.pardir, file_name.split('.')[0]), format='jpg', dpi=1200)
+            # plt.show()
+            plt.savefig('{}/plots/PMC - {}.jpg'.format(os.path.pardir, file_name.split('.')[0]), format='jpg', dpi=1200)
 
 
 def plot_valid_TSS_pie():
@@ -124,6 +124,7 @@ def plot_valid_TSS_pie():
     tss_pie_sizes = [tss_dict['TSS Valid'], tss_dict['TSS Calculable'], tss_dict['TSS Others']]
     tss_pie_explode = (0, 0, 0.1)  # only "explode" the 3rd slice
     fig2, ax2 = plt.subplots()
+    plt.rcParams["figure.figsize"] = (8, 5)
     ax2.pie(tss_pie_sizes, explode=tss_pie_explode, labels=tss_pie_labels, autopct='%1.1f%%',
             shadow=True, startangle=90, colors=('steelblue', 'skyblue', 'lightgrey'))
     ax2.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
@@ -137,8 +138,8 @@ advance_dict = {'Data_amount': [], 'Running': [], 'Cycling': [], 'Swimming': []}
 athletes_dict = {}
 
 
-def plot_activity_tendency_bar():
-    def fill_out_dicts(dict, activity_counts):
+def fill_out_dicts():
+    def fill_out_level_dicts(dict, activity_counts):
         dict['Data_amount'].append(athlete_dataframe.shape[0])
         dict['Running'].append(activity_counts['Running'])
         dict['Cycling'].append(activity_counts['Cycling'])
@@ -159,11 +160,15 @@ def plot_activity_tendency_bar():
                 except:
                     pass
             if 'Novice' in file_name:
-                fill_out_dicts(novice_dict, activity_counts)
+                fill_out_level_dicts(novice_dict, activity_counts)
             if 'Intermediate' in file_name:
-                fill_out_dicts(intermediate_dict, activity_counts)
+                fill_out_level_dicts(intermediate_dict, activity_counts)
             if 'Advance' in file_name:
-                fill_out_dicts(advance_dict, activity_counts)
+                fill_out_level_dicts(advance_dict, activity_counts)
+
+
+def plot_activity_tendency_bar():
+    fill_out_dicts()
     plt.rcParams["figure.figsize"] = (10, 5)
     pd.DataFrame(athletes_dict).T.plot(kind='bar', color=('steelblue', 'skyblue', 'lightgrey'))
     plt.xticks(rotation=30, ha='right')
@@ -174,6 +179,8 @@ def plot_activity_tendency_bar():
 
 
 def plot_athlete_level_pie():
+    fill_out_dicts()
+    plt.rcParams["figure.figsize"] = (8, 5)
     pie_labels = ['Novice', 'Intermediate', 'Advance']
     sizes = [sum(novice_dict['Data_amount']),
              sum(intermediate_dict['Data_amount']),
@@ -181,12 +188,14 @@ def plot_athlete_level_pie():
     explode = (0, 0, 0.1)  # only "explode" the 3rd slice
     fig1, ax1 = plt.subplots()
     ax1.pie(sizes, explode=explode, labels=pie_labels, autopct='%1.1f%%',
-            shadow=True, startangle=90)
+            shadow=True, startangle=90, colors=('yellowgreen', 'olivedrab', 'forestgreen'))
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
     plt.show()
+    # plt.savefig('{}/plots/athlete_athlete_level_pie.jpg'.format(os.path.pardir), format='jpg', dpi=1200)
 
 
 def plot_boxplots():
+    fill_out_dicts()
     fig, ax = plt.subplots()
     ax.set_title('Running Sample Sizes')
     ax.boxplot([novice_dict['Running'], intermediate_dict['Running'], advance_dict['Running']])
@@ -206,9 +215,28 @@ def plot_boxplots():
     plt.show()
 
 
+def plot_frequency():
+    data_path = '{}/data'.format(os.path.pardir)
+    dirs = os.listdir(data_path)
+    for file_name in dirs:
+        # if file_name.endswith(".csv"):
+        if file_name == 'Andrea Stranna (High Intermediate).csv':
+            athlete_dataframe = DataLoader(file_name).load_athlete_dataframe()
+            dates = [date.split(' ')[0] for date in list(athlete_dataframe['Date'].values)]
+            athlete_dataframe['Date'] = athlete_dataframe['Date'].str.split(' ').str[0]
+            fig, ax = plt.subplots(figsize=(8, 4.5))
+            df = athlete_dataframe[['Date', 'Activity Type']].groupby(['Date'])
+            df.count()['Activity Type'].plot(ax=ax)
+            fig.autofmt_xdate()
+            plt.xticks(rotation=30, ha='right')
+            plt.show()
+
+
 if __name__ == '__main__':
-    plot_PMC()
+    # plot_PMC()
+    # plot_valid_TSS_pie()
     # plot_athlete_level_pie()
     # plot_activity_tendency_bar()
+    plot_frequency()
 
 
