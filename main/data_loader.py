@@ -19,6 +19,21 @@ import pandas as pd
 
 
 def check_valid_tss_perc():
+    """Gets and prints the spreadsheet's header columns
+
+    Parameters
+    ----------
+    file_loc : str
+        The file location of the spreadsheet
+    print_cols : bool, optional
+        A flag used to print the columns to the console (default is
+        False)
+
+    Returns
+    -------
+    list
+        a list of strings used that are the header columns
+    """
     data_path = '{}/data'.format(os.path.pardir)
     dirs = os.listdir(data_path)
     for file_name in dirs:
@@ -33,7 +48,25 @@ def check_valid_tss_perc():
 
 
 class DataLoader():
+    """
+    A class used to load data
 
+    ...
+
+    Attributes
+    ----------
+    sample_str : str
+        Description
+    file_name : str
+        The name of the file that is about to load (default '{}/data')
+
+    Methods
+    -------
+    load_athlete_dataframe()
+        Load the data frame
+    """
+
+    sample_str = ''
     def __init__(self, file_name):
         data_path = '{}/data'.format(os.path.pardir)
         self.file_path = '{}/{}'.format(data_path, file_name)
