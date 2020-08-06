@@ -1,3 +1,24 @@
+"""Make Plots
+
+This script allows the user to make plots from the athletes data.
+
+This tool accepts comma separated value files (.csv).
+
+This script requires that `pandas`, `matplotlib.pyplot` be installed
+within the Python environment you are running this script in.
+
+This file can also be imported as a module and contains the following
+functions:
+
+    * plot_PMC - plots a PMC for a certain athlete
+    * plot_valid_TSS_pie
+    * plot_activity_tendency_bar
+    * plot_athlete_level_pie
+    * plot_boxplots
+    * plot_frequency
+
+"""
+
 import os
 import sys
 import re
@@ -11,17 +32,56 @@ from data_loader import DataLoader
 from data_preprocess import DataPreprocessor
 
 
+# Set the data frame display option
 pd.set_option('display.max_row', 20)
 pd.set_option('display.max_columns', 4)
 
 
-class DataPlotter():
+def create_plot_folder():
+    """Create the plot folder if it does not exist
+    """
+    plot_folder = '{}/plots'.format(os.path.pardir)
+    if not os.path.exists(plot_folder):
+        os.mkdir(plot_folder)
 
-    def __init__(self, athlete_dataframe):
-        self.athlete_dataframe =  athlete_dataframe
+
+class SingleAthleteDataPlotter():
+    """
+    A class used to make plots related to a certain athlete
+
+    ...
+
+    Attributes
+    ----------
+    file_name : str
+        The file name of the athlete's data
+
+    Methods
+    -------
+    plot_TSS()
+        Load the data frame
+    plot_fatigue_and_fitness()
+        Des
+    plot_PMC()
+        plot_PMC
+    """
+
+    def __init__(self, file_name):
+        self.file_name = file_name
+        self.athlete_dataframe = self.preprocess()
         self.fig, self.ax = plt.subplots()
-        # self.fig2, self.ax2 = plt.subplots()
         self.ax2 = self.ax.twinx()
+
+    def preprocess(self):
+        athlete_dataframe = DataLoader(self.file_name).load_athlete_dataframe()
+        preprocessor = DataPreprocessor(athlete_dataframe)
+        activity_types = preprocessor.get_activity_types()
+        for activity_type in activity_types:
+            preprocessor.fill_out_tss(activity_type)
+        df = preprocessor.athlete_dataframe
+        df['Date'] = pd.to_datetime(df.Date, dayfirst=True)
+        df = df.sort_values(by=['Date'], ascending=True)
+        return df
 
     def plot_TSS(self):
         df = self.athlete_dataframe
@@ -56,12 +116,21 @@ class DataPlotter():
         plt.axhline(xmin=0.05, xmax=1, y=-10, color='g', linestyle='-')
         plt.axhline(xmin=0.05, xmax=1, y=5, color='grey', linestyle='-')
         plt.axhline(xmin=0.05, xmax=1, y=25, color='royalblue', linestyle='-')
+        # TODO: Generalize the line ends
         plt.text(x=datetime.date(2019, 8, 1), y=-40, s='High Risk Zone', horizontalalignment='right', color='red')
         plt.text(x=datetime.date(2019, 8, 1), y=-20, s='Optimal Training Zone', horizontalalignment='right', color='green')
         plt.text(x=datetime.date(2019, 8, 1), y=-4, s='Grey Zone', horizontalalignment='right', color='grey')
         plt.text(x=datetime.date(2019, 8, 1), y=15, s='Freshness Zone', horizontalalignment='right', color='royalblue')
         plt.text(x=datetime.date(2019, 8, 1), y=32, s='Transition Zone', horizontalalignment='right', color='darkgoldenrod')
         self.ax2.set_ylabel('CTL / ATL / TSB')
+
+    def plot_PMC(self):
+        self.plot_TSS()
+        self.plot_fatigue_and_fitness()
+        plt.title('Performance Management Chart - {}'.format(self.file_name.split('.')[0]))
+        plt.legend()
+        # plt.show()
+        plt.savefig('{}/plots/PMC - {}.jpg'.format(os.path.pardir, self.file_name.split('.')[0]), format='jpg', dpi=1200)
 
 
 def plot_PMC():
@@ -70,22 +139,13 @@ def plot_PMC():
     for file_name in dirs:
         # if file_name.endswith(".csv"):
         if file_name == 'Simon R Gronow (Novice).csv':
-            athlete_dataframe = DataLoader(file_name).load_athlete_dataframe()
-            preprocessor = DataPreprocessor(athlete_dataframe)
-            activity_types = preprocessor.get_activity_types()
-            for activity_type in activity_types:
-                preprocessor.fill_out_tss(activity_type)
-            df = preprocessor.athlete_dataframe
-            df['Date'] = pd.to_datetime(df.Date, dayfirst=True)
-            df = df.sort_values(by=['Date'], ascending=True)
-            print(df)
-            plotter = DataPlotter(df)
-            plotter.plot_TSS()
-            plotter.plot_fatigue_and_fitness()
-            plt.title('Performance Management Chart - {}'.format(file_name.split('.')[0]))
-            plt.legend()
-            # plt.show()
-            plt.savefig('{}/plots/PMC - {}.jpg'.format(os.path.pardir, file_name.split('.')[0]), format='jpg', dpi=1200)
+            pass
+
+
+class MultipleAtheletesDataPlotter():
+
+    def __init__(self):
+        pass
 
 
 def plot_valid_TSS_pie():
@@ -233,10 +293,12 @@ def plot_frequency():
 
 
 if __name__ == '__main__':
-    # plot_PMC()
+    create_plot_folder()
+    single_plotter = SingleAthleteDataPlotter('Simon R Gronow (Novice).csv')
+    single_plotter.plot_PMC()
     # plot_valid_TSS_pie()
     # plot_athlete_level_pie()
     # plot_activity_tendency_bar()
-    plot_frequency()
+    # plot_frequency()
 
 
