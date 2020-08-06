@@ -18,29 +18,6 @@ import os
 import pandas as pd
 
 
-def check_valid_tss_perc():
-    """Check the proportion of valid TSS
-
-    Parameters
-    ----------
-
-    Returns
-    -------
-
-    """
-    data_path = '{}/data'.format(os.path.pardir)
-    dirs = os.listdir(data_path)
-    for file_name in dirs:
-        # if file.endswith((".csv", ".xlsx")):
-        if file_name.endswith(".csv"):
-            csv_file = '{}/{}'.format(data_path, file_name)
-            data = pd.read_csv(csv_file)
-            tss_col = data['Training Stress Score®']
-            tss_non_zero_perc = sum([1 for val in tss_col if float(str(val).replace(',', '')) != 0]) / len(tss_col)
-            print('{} TSS Non zero percentage: {}'
-                  .format(file_name.split('.')[0], tss_non_zero_perc))
-
-
 class DataLoader():
     """
     A class used to load data
@@ -66,8 +43,18 @@ class DataLoader():
         self.file_path = '{}/{}'.format(data_path, file_name)
 
     def load_athlete_dataframe(self):
+        """Load the CoachingMate data for the athlete
+
+        Returns
+        -------
+        Pandas data frame
+        """
         return pd.read_csv(self.file_path, sep=',')
+
+    def load_athlete_garmin_dataframe(self):
+        pass
 
 
 if __name__ == '__main__':
-    check_valid_tss_perc()
+    data_loader = DataLoader('Simon R Gronow (Novice).csv')
+    print(data_loader.load_athlete_dataframe().head())
