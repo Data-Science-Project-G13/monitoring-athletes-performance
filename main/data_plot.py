@@ -164,7 +164,7 @@ class MultipleAtheletesDataPlotter():
         self.advance_dict = {'Data_amount': [], 'Running': [], 'Cycling': [], 'Swimming': []}
         self.athletes_dict = {}
 
-    def plot_valid_TSS_pie(self):
+    def plot_valid_TSS_pie(self, save=False):
         def is_valid_number(value):
             try:
                 float(value)
@@ -204,8 +204,10 @@ class MultipleAtheletesDataPlotter():
         ax2.pie(tss_pie_sizes, explode=tss_pie_explode, labels=tss_pie_labels, autopct='%1.1f%%',
                 shadow=True, startangle=90, colors=('steelblue', 'skyblue', 'lightgrey'))
         ax2.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-        plt.show()
-        # plt.savefig('{}/plots/athlete_tss_pie.jpg'.format(os.path.pardir), format='jpg', dpi=1000)
+        if save:
+            plt.savefig('{}/plots/athlete_tss_pie.jpg'.format(os.path.pardir), format='jpg', dpi=1000)
+        else:
+            plt.show()
 
     def fill_out_dicts(self):
         def fill_out_level_dicts(dict, activity_counts):
@@ -236,18 +238,20 @@ class MultipleAtheletesDataPlotter():
                     fill_out_level_dicts(self.advance_dict, activity_counts)
 
 
-    def plot_activity_tendency_bar(self):
+    def plot_activity_tendency_bar(self, save=False):
         self.fill_out_dicts()
         plt.rcParams["figure.figsize"] = (10, 5)
         pd.DataFrame(self.athletes_dict).T.plot(kind='bar', color=('steelblue', 'skyblue', 'lightgrey'))
         plt.xticks(rotation=30, ha='right')
         plt.title('Athlete Activity Tendencies')
         plt.ylabel('Activity Counts')
-        plt.show()
-        # plt.savefig('{}/plots/athlete_activity_bar.jpg'.format(os.path.pardir), format='jpg', dpi=1200)
+        if save:
+            plt.savefig('{}/plots/athlete_activity_bar.jpg'.format(os.path.pardir), format='jpg', dpi=1200)
+        else:
+            plt.show()
 
 
-    def plot_athlete_level_pie(self):
+    def plot_athlete_level_pie(self, save=False):
         self.fill_out_dicts()
         plt.rcParams["figure.figsize"] = (8, 5)
         pie_labels = ['Novice', 'Intermediate', 'Advance']
@@ -259,11 +263,12 @@ class MultipleAtheletesDataPlotter():
         ax1.pie(sizes, explode=explode, labels=pie_labels, autopct='%1.1f%%',
                 shadow=True, startangle=90, colors=('yellowgreen', 'olivedrab', 'forestgreen'))
         ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-        plt.show()
-        # plt.savefig('{}/plots/athlete_athlete_level_pie.jpg'.format(os.path.pardir), format='jpg', dpi=1200)
+        if save:
+            plt.savefig('{}/plots/athlete_athlete_level_pie.jpg'.format(os.path.pardir), format='jpg', dpi=1200)
+        else:
+            plt.show()
 
-
-    def plot_boxplots(self):
+    def plot_boxplots(self, save=False):
         self.fill_out_dicts()
         fig, ax = plt.subplots()
         ax.set_title('Running Sample Sizes')
@@ -284,7 +289,7 @@ class MultipleAtheletesDataPlotter():
         plt.show()
 
 
-    def plot_frequency(self):
+    def plot_frequency(self, save=False):
         data_path = '{}/data'.format(os.path.pardir)
         dirs = os.listdir(data_path)
         for file_name in dirs:
@@ -304,10 +309,11 @@ class MultipleAtheletesDataPlotter():
 if __name__ == '__main__':
     create_plot_folder()
     single_plotter = SingleAthleteDataPlotter('Simon R Gronow (Novice).csv')
-    single_plotter.plot_PMC()
-    # plot_valid_TSS_pie()
-    # plot_athlete_level_pie()
-    # plot_activity_tendency_bar()
-    # plot_frequency()
+    # single_plotter.plot_PMC()
+    multi_plotter = MultipleAtheletesDataPlotter()
+    multi_plotter.plot_valid_TSS_pie(save=False)
+    multi_plotter.plot_athlete_level_pie(save=False)
+    multi_plotter.plot_activity_tendency_bar(save=True)
+    multi_plotter.plot_frequency(save=True)
 
 
