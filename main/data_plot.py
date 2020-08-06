@@ -59,11 +59,11 @@ class SingleAthleteDataPlotter():
     Methods
     -------
     plot_TSS()
-        Load the data frame
+        Plot TSS points
     plot_fatigue_and_fitness()
-        Des
+        Plot Fatigue, Fitness and Form
     plot_PMC()
-        plot_PMC
+        Plot the PMC
     """
 
     def __init__(self, file_name):
@@ -73,17 +73,26 @@ class SingleAthleteDataPlotter():
         self.ax2 = self.ax.twinx()
 
     def preprocess(self):
+        """Preprocess the athlete's data frame
+
+        Returns
+        -------
+        preprocessed_df: pandas data frame
+            A data frame that is able to generate PMC
+        """
         athlete_dataframe = DataLoader(self.file_name).load_athlete_dataframe()
         preprocessor = DataPreprocessor(athlete_dataframe)
         activity_types = preprocessor.get_activity_types()
         for activity_type in activity_types:
             preprocessor.fill_out_tss(activity_type)
-        df = preprocessor.athlete_dataframe
-        df['Date'] = pd.to_datetime(df.Date, dayfirst=True)
-        df = df.sort_values(by=['Date'], ascending=True)
-        return df
+        preprocessed_df = preprocessor.athlete_dataframe
+        preprocessed_df['Date'] = pd.to_datetime(preprocessed_df.Date, dayfirst=True)
+        preprocessed_df = preprocessed_df.sort_values(by=['Date'], ascending=True)
+        return preprocessed_df
 
     def plot_TSS(self):
+        """Plot TSS
+        """
         df = self.athlete_dataframe
         dates = df['Date'] #mdates.num2date(mdates.datestr2num(df['Date']))
         tss = df['Training Stress Score®']
@@ -98,6 +107,8 @@ class SingleAthleteDataPlotter():
         self.ax.set_ylabel('TSS')
 
     def plot_fatigue_and_fitness(self):
+        """Plot Fatigue, Fitness and Form
+        """
         df = self.athlete_dataframe[['Date', 'Training Stress Score®']]
         df = df[df['Training Stress Score®'] != 0]
         dates = df['Date']
@@ -125,6 +136,9 @@ class SingleAthleteDataPlotter():
         self.ax2.set_ylabel('CTL / ATL / TSB')
 
     def plot_PMC(self):
+        """Plot the PMC
+        Show the plot or save the plot to the plots folder
+        """
         self.plot_TSS()
         self.plot_fatigue_and_fitness()
         plt.title('Performance Management Chart - {}'.format(self.file_name.split('.')[0]))
@@ -145,151 +159,146 @@ def plot_PMC():
 class MultipleAtheletesDataPlotter():
 
     def __init__(self):
-        pass
+        self.novice_dict = {'Data_amount': [], 'Running': [], 'Cycling': [], 'Swimming': []}
+        self.intermediate_dict = {'Data_amount': [], 'Running': [], 'Cycling': [], 'Swimming': []}
+        self.advance_dict = {'Data_amount': [], 'Running': [], 'Cycling': [], 'Swimming': []}
+        self.athletes_dict = {}
 
-
-def plot_valid_TSS_pie():
-    def is_valid_number(value):
-        try:
-            float(value)
-            if float(value) != 0:
-                return True
-            else:
+    def plot_valid_TSS_pie(self):
+        def is_valid_number(value):
+            try:
+                float(value)
+                if float(value) != 0:
+                    return True
+                else:
+                    return False
+            except ValueError:
                 return False
-        except ValueError:
-            return False
 
-    tss_dict = {'TSS Valid': 0, 'TSS Calculable': 0, 'TSS Others': 0}
-    file_names = ['Simon R Gronow (Novice).csv', 'Eduardo Oliveira (Intermediate).csv', 'Juliet Forsyth (Advance).csv',
-                  # 'Michelle Bond (Advance).csv', 'Narelle Hayes (Novice).csv', 'Ollie Allan (Advance).csv',
-                  # 'Rach Madden (High Intermediate).csv', # 'Sam Woodland (Advance World Champion).csv',
-                  'Sophie Perry (Advance).csv']
-    for file_name in file_names:
-        athlete_dataframe = DataLoader(file_name).load_athlete_dataframe()
-        preprocessor = DataPreprocessor(athlete_dataframe)
-        total = preprocessor.athlete_dataframe.shape[0]
-        valid = preprocessor.athlete_dataframe[
-            preprocessor.athlete_dataframe['Training Stress Score®'].apply(lambda x: is_valid_number(x))].shape[0]
-        activity_types = preprocessor.get_activity_types()
-        for activity_type in activity_types:
-            preprocessor.fill_out_tss(activity_type)
-        calculable = preprocessor.athlete_dataframe[preprocessor.athlete_dataframe['Training Stress Score®']
-            .apply(lambda x: is_valid_number(x))].shape[0] - valid
-
-        tss_dict['TSS Valid'] += valid
-        tss_dict['TSS Calculable'] += calculable
-        tss_dict['TSS Others'] += total - valid - calculable
-
-    tss_pie_labels = ['TSS Valid', 'TSS Calculable', 'TSS Others']
-    tss_pie_sizes = [tss_dict['TSS Valid'], tss_dict['TSS Calculable'], tss_dict['TSS Others']]
-    tss_pie_explode = (0, 0, 0.1)  # only "explode" the 3rd slice
-    fig2, ax2 = plt.subplots()
-    plt.rcParams["figure.figsize"] = (8, 5)
-    ax2.pie(tss_pie_sizes, explode=tss_pie_explode, labels=tss_pie_labels, autopct='%1.1f%%',
-            shadow=True, startangle=90, colors=('steelblue', 'skyblue', 'lightgrey'))
-    ax2.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-    plt.show()
-    # plt.savefig('{}/plots/athlete_tss_pie.jpg'.format(os.path.pardir), format='jpg', dpi=1000)
-
-
-novice_dict = {'Data_amount': [], 'Running': [], 'Cycling': [], 'Swimming': []}
-intermediate_dict = {'Data_amount': [], 'Running': [], 'Cycling': [], 'Swimming': []}
-advance_dict = {'Data_amount': [], 'Running': [], 'Cycling': [], 'Swimming': []}
-athletes_dict = {}
-
-
-def fill_out_dicts():
-    def fill_out_level_dicts(dict, activity_counts):
-        dict['Data_amount'].append(athlete_dataframe.shape[0])
-        dict['Running'].append(activity_counts['Running'])
-        dict['Cycling'].append(activity_counts['Cycling'])
-        dict['Swimming'].append(activity_counts['Pool Swimming'])
-    data_path = '{}/data'.format(os.path.pardir)
-    dirs = os.listdir(data_path)
-    for file_name in dirs:
-        if file_name.endswith(".csv"):
+        tss_dict = {'TSS Valid': 0, 'TSS Calculable': 0, 'TSS Others': 0}
+        file_names = ['Simon R Gronow (Novice).csv', 'Eduardo Oliveira (Intermediate).csv', 'Juliet Forsyth (Advance).csv',
+                      # 'Michelle Bond (Advance).csv', 'Narelle Hayes (Novice).csv', 'Ollie Allan (Advance).csv',
+                      # 'Rach Madden (High Intermediate).csv', # 'Sam Woodland (Advance World Champion).csv',
+                      'Sophie Perry (Advance).csv']
+        for file_name in file_names:
             athlete_dataframe = DataLoader(file_name).load_athlete_dataframe()
-            athlete_name = file_name.split(' ')[0]
-            activity_counts = athlete_dataframe['Activity Type'].value_counts()
-            athletes_dict[athlete_name] = {'Running': activity_counts['Running'],
-                                           'Cycling': activity_counts['Cycling'],
-                                           'Swimming': activity_counts['Pool Swimming']}
-            for activity in ['Indoor Cycling', 'Road Cycling', 'Swimming', 'Open Water Swimming']:
-                try:
-                    athletes_dict[athlete_name][activity.split(' ')[1]] += activity_counts[activity]
-                except:
-                    pass
-            if 'Novice' in file_name:
-                fill_out_level_dicts(novice_dict, activity_counts)
-            if 'Intermediate' in file_name:
-                fill_out_level_dicts(intermediate_dict, activity_counts)
-            if 'Advance' in file_name:
-                fill_out_level_dicts(advance_dict, activity_counts)
+            preprocessor = DataPreprocessor(athlete_dataframe)
+            total = preprocessor.athlete_dataframe.shape[0]
+            valid = preprocessor.athlete_dataframe[
+                preprocessor.athlete_dataframe['Training Stress Score®'].apply(lambda x: is_valid_number(x))].shape[0]
+            activity_types = preprocessor.get_activity_types()
+            for activity_type in activity_types:
+                preprocessor.fill_out_tss(activity_type)
+            calculable = preprocessor.athlete_dataframe[preprocessor.athlete_dataframe['Training Stress Score®']
+                .apply(lambda x: is_valid_number(x))].shape[0] - valid
+
+            tss_dict['TSS Valid'] += valid
+            tss_dict['TSS Calculable'] += calculable
+            tss_dict['TSS Others'] += total - valid - calculable
+
+        tss_pie_labels = ['TSS Valid', 'TSS Calculable', 'TSS Others']
+        tss_pie_sizes = [tss_dict['TSS Valid'], tss_dict['TSS Calculable'], tss_dict['TSS Others']]
+        tss_pie_explode = (0, 0, 0.1)  # only "explode" the 3rd slice
+        fig2, ax2 = plt.subplots()
+        plt.rcParams["figure.figsize"] = (8, 5)
+        ax2.pie(tss_pie_sizes, explode=tss_pie_explode, labels=tss_pie_labels, autopct='%1.1f%%',
+                shadow=True, startangle=90, colors=('steelblue', 'skyblue', 'lightgrey'))
+        ax2.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+        plt.show()
+        # plt.savefig('{}/plots/athlete_tss_pie.jpg'.format(os.path.pardir), format='jpg', dpi=1000)
+
+    def fill_out_dicts(self):
+        def fill_out_level_dicts(dict, activity_counts):
+            dict['Data_amount'].append(athlete_dataframe.shape[0])
+            dict['Running'].append(activity_counts['Running'])
+            dict['Cycling'].append(activity_counts['Cycling'])
+            dict['Swimming'].append(activity_counts['Pool Swimming'])
+        data_path = '{}/data'.format(os.path.pardir)
+        dirs = os.listdir(data_path)
+        for file_name in dirs:
+            if file_name.endswith(".csv"):
+                athlete_dataframe = DataLoader(file_name).load_athlete_dataframe()
+                athlete_name = file_name.split(' ')[0]
+                activity_counts = athlete_dataframe['Activity Type'].value_counts()
+                self.athletes_dict[athlete_name] = {'Running': activity_counts['Running'],
+                                               'Cycling': activity_counts['Cycling'],
+                                               'Swimming': activity_counts['Pool Swimming']}
+                for activity in ['Indoor Cycling', 'Road Cycling', 'Swimming', 'Open Water Swimming']:
+                    try:
+                        self.athletes_dict[athlete_name][activity.split(' ')[1]] += activity_counts[activity]
+                    except:
+                        pass
+                if 'Novice' in file_name:
+                    fill_out_level_dicts(self.novice_dict, activity_counts)
+                if 'Intermediate' in file_name:
+                    fill_out_level_dicts(self.intermediate_dict, activity_counts)
+                if 'Advance' in file_name:
+                    fill_out_level_dicts(self.advance_dict, activity_counts)
 
 
-def plot_activity_tendency_bar():
-    fill_out_dicts()
-    plt.rcParams["figure.figsize"] = (10, 5)
-    pd.DataFrame(athletes_dict).T.plot(kind='bar', color=('steelblue', 'skyblue', 'lightgrey'))
-    plt.xticks(rotation=30, ha='right')
-    plt.title('Athlete Activity Tendencies')
-    plt.ylabel('Activity Counts')
-    plt.show()
-    # plt.savefig('{}/plots/athlete_activity_bar.jpg'.format(os.path.pardir), format='jpg', dpi=1200)
+    def plot_activity_tendency_bar(self):
+        self.fill_out_dicts()
+        plt.rcParams["figure.figsize"] = (10, 5)
+        pd.DataFrame(self.athletes_dict).T.plot(kind='bar', color=('steelblue', 'skyblue', 'lightgrey'))
+        plt.xticks(rotation=30, ha='right')
+        plt.title('Athlete Activity Tendencies')
+        plt.ylabel('Activity Counts')
+        plt.show()
+        # plt.savefig('{}/plots/athlete_activity_bar.jpg'.format(os.path.pardir), format='jpg', dpi=1200)
 
 
-def plot_athlete_level_pie():
-    fill_out_dicts()
-    plt.rcParams["figure.figsize"] = (8, 5)
-    pie_labels = ['Novice', 'Intermediate', 'Advance']
-    sizes = [sum(novice_dict['Data_amount']),
-             sum(intermediate_dict['Data_amount']),
-             sum(advance_dict['Data_amount'])]
-    explode = (0, 0, 0.1)  # only "explode" the 3rd slice
-    fig1, ax1 = plt.subplots()
-    ax1.pie(sizes, explode=explode, labels=pie_labels, autopct='%1.1f%%',
-            shadow=True, startangle=90, colors=('yellowgreen', 'olivedrab', 'forestgreen'))
-    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-    plt.show()
-    # plt.savefig('{}/plots/athlete_athlete_level_pie.jpg'.format(os.path.pardir), format='jpg', dpi=1200)
+    def plot_athlete_level_pie(self):
+        self.fill_out_dicts()
+        plt.rcParams["figure.figsize"] = (8, 5)
+        pie_labels = ['Novice', 'Intermediate', 'Advance']
+        sizes = [sum(self.novice_dict['Data_amount']),
+                 sum(self.intermediate_dict['Data_amount']),
+                 sum(self.advance_dict['Data_amount'])]
+        explode = (0, 0, 0.1)  # only "explode" the 3rd slice
+        fig1, ax1 = plt.subplots()
+        ax1.pie(sizes, explode=explode, labels=pie_labels, autopct='%1.1f%%',
+                shadow=True, startangle=90, colors=('yellowgreen', 'olivedrab', 'forestgreen'))
+        ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+        plt.show()
+        # plt.savefig('{}/plots/athlete_athlete_level_pie.jpg'.format(os.path.pardir), format='jpg', dpi=1200)
 
 
-def plot_boxplots():
-    fill_out_dicts()
-    fig, ax = plt.subplots()
-    ax.set_title('Running Sample Sizes')
-    ax.boxplot([novice_dict['Running'], intermediate_dict['Running'], advance_dict['Running']])
-    plt.xticks([1, 2, 3], ['Novice', 'Intermediate', 'Advance'])
-    plt.show()
+    def plot_boxplots(self):
+        self.fill_out_dicts()
+        fig, ax = plt.subplots()
+        ax.set_title('Running Sample Sizes')
+        ax.boxplot([self.novice_dict['Running'], self.intermediate_dict['Running'], self.advance_dict['Running']])
+        plt.xticks([1, 2, 3], ['Novice', 'Intermediate', 'Advance'])
+        plt.show()
 
-    fig1, ax1 = plt.subplots()
-    ax1.set_title('Cycling Sample Sizes')
-    ax1.boxplot([novice_dict['Cycling'], intermediate_dict['Cycling'], advance_dict['Cycling']])
-    plt.xticks([1, 2, 3], ['Novice', 'Intermediate', 'Advance'])
-    plt.show()
+        fig1, ax1 = plt.subplots()
+        ax1.set_title('Cycling Sample Sizes')
+        ax1.boxplot([self.novice_dict['Cycling'], self.intermediate_dict['Cycling'], self.advance_dict['Cycling']])
+        plt.xticks([1, 2, 3], ['Novice', 'Intermediate', 'Advance'])
+        plt.show()
 
-    fig2, ax2 = plt.subplots()
-    ax2.set_title('Swimming Sample Sizes')
-    ax2.boxplot([novice_dict['Swimming'], intermediate_dict['Swimming'], advance_dict['Swimming']])
-    plt.xticks([1, 2, 3], ['Novice', 'Intermediate', 'Advance'])
-    plt.show()
+        fig2, ax2 = plt.subplots()
+        ax2.set_title('Swimming Sample Sizes')
+        ax2.boxplot([self.novice_dict['Swimming'], self.intermediate_dict['Swimming'], self.advance_dict['Swimming']])
+        plt.xticks([1, 2, 3], ['Novice', 'Intermediate', 'Advance'])
+        plt.show()
 
 
-def plot_frequency():
-    data_path = '{}/data'.format(os.path.pardir)
-    dirs = os.listdir(data_path)
-    for file_name in dirs:
-        # if file_name.endswith(".csv"):
-        if file_name == 'Andrea Stranna (High Intermediate).csv':
-            athlete_dataframe = DataLoader(file_name).load_athlete_dataframe()
-            dates = [date.split(' ')[0] for date in list(athlete_dataframe['Date'].values)]
-            athlete_dataframe['Date'] = athlete_dataframe['Date'].str.split(' ').str[0]
-            fig, ax = plt.subplots(figsize=(8, 4.5))
-            df = athlete_dataframe[['Date', 'Activity Type']].groupby(['Date'])
-            df.count()['Activity Type'].plot(ax=ax)
-            fig.autofmt_xdate()
-            plt.xticks(rotation=30, ha='right')
-            plt.show()
+    def plot_frequency(self):
+        data_path = '{}/data'.format(os.path.pardir)
+        dirs = os.listdir(data_path)
+        for file_name in dirs:
+            # if file_name.endswith(".csv"):
+            if file_name == 'Andrea Stranna (High Intermediate).csv':
+                athlete_dataframe = DataLoader(file_name).load_athlete_dataframe()
+                dates = [date.split(' ')[0] for date in list(athlete_dataframe['Date'].values)]
+                athlete_dataframe['Date'] = athlete_dataframe['Date'].str.split(' ').str[0]
+                fig, ax = plt.subplots(figsize=(8, 4.5))
+                df = athlete_dataframe[['Date', 'Activity Type']].groupby(['Date'])
+                df.count()['Activity Type'].plot(ax=ax)
+                fig.autofmt_xdate()
+                plt.xticks(rotation=30, ha='right')
+                plt.show()
 
 
 if __name__ == '__main__':
