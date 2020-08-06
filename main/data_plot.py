@@ -135,7 +135,7 @@ class SingleAthleteDataPlotter():
         plt.text(x=datetime.date(2019, 8, 1), y=32, s='Transition Zone', horizontalalignment='right', color='darkgoldenrod')
         self.ax2.set_ylabel('CTL / ATL / TSB')
 
-    def plot_PMC(self):
+    def plot_PMC(self, save=False):
         """Plot the PMC
         Show the plot or save the plot to the plots folder
         """
@@ -143,8 +143,10 @@ class SingleAthleteDataPlotter():
         self.plot_fatigue_and_fitness()
         plt.title('Performance Management Chart - {}'.format(self.file_name.split('.')[0]))
         plt.legend()
-        # plt.show()
-        plt.savefig('{}/plots/PMC - {}.jpg'.format(os.path.pardir, self.file_name.split('.')[0]), format='jpg', dpi=1200)
+        if save:
+            plt.savefig('{}/plots/PMC - {}.jpg'.format(os.path.pardir, self.file_name.split('.')[0]), format='jpg', dpi=1200)
+        else:
+            plt.show()
 
 
 def plot_PMC():
@@ -309,10 +311,10 @@ class MultipleAtheletesDataPlotter():
 if __name__ == '__main__':
     create_plot_folder()
     single_plotter = SingleAthleteDataPlotter('Simon R Gronow (Novice).csv')
-    # single_plotter.plot_PMC()
+    single_plotter.plot_PMC(save=True)
     multi_plotter = MultipleAtheletesDataPlotter()
-    multi_plotter.plot_valid_TSS_pie(save=False)
-    multi_plotter.plot_athlete_level_pie(save=False)
+    multi_plotter.plot_valid_TSS_pie()
+    multi_plotter.plot_athlete_level_pie()
     multi_plotter.plot_activity_tendency_bar(save=True)
     multi_plotter.plot_frequency(save=True)
 
