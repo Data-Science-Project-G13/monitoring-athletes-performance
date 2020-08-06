@@ -1,3 +1,12 @@
+"""Summarize athletes' CoachingMate data
+
+This script allows the user to make summaries for the athletes' CoachingMate data.
+
+This script requires that `pandas`, `statistics`, `numpy` be installed
+within the Python environment you are running this script in.
+
+"""
+
 import os
 import sys
 import re
@@ -5,10 +14,8 @@ import datetime
 import logging
 import statistics
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 from data_loader import DataLoader
-from data_preprocess import DataPreprocessor
 
 
 def _setup_logger():
@@ -19,6 +26,29 @@ def _setup_logger():
 
 
 class SummaryGenerater():
+    """
+    A class used to make summaries for athletes CoachingMate data
+
+    ...
+
+    Attributes
+    ----------
+    file_name : str
+        The file name of the athlete's data
+    athlete_dataframe : pandas data frame
+        The data frame of the athlete's data
+
+    Methods
+    -------
+    summarize_sport_categories()
+    summarize_dataset_shape()
+    summarize_dates()
+    summarize_workout_time()
+    summarize_features()
+    summarize_unique_features()
+    summarize_feature_correlations()
+    summarize_valid_tss_perc()
+    """
 
     def __init__(self, file_name, athlete_dataframe):
         self.athlete_dataframe = athlete_dataframe
@@ -101,8 +131,22 @@ class SummaryGenerater():
         print(self.file_name)
         print(self.athlete_dataframe.columns)
 
-    def summatize_feature_correlations(self):
+    def summarize_feature_correlations(self):
         pass
+
+    def summarize_valid_tss_perc(self):
+        """Check the proportion of valid TSS for all CoachingMate data
+        """
+        data_path = '{}/data'.format(os.path.pardir)
+        dirs = os.listdir(data_path)
+        for file_name in dirs:
+            if file_name.endswith(".csv"):
+                csv_file = '{}/{}'.format(data_path, file_name)
+                data = pd.read_csv(csv_file)
+                tss_col = data['Training Stress Score®']
+                tss_non_zero_perc = sum([1 for val in tss_col if float(str(val).replace(',', '')) != 0]) / len(tss_col)
+                print('{} TSS Non zero percentage: {}'
+                      .format(file_name.split('.')[0], tss_non_zero_perc))
 
 
 def _process_summarizing(file_name):
