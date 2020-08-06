@@ -1,7 +1,7 @@
 import csv
 import os
-#to install fitparse, run
-#sudo pip3 install -e git+https://github.com/dtcooper/python-fitparse#egg=python-fitparse
+# To install fitparse, run
+# sudo pip3 install -e git+https://github.com/dtcooper/python-fitparse#egg=python-fitparse
 import fitparse
 import pytz
 
