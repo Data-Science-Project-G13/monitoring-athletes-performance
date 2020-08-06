@@ -1,12 +1,12 @@
-# monitoring-athletes-performance
+# Monitoring Athletes Performance
 A CoachingMate analytical module to generate and deliver personalized feedback to coaches and athletes. Training sessions' descriptions could be 
 merged with Garmin data to:
- - assess if athletes are training as they should (is the athlete training as suggested?);
- - assess if athletes are training more or less than what they should (is the athlete over-training?);
- - predict/anticipate athlete risk fatigue levels (to avoid injuries)
- - predict performance (if the athlete keep training in a particular way, how his/her fitness and form levels will increase?
+ - Assess if athletes are training as they should (is the athlete training as suggested?);
+ - Assess if athletes are training more or less than what they should (is the athlete over-training?);
+ - Predict/anticipate athlete risk fatigue levels (to avoid injuries)
+ - Predict performance (if the athlete keep training in a particular way, how his/her fitness and form levels will increase?
  can this athlete make a podium in a particular event in 6 months time, for example?)
-- Look are race performance data to compare predictabilities. 
+- Look at race performance data to compare predictabilities. 
 
 
 ## Guidelines
