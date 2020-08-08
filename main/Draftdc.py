@@ -33,16 +33,19 @@ import missingno as msno
 
 
 #reading data 
-os.listdir('/Users/sindhuveluguleti/Desktop/Semester -2 /Project/data files of project/data sets old ')
-
-
+#os.listdir('/Users/sindhuveluguleti/Desktop/Semester -2 /Project/data files of project/data sets old ')
+data_path = '{}/data'.format(os.path.pardir)
+athlete_csv_file = '{}/{}'.format(data_path, 'Eduardo Oliveira (Intermediate).csv')
+print(athlete_csv_file)
 # In[43]:
 
 
 #reading eddy data and print its shape and data type
-eddy=pd.read_csv('/Users/sindhuveluguleti/Desktop/Semester -2 /Project/data files of project/data sets old /Eddy.csv')
+#eddy=pd.read_csv('/Users/sindhuveluguleti/Desktop/Semester -2 /Project/data files of project/data sets old /Eddy.csv')
+eddy=pd.read_csv(athlete_csv_file)
 print('eddy data shape: ', eddy.shape)#shape 
 print(eddy.dtypes)#data type
+
 
 
 # In[158]:
@@ -236,7 +239,7 @@ eddy_clean['Date']
 
 # In[194]:
 
-
+eddy_clean['Date'] = pd.to_datetime(eddy_clean['Date'], errors='coerce')
 eddy_clean["Date"]= eddy_clean["Date"].dt.strftime("%d/%m/%Y %H:%M:%S ")
 
 print(eddy_clean["Date"])
