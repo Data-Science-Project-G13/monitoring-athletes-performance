@@ -13,10 +13,40 @@ minimum_num_rows_for_calculate_trimp_tss_coef = 30
 
 
 class DataPreprocessor():
+    """
+    A class used to preprocess the data so that the one can make PMC from it
+
+    ...
+
+    Attributes
+    ----------
+    athlete_dataframe : pandas data frame
+        The name of the file that is about to load (default '{}/data')
+    reg : linear regression model
+        The TRIMP-TSS regression model for the athlete
+
+    Methods
+    -------
+    get_activity_types()
+        Load the data frame
+    add_time_in_minutes()
+    calculate_rtss()
+        Calculate running TSS
+    calculate_stss()
+        Calculate swimming TSS
+    calculate_hrtss()
+        Calculate heart rate TSS
+    calculate_trimp_exp()
+        Calculate TRIMP
+    calculate_ttss()
+        Calculate TRIMP TSS
+    fill_out_tss()
+        Fill out the missing TSS of the column
+    """
 
     def __init__(self, athlete_dataframe):
         self.athlete_dataframe = athlete_dataframe
-        self.reg = self.get_trimp_tss_reg_for_this_athlete()
+        self.reg = self._get_trimp_tss_reg_for_this_athlete()
 
 
     def view_data(self):
@@ -48,10 +78,8 @@ class DataPreprocessor():
         return None
 
     def calculate_trimp_exp(self, activity_df, gender='male'):
-        if gender == 'male':
-            y = 1.92
-        else:
-            y = 1.67
+        if gender == 'male': y = 1.92
+        else: y = 1.67
         time_duration = activity_df['Time in Minutes']
         avg_hr = activity_df['Avg HR']
         max_hr = activity_df['Max HR']
@@ -60,7 +88,7 @@ class DataPreprocessor():
         trimp = time_duration*hrr*0.64*math.exp(y*hrr)
         return trimp
 
-    def get_trimp_tss_reg_for_this_athlete(self):
+    def _get_trimp_tss_reg_for_this_athlete(self):
         activity_types = self.get_activity_types()
         for activity_type in activity_types:
             activity_df = self.athlete_dataframe[self.athlete_dataframe['Activity Type'] == activity_type]

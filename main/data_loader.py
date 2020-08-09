@@ -26,8 +26,6 @@ class DataLoader():
 
     Attributes
     ----------
-    example_attribute : str
-        Description
     file_or_dir_name : str
         The name of the file that is about to load (default '{}/data')
 
@@ -37,7 +35,6 @@ class DataLoader():
         Load the data frame
     """
 
-    example_attribute = ''
     def __init__(self, file_or_dir_name, data_type='original'):
         self.data_path = '{}/data'.format(os.path.pardir)
         self.file_or_dir_name = file_or_dir_name
