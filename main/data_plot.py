@@ -159,6 +159,35 @@ def plot_PMC():
 
 
 class MultipleAtheletesDataPlotter():
+    """
+    A class used to make plots related to multiple athletes
+
+    ...
+
+    Attributes
+    ----------
+    novice_dict : dict
+        The dictionary for novice athletes
+    intermediate_dict : dict
+        The dictionary for intermediate athletes
+    advance_dict : dict
+        The dictionary for advance athletes
+    athletes_dict : dict
+        The dictionary for athletes
+
+    Methods
+    -------
+    plot_valid_TSS_pie()
+        Plot TSS valid proportions
+    plot_activity_tendency_bar()
+        Plot activity tendencies for athletes
+    plot_athlete_level_pie()
+        Plot the pie chart denotes the athlete level distribution
+    plot_boxplots()
+        Plot box plots
+    plot_frequency()
+        Plot frequencies
+    """
 
     def __init__(self):
         self.novice_dict = {'Data_amount': [], 'Running': [], 'Cycling': [], 'Swimming': []}
@@ -211,7 +240,7 @@ class MultipleAtheletesDataPlotter():
         else:
             plt.show()
 
-    def fill_out_dicts(self):
+    def _fill_out_dicts(self):
         def fill_out_level_dicts(dict, activity_counts):
             dict['Data_amount'].append(athlete_dataframe.shape[0])
             dict['Running'].append(activity_counts['Running'])
@@ -241,7 +270,7 @@ class MultipleAtheletesDataPlotter():
 
 
     def plot_activity_tendency_bar(self, save=False):
-        self.fill_out_dicts()
+        self._fill_out_dicts()
         plt.rcParams["figure.figsize"] = (10, 5)
         pd.DataFrame(self.athletes_dict).T.plot(kind='bar', color=('steelblue', 'skyblue', 'lightgrey'))
         plt.xticks(rotation=30, ha='right')
@@ -254,7 +283,7 @@ class MultipleAtheletesDataPlotter():
 
 
     def plot_athlete_level_pie(self, save=False):
-        self.fill_out_dicts()
+        self._fill_out_dicts()
         plt.rcParams["figure.figsize"] = (8, 5)
         pie_labels = ['Novice', 'Intermediate', 'Advance']
         sizes = [sum(self.novice_dict['Data_amount']),
@@ -271,7 +300,7 @@ class MultipleAtheletesDataPlotter():
             plt.show()
 
     def plot_boxplots(self, save=False):
-        self.fill_out_dicts()
+        self._fill_out_dicts()
         fig, ax = plt.subplots()
         ax.set_title('Running Sample Sizes')
         ax.boxplot([self.novice_dict['Running'], self.intermediate_dict['Running'], self.advance_dict['Running']])
