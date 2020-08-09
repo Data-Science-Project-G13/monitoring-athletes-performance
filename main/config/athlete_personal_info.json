@@ -1,0 +1,83 @@
+{
+    "Andrea Stranna":{
+        "athlete type": "high intermediate",
+        "gender": "female",
+        "age": 32,
+        "height": 175,
+        "pre weight": 72,
+        "post weight": 68,
+        "injuries": "shin, foot"
+    },
+    "Eduardo Oliveira":{
+        "athlete type": "intermediate",
+        "gender": "male",
+        "age": 38,
+        "height": 177,
+        "pre weight": 82,
+        "post weight": 79,
+        "injuries": "hamstring"
+    },
+    "Juliet Forsyth":{
+        "athlete type": "advance",
+        "gender": "female",
+        "age": 45,
+        "height": 158,
+        "pre weight": 52,
+        "post weight": 48,
+        "injuries": "foot"
+    },
+    "Narelle Hayes":{
+        "athlete type": "novice",
+        "gender": "female",
+        "age": null,
+        "height": null,
+        "pre weight": null,
+        "post weight": null,
+        "injuries": null
+    },
+    "Ollie Allan":{
+        "athlete type": "advance",
+        "gender": "male",
+        "age": 45,
+        "height": 181,
+        "pre weight": 79,
+        "post weight": 74,
+        "injuries": "achilles"
+    },
+    "Rach Madden":{
+        "athlete type": "high intermediate",
+        "gender": "female",
+        "age": 36,
+        "height": 173,
+        "pre weight": 65,
+        "post weight": 63,
+        "injuries": "none"
+    },
+    "Sam Woodland":{
+        "athlete type": "advance world champion",
+        "gender": "female",
+        "age": 30,
+        "height": 168,
+        "pre weight": 64,
+        "post weight": 60.5,
+        "injuries": "MTPJ inflammation"
+    },
+    "Simon R Gronow":{
+        "athlete type": "novice",
+        "gender": "male",
+        "age": 50,
+        "height": 170,
+        "pre weight": 83,
+        "post weight": 77,
+        "injuries": "none"
+    },
+    "Sophie Perry":{
+        "athlete type": "advance",
+        "gender": "female",
+        "age": 27,
+        "height": 167,
+        "pre weight": 62,
+        "post weight": 59,
+        "injuries": "achilles"
+    }
+}
