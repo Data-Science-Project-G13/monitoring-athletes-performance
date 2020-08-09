@@ -45,7 +45,6 @@ In terms of this monitoring-athletes-performance project, go to directory `main`
      python3 fit_file_convert/process_all.py --subject-dir=../data --subject-name=csv_eduardo_oliveira --fit-source=../data/fit_eduardo_oliveira
 
 You can also provide a csv to censor certain geographic regions by latitude, longitude, and radius. Simply create a CSV with `longitude`, `latitude`, and `radius` column headers, and add as many circular regions as you want. Note that radius is assumed to be in meters.
-
     
     python3 process_all.py --subject-name=mysubjectname --fit-source-dir=/media/myname/GARMIN/Garmin/ACTIVITY/ --censorfile=/home/mydir/censor.csv --censor
 
