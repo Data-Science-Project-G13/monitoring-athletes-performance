@@ -1,14 +1,17 @@
-import os
-import pandas as pd
-from models import ModelBuilder
+"""Main Script of the Project
+
+This script allows the user to run the project.
+
+This file can also be imported as a module and contains the following
+functions:
+
+    * get_nonzero_TSS_rows - returns a pandas data_frame which contains rows with valid TSS
+    * main - the main function of the script
+"""
+
+from data_loader import DataLoader
 from data_preprocess import DataPreprocessor
-
-
-def load_athlete_df(file_name):
-    data_path = '{}/data'.format(os.path.pardir)
-    athlete_csv_file = '{}/{}'.format(data_path, file_name)
-    athlete_df = pd.read_csv(athlete_csv_file)
-    return athlete_df
+from models import ModelBuilder
 
 
 def get_nonzero_TSS_rows(athlete_df):
@@ -16,10 +19,7 @@ def get_nonzero_TSS_rows(athlete_df):
     return valid_df
 
 
-if __name__ == '__main__':
-    file_name = 'Simon R Gronow - Ironman Build Cairns IM 2019 - Activities.csv'
-    columns_for_analysis = ['Training Stress Score®', 'Avg HR', 'Avg Power']
-    athlete_df = load_athlete_df(file_name)
+def main(athlete_df):
     valid_df = get_nonzero_TSS_rows(athlete_df)
     y = valid_df[columns_for_analysis[0]]
     X = valid_df[columns_for_analysis[1:]]
@@ -28,5 +28,13 @@ if __name__ == '__main__':
     model_builder = ModelBuilder(X, y)
     X_train, X_test, y_train, y_test = model_builder.split_train_validation()
     model_builder.process_linear_regression(X_train, y_train)
+
+
+if __name__ == '__main__':
+    file_name = 'Simon R Gronow (Novice).csv'
+    columns_for_analysis = ['Training Stress Score®', 'Avg HR', 'Avg Power']
+    data_loader = DataLoader(file_name, 'original')
+    athlete_df = data_loader.load_original_data()
+    main(athlete_df)
 
 
