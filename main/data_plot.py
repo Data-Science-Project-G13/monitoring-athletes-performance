@@ -71,7 +71,8 @@ class SingleAthleteDataPlotter():
     def __init__(self, file_name):
         self.file_name = file_name
         self.athlete_dataframe = self._preprocess()
-        self.fig, self.ax = plt.subplots()
+        self.plt = plt
+        self.fig, self.ax = self.plt.subplots()
         self.ax2 = self.ax.twinx()
 
     def _preprocess(self):
@@ -125,16 +126,16 @@ class SingleAthleteDataPlotter():
         # lns = dot1 + l1 + l2 + l3
         # labs = [l.get_label() for l in lns]
         self.ax2.legend(loc=0)
-        plt.axhline(xmin=0.05, xmax=1, y=-30, color='r', linestyle='-')
-        plt.axhline(xmin=0.05, xmax=1, y=-10, color='g', linestyle='-')
-        plt.axhline(xmin=0.05, xmax=1, y=5, color='grey', linestyle='-')
-        plt.axhline(xmin=0.05, xmax=1, y=25, color='royalblue', linestyle='-')
+        self.plt.axhline(xmin=0.05, xmax=1, y=-30, color='r', linestyle='-')
+        self.plt.axhline(xmin=0.05, xmax=1, y=-10, color='g', linestyle='-')
+        self.plt.axhline(xmin=0.05, xmax=1, y=5, color='grey', linestyle='-')
+        self.plt.axhline(xmin=0.05, xmax=1, y=25, color='royalblue', linestyle='-')
         # TODO: Generalize the line ends
-        plt.text(x=datetime.date(2019, 8, 1), y=-40, s='High Risk Zone', horizontalalignment='right', color='red')
-        plt.text(x=datetime.date(2019, 8, 1), y=-20, s='Optimal Training Zone', horizontalalignment='right', color='green')
-        plt.text(x=datetime.date(2019, 8, 1), y=-4, s='Grey Zone', horizontalalignment='right', color='grey')
-        plt.text(x=datetime.date(2019, 8, 1), y=15, s='Freshness Zone', horizontalalignment='right', color='royalblue')
-        plt.text(x=datetime.date(2019, 8, 1), y=32, s='Transition Zone', horizontalalignment='right', color='darkgoldenrod')
+        self.plt.text(x=datetime.date(2019, 8, 1), y=-40, s='High Risk Zone', horizontalalignment='right', color='red')
+        self.plt.text(x=datetime.date(2019, 8, 1), y=-20, s='Optimal Training Zone', horizontalalignment='right', color='green')
+        self.plt.text(x=datetime.date(2019, 8, 1), y=-4, s='Grey Zone', horizontalalignment='right', color='grey')
+        self.plt.text(x=datetime.date(2019, 8, 1), y=15, s='Freshness Zone', horizontalalignment='right', color='royalblue')
+        self.plt.text(x=datetime.date(2019, 8, 1), y=32, s='Transition Zone', horizontalalignment='right', color='darkgoldenrod')
         self.ax2.set_ylabel('CTL / ATL / TSB')
 
     def plot_PMC(self, save=False):
@@ -143,12 +144,12 @@ class SingleAthleteDataPlotter():
         """
         self._plot_TSS()
         self._plot_fatigue_and_fitness()
-        plt.title('Performance Management Chart - {}'.format(self.file_name.split('.')[0]))
-        plt.legend()
+        self.plt.title('Performance Management Chart - {}'.format(self.file_name.split('.')[0]))
+        self.plt.legend()
         if save:
-            plt.savefig('{}/plots/PMC - {}.jpg'.format(os.path.pardir, self.file_name.split('.')[0]), format='jpg', dpi=1200)
+            self.plt.savefig('{}/plots/PMC - {}.jpg'.format(os.path.pardir, self.file_name.split('.')[0]), format='jpg', dpi=1200)
         else:
-            plt.show()
+            self.plt.show()
 
 
 class MultipleAtheletesDataPlotter():
@@ -187,6 +188,7 @@ class MultipleAtheletesDataPlotter():
         self.intermediate_dict = {'Data_amount': [], 'Running': [], 'Cycling': [], 'Swimming': []}
         self.advance_dict = {'Data_amount': [], 'Running': [], 'Cycling': [], 'Swimming': []}
         self.athletes_dict = {}
+        self.plt = plt
 
     def plot_valid_TSS_pie(self, save=False):
         def is_valid_number(value):
@@ -223,15 +225,15 @@ class MultipleAtheletesDataPlotter():
         tss_pie_labels = ['TSS Valid', 'TSS Calculable', 'TSS Others']
         tss_pie_sizes = [tss_dict['TSS Valid'], tss_dict['TSS Calculable'], tss_dict['TSS Others']]
         tss_pie_explode = (0, 0, 0.1)  # only "explode" the 3rd slice
-        fig2, ax2 = plt.subplots()
-        plt.rcParams["figure.figsize"] = (8, 5)
+        fig2, ax2 = self.plt.subplots()
+        self.plt.rcParams["figure.figsize"] = (8, 5)
         ax2.pie(tss_pie_sizes, explode=tss_pie_explode, labels=tss_pie_labels, autopct='%1.1f%%',
                 shadow=True, startangle=90, colors=('steelblue', 'skyblue', 'lightgrey'))
         ax2.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         if save:
-            plt.savefig('{}/plots/athlete_tss_pie.jpg'.format(os.path.pardir), format='jpg', dpi=1000)
+            self.plt.savefig('{}/plots/athlete_tss_pie.jpg'.format(os.path.pardir), format='jpg', dpi=1000)
         else:
-            plt.show()
+            self.plt.show()
 
     def _fill_out_dicts(self):
         def fill_out_level_dicts(dict, activity_counts):
@@ -264,76 +266,78 @@ class MultipleAtheletesDataPlotter():
 
     def plot_activity_tendency_bar(self, save=False):
         self._fill_out_dicts()
-        plt.rcParams["figure.figsize"] = (10, 5)
+        self.plt.rcParams["figure.figsize"] = (10, 5)
         pd.DataFrame(self.athletes_dict).T.plot(kind='bar', color=('steelblue', 'skyblue', 'lightgrey'))
-        plt.xticks(rotation=30, ha='right')
-        plt.title('Athlete Activity Tendencies')
-        plt.ylabel('Activity Counts')
+        self.plt.xticks(rotation=30, ha='right')
+        self.plt.title('Athlete Activity Tendencies')
+        self.plt.ylabel('Activity Counts')
         if save:
-            plt.savefig('{}/plots/athlete_activity_bar.jpg'.format(os.path.pardir), format='jpg', dpi=1200)
+            self.plt.savefig('{}/plots/athlete_activity_bar.jpg'.format(os.path.pardir), format='jpg', dpi=1200)
         else:
-            plt.show()
+            self.plt.show()
 
 
     def plot_athlete_level_pie(self, save=False):
         self._fill_out_dicts()
-        plt.rcParams["figure.figsize"] = (8, 5)
+        self.plt.rcParams["figure.figsize"] = (8, 5)
         pie_labels = ['Novice', 'Intermediate', 'Advance']
         sizes = [sum(self.novice_dict['Data_amount']),
                  sum(self.intermediate_dict['Data_amount']),
                  sum(self.advance_dict['Data_amount'])]
         explode = (0, 0, 0.1)  # only "explode" the 3rd slice
-        fig1, ax1 = plt.subplots()
+        fig1, ax1 = self.plt.subplots()
         ax1.pie(sizes, explode=explode, labels=pie_labels, autopct='%1.1f%%',
                 shadow=True, startangle=90, colors=('yellowgreen', 'olivedrab', 'forestgreen'))
         ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         if save:
-            plt.savefig('{}/plots/athlete_athlete_level_pie.jpg'.format(os.path.pardir), format='jpg', dpi=1200)
+            self.plt.savefig('{}/plots/athlete_athlete_level_pie.jpg'.format(os.path.pardir), format='jpg', dpi=1200)
         else:
-            plt.show()
+            self.plt.show()
 
     def plot_boxplots(self, save=False):
         self._fill_out_dicts()
-        fig, ax = plt.subplots()
+        fig, ax = self.plt.subplots()
         ax.set_title('Running Sample Sizes')
         ax.boxplot([self.novice_dict['Running'], self.intermediate_dict['Running'], self.advance_dict['Running']])
-        plt.xticks([1, 2, 3], ['Novice', 'Intermediate', 'Advance'])
-        plt.show()
+        self.plt.xticks([1, 2, 3], ['Novice', 'Intermediate', 'Advance'])
+        self.plt.show()
 
         fig1, ax1 = plt.subplots()
         ax1.set_title('Cycling Sample Sizes')
         ax1.boxplot([self.novice_dict['Cycling'], self.intermediate_dict['Cycling'], self.advance_dict['Cycling']])
-        plt.xticks([1, 2, 3], ['Novice', 'Intermediate', 'Advance'])
-        plt.show()
+        self.plt.xticks([1, 2, 3], ['Novice', 'Intermediate', 'Advance'])
+        self.plt.show()
 
-        fig2, ax2 = plt.subplots()
+        fig2, ax2 = self.plt.subplots()
         ax2.set_title('Swimming Sample Sizes')
         ax2.boxplot([self.novice_dict['Swimming'], self.intermediate_dict['Swimming'], self.advance_dict['Swimming']])
-        plt.xticks([1, 2, 3], ['Novice', 'Intermediate', 'Advance'])
-        plt.show()
+        self.plt.xticks([1, 2, 3], ['Novice', 'Intermediate', 'Advance'])
+        self.plt.show()
 
 
     def plot_frequency(self, save=False):
         data_path = '{}/data'.format(os.path.pardir)
         dirs = os.listdir(data_path)
         for file_name in dirs:
-            # if file_name.endswith(".csv"):
             if file_name == 'Andrea Stranna (High Intermediate).csv':
                 athlete_dataframe = DataLoader().load_original_data(file_name)
                 dates = [date.split(' ')[0] for date in list(athlete_dataframe['Date'].values)]
                 athlete_dataframe['Date'] = athlete_dataframe['Date'].str.split(' ').str[0]
-                fig, ax = plt.subplots(figsize=(8, 4.5))
+                fig, ax = self.plt.subplots(figsize=(8, 4.5))
                 df = athlete_dataframe[['Date', 'Activity Type']].groupby(['Date'])
                 df.count()['Activity Type'].plot(ax=ax)
                 fig.autofmt_xdate()
-                plt.xticks(rotation=30, ha='right')
-                plt.show()
+                self.plt.xticks(rotation=30, ha='right')
+                self.plt.show()
 
 
 if __name__ == '__main__':
     create_plot_folder()
     single_plotter = SingleAthleteDataPlotter('Simon R Gronow (Novice).csv')
     single_plotter.plot_PMC(save=True)
+
+    # # Note functions in MultipleAtheletesDataPlotter() and functions in SingleAthleteDataPlotter()
+    # # cannot run at the same time because of the characteristic of matplotlib.pyplot
     # multi_plotter = MultipleAtheletesDataPlotter()
     # multi_plotter.plot_valid_TSS_pie()
     # multi_plotter.plot_athlete_level_pie()
