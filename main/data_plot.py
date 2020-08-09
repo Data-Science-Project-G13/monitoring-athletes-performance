@@ -85,12 +85,7 @@ class SingleAthleteDataPlotter():
         """
         athlete_dataframe = DataLoader().load_original_data(self.file_name)
         preprocessor = DataPreprocessor(athlete_dataframe)
-        activity_types = preprocessor.get_activity_types()
-        for activity_type in activity_types:
-            preprocessor.fill_out_tss(activity_type)
-        preprocessed_df = preprocessor.athlete_dataframe
-        preprocessed_df['Date'] = pd.to_datetime(preprocessed_df.Date, dayfirst=True)
-        preprocessed_df = preprocessed_df.sort_values(by=['Date'], ascending=True)
+        preprocessed_df = preprocessor.preprocess_for_pmc()
         return preprocessed_df
 
     def _plot_TSS(self):
@@ -214,7 +209,7 @@ class MultipleAtheletesDataPlotter():
                 preprocessor.athlete_dataframe['Training Stress Score®'].apply(lambda x: is_valid_number(x))].shape[0]
             activity_types = preprocessor.get_activity_types()
             for activity_type in activity_types:
-                preprocessor.fill_out_tss(activity_type)
+                preprocessor._fill_out_tss(activity_type)
             calculable = preprocessor.athlete_dataframe[preprocessor.athlete_dataframe['Training Stress Score®']
                 .apply(lambda x: is_valid_number(x))].shape[0] - valid
 

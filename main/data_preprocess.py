@@ -68,16 +68,16 @@ class DataPreprocessor():
         activity_df.insert(3, 'Time in Minutes', total_minutes_list, True)
         return activity_df
 
-    def calculate_rtss(self, activity_df):
+    def _calculate_rtss(self, activity_df):
         return None
 
-    def calculate_stss(self, activity_df):
+    def _calculate_stss(self, activity_df):
         return None
 
-    def calculate_hrtss(self, activity_df):
+    def _calculate_hrtss(self, activity_df):
         return None
 
-    def calculate_trimp_exp(self, activity_df, gender='male'):
+    def _calculate_trimp_exp(self, activity_df, gender='male'):
         if gender == 'male': y = 1.92
         else: y = 1.67
         time_duration = activity_df['Time in Minutes']
@@ -102,26 +102,26 @@ class DataPreprocessor():
                     activity_df = activity_df[activity_df['Avg HR'] != '--']
                     activity_df['Avg HR'] = activity_df['Avg HR'].astype(float)
                     activity_df['Max HR'] = activity_df['Max HR'].astype(float)
-                    trimp = activity_df.apply(self.calculate_trimp_exp, axis=1)
+                    trimp = activity_df.apply(self._calculate_trimp_exp, axis=1)
                     tss = pd.DataFrame(activity_df['Training Stress Score®'])
                     reg = LinearRegression(fit_intercept=True).fit(pd.DataFrame(trimp), tss)
                     return reg
 
-    def calculate_ttss(self, activity_df):
+    def _calculate_ttss(self, activity_df):
         try:
             activity_df = self.add_time_in_minutes(activity_df)
             activity_df_new = activity_df[(activity_df['Avg HR'] != '--') & (activity_df['Max HR'] != '--')].copy()
             if activity_df_new.shape[0] > 0:
                 activity_df_new['Avg HR'] = activity_df_new['Avg HR'].astype(float)
                 activity_df_new['Max HR'] = activity_df_new['Max HR'].astype(float)
-                trimp = activity_df_new.apply(self.calculate_trimp_exp, axis=1)
+                trimp = activity_df_new.apply(self._calculate_trimp_exp, axis=1)
                 ttss = pd.DataFrame(self.reg.predict(pd.DataFrame(trimp)), columns=['Training Stress Score®'])
                 return ttss
         except Exception as e:
             print(e)
             # raise e
 
-    def fill_out_tss(self, activity_type):
+    def _fill_out_tss(self, activity_type):
         activity_df = self.athlete_dataframe[self.athlete_dataframe['Activity Type'] == activity_type]
         num_nonzeros = activity_df.fillna(0).astype(bool).sum(axis=0)['Training Stress Score®']
         rtss_requirements_satisfied = False
@@ -134,13 +134,13 @@ class DataPreprocessor():
             tss = activity_df['Training Stress Score®']
             tss = pd.DataFrame({'Training Stress Score®': [float(str(var).replace(',', '')) for var in tss]})
         elif activity_type == 'Running' and rtss_requirements_satisfied:
-            tss = self.calculate_rtss(activity_df)
+            tss = self._calculate_rtss(activity_df)
         elif activity_type == 'Swimming' and stss_requirements_satisfied:
-            tss = self.calculate_stss(activity_df)
+            tss = self._calculate_stss(activity_df)
         elif hrtss_requirements_satisfied:
-            tss = self.calculate_hrtss(activity_df)
+            tss = self._calculate_hrtss(activity_df)
         elif ttss_requirements_satisfied:
-            tss = self.calculate_ttss(activity_df)
+            tss = self._calculate_ttss(activity_df)
             if tss is not None:
                 # Update TSS with estimated ones. Important.
                 self.athlete_dataframe.loc[(self.athlete_dataframe['Activity Type'] == activity_type)
@@ -149,6 +149,15 @@ class DataPreprocessor():
                                            'Training Stress Score®'] = tss['Training Stress Score®'].values
         else:
             tss = None
+
+    def preprocess_for_pmc(self):
+        activity_types = self.get_activity_types()
+        for activity_type in activity_types:
+            self._fill_out_tss(activity_type)
+        preprocessed_df = self.athlete_dataframe
+        preprocessed_df['Date'] = pd.to_datetime(preprocessed_df.Date, dayfirst=True)
+        preprocessed_df = preprocessed_df.sort_values(by=['Date'], ascending=True)
+        return preprocessed_df
 
     def get_fatigue(self):
         pass
@@ -164,12 +173,6 @@ class DataPreprocessor():
         """
         pass
 
-    def clean_numerical_columns(self, df, columns):
-        pass
-
-    def clean_categorical_columns(self, df, columns):
-        pass
-
 
 if __name__ == '__main__':
     file_name = 'Ollie Allan (Advance).csv'
@@ -178,7 +181,7 @@ if __name__ == '__main__':
     # preprocessor.view_data()
     activity_types = preprocessor.get_activity_types()
     for activity_type in activity_types:
-        preprocessor.fill_out_tss(activity_type)
+        preprocessor._fill_out_tss(activity_type)
     print(preprocessor.athlete_dataframe)
 
 
