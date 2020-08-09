@@ -152,7 +152,7 @@ def parse_options():
                         help='Skips GPX conversion if used',
     )
 
-    parser.add_argument('--skip-fit-conversion', dest='skierap_fit_conversion',
+    parser.add_argument('--skip-fit-conversion', dest='skip_fit_conversion',
                         action='store_true', required=False,
                         help='Skips FIT conversion if used'
     )
