@@ -80,7 +80,7 @@ class SingleAthleteDataPlotter():
         preprocessed_df: pandas data frame
             A data frame that is able to generate PMC
         """
-        athlete_dataframe = DataLoader(self.file_name).load_original_athlete_dataframe()
+        athlete_dataframe = DataLoader(self.file_name).load_original_data()
         preprocessor = DataPreprocessor(athlete_dataframe)
         activity_types = preprocessor.get_activity_types()
         for activity_type in activity_types:
@@ -183,7 +183,7 @@ class MultipleAtheletesDataPlotter():
                       # 'Rach Madden (High Intermediate).csv', # 'Sam Woodland (Advance World Champion).csv',
                       'Sophie Perry (Advance).csv']
         for file_name in file_names:
-            athlete_dataframe = DataLoader(file_name).load_original_athlete_dataframe()
+            athlete_dataframe = DataLoader(file_name).load_original_data()
             preprocessor = DataPreprocessor(athlete_dataframe)
             total = preprocessor.athlete_dataframe.shape[0]
             valid = preprocessor.athlete_dataframe[
@@ -221,7 +221,7 @@ class MultipleAtheletesDataPlotter():
         dirs = os.listdir(data_path)
         for file_name in dirs:
             if file_name.endswith(".csv"):
-                athlete_dataframe = DataLoader(file_name).load_original_athlete_dataframe()
+                athlete_dataframe = DataLoader(file_name).load_original_data()
                 athlete_name = file_name.split(' ')[0]
                 activity_counts = athlete_dataframe['Activity Type'].value_counts()
                 self.athletes_dict[athlete_name] = {'Running': activity_counts['Running'],
@@ -297,7 +297,7 @@ class MultipleAtheletesDataPlotter():
         for file_name in dirs:
             # if file_name.endswith(".csv"):
             if file_name == 'Andrea Stranna (High Intermediate).csv':
-                athlete_dataframe = DataLoader(file_name).load_original_athlete_dataframe()
+                athlete_dataframe = DataLoader(file_name).load_original_data()
                 dates = [date.split(' ')[0] for date in list(athlete_dataframe['Date'].values)]
                 athlete_dataframe['Date'] = athlete_dataframe['Date'].str.split(' ').str[0]
                 fig, ax = plt.subplots(figsize=(8, 4.5))
