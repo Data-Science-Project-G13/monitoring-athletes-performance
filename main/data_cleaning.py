@@ -11,7 +11,7 @@ This file can also be imported as a module
 import pandas as pd
 
 
-class CoachingMateDataCleaner():
+class OriginalDataCleaner():
     """
     A class used to process data cleaning on CoachingMate data
 
@@ -64,7 +64,7 @@ class CoachingMateDataCleaner():
         pass
 
 
-class GarminDataCleaner():
+class AdditionalDataCleaner():
     """
     A class used to process data cleaning on a group of Garmin datasets for one athlete
 

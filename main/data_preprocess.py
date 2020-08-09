@@ -132,10 +132,8 @@ class DataPreprocessor():
         pass
 
     def get_valid_data(self):
-        '''
-        Get rows that contains TSS or contains enough values for calculating TSS
-        :return:
-        '''
+        """Get rows that contains TSS or contains enough values for calculating TSS
+        """
         pass
 
     def clean_numerical_columns(self, df, columns):
@@ -147,7 +145,7 @@ class DataPreprocessor():
 
 if __name__ == '__main__':
     file_name = 'Ollie Allan (Advance).csv'
-    athlete_dataframe = DataLoader(file_name).load_athlete_dataframe()
+    athlete_dataframe = DataLoader(file_name).load_original_athlete_dataframe()
     preprocessor = DataPreprocessor(athlete_dataframe)
     # preprocessor.view_data()
     activity_types = preprocessor.get_activity_types()

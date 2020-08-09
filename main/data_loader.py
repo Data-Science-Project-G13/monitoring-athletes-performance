@@ -26,7 +26,7 @@ class DataLoader():
 
     Attributes
     ----------
-    sample_str : str
+    example_attribute : str
         Description
     file_name : str
         The name of the file that is about to load (default '{}/data')
@@ -37,12 +37,12 @@ class DataLoader():
         Load the data frame
     """
 
-    sample_str = ''
+    example_attribute = ''
     def __init__(self, file_name):
         data_path = '{}/data'.format(os.path.pardir)
         self.file_path = '{}/{}'.format(data_path, file_name)
 
-    def load_athlete_dataframe(self):
+    def load_original_athlete_dataframe(self):
         """Load the CoachingMate data for the athlete
 
         Returns
@@ -51,10 +51,10 @@ class DataLoader():
         """
         return pd.read_csv(self.file_path, sep=',')
 
-    def load_athlete_garmin_dataframe(self):
+    def load_additional_athlete_dataframe(self):
         pass
 
 
 if __name__ == '__main__':
     data_loader = DataLoader('Simon R Gronow (Novice).csv')
-    print(data_loader.load_athlete_dataframe().head())
+    print(data_loader.load_original_athlete_dataframe().head())
