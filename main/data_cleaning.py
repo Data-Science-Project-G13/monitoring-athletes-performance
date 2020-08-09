@@ -72,8 +72,8 @@ class AdditionalDataCleaner():
 
     Attributes
     ----------
-    dir_name : str
-      The name of the directory at where Garmin data for a certain athlete located
+    file_names : list(str)
+      The list of names of the additional data for a certain athlete
 
     Methods
     -------
@@ -81,8 +81,8 @@ class AdditionalDataCleaner():
        Process the data cleaning
     """
 
-    def __init__(self, dir_name):
-        self.dir_name = dir_name
+    def __init__(self, file_names):
+        self.file_names = file_names
 
     def process_data_cleaning(self):
         """Process the data cleaning
@@ -94,6 +94,12 @@ class AdditionalDataCleaner():
         """
         pass
 
+    def clean_numerical_columns(self, df, columns):
+        pass
+
+    def clean_categorical_columns(self, df, columns):
+        pass
+
 
 if __name__ == '__main__':
-    pass
+    addtional_data_cleaner = AdditionalDataCleaner()

@@ -5,12 +5,10 @@ import datetime as dt
 from sklearn.linear_model import LinearRegression
 from data_loader import DataLoader
 
-
 pd.set_option('display.max_row', 100)
 pd.set_option('display.max_columns', 50)
 data_integrity_baseline = 0.8
 minimum_num_rows_for_calculate_trimp_tss_coef = 30
-
 
 class DataPreprocessor():
     """
@@ -48,9 +46,8 @@ class DataPreprocessor():
         self.athlete_dataframe = athlete_dataframe
         self.reg = self._get_trimp_tss_reg_for_this_athlete()
 
-
     def view_data(self):
-        print(self.athlete_dataframe)
+        print(self.athlete_dataframe.head())
 
     def get_activity_types(self):
         activity_types = self.athlete_dataframe['Activity Type'].unique()
@@ -118,7 +115,7 @@ class DataPreprocessor():
                 ttss = pd.DataFrame(self.reg.predict(pd.DataFrame(trimp)), columns=['Training Stress Score®'])
                 return ttss
         except Exception as e:
-            print(e)
+            print('Error occurs when calculating tTSS: ', e)
             # raise e
 
     def _fill_out_tss(self, activity_type):
@@ -150,6 +147,18 @@ class DataPreprocessor():
         else:
             tss = None
 
+    def add_feature_fatigue(self):
+        df = self.athlete_dataframe[['Date', 'Training Stress Score®']]
+        df = df[df['Training Stress Score®'] != 0]
+        dates = df['Date']
+        df = df.set_index('Date')
+        df['ATL'] = df.rolling('7d', min_periods=1)['Training Stress Score®'].mean()
+        df['ATL2'] = df.rolling(7, min_periods=1)['Training Stress Score®'].mean()
+        df['CTL'] = df.rolling('42d', min_periods=1)['Training Stress Score®'].mean()
+
+    def add_feature_fitness(self):
+        pass
+
     def preprocess_for_pmc(self):
         activity_types = self.get_activity_types()
         for activity_type in activity_types:
@@ -178,11 +187,9 @@ if __name__ == '__main__':
     file_name = 'Ollie Allan (Advance).csv'
     athlete_dataframe = DataLoader().load_original_data(file_name)
     preprocessor = DataPreprocessor(athlete_dataframe)
-    # preprocessor.view_data()
-    activity_types = preprocessor.get_activity_types()
-    for activity_type in activity_types:
-        preprocessor._fill_out_tss(activity_type)
-    print(preprocessor.athlete_dataframe)
+    preprocessor.view_data()
+    preprocessed_df = preprocessor.preprocess_for_pmc()
+    print(preprocessed_df.head())
 
 
 
