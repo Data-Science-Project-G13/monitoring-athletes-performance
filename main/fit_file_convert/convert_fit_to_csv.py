@@ -226,7 +226,7 @@ def write_fitfile_to_csv(
             
     #write to csv
     #general track info
-    with open(os.path.join(fit_processed_csv_dir, '{}_real_time'.format(output_file)), 'w') as f:
+    with open(os.path.join(fit_processed_csv_dir, '{}_real-time.csv'.format(output_file[:-4])), 'w') as f:
         writer = csv.writer(f)
         writer.writerow(allowed_fields)
         for entry in data:
