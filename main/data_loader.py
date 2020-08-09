@@ -36,6 +36,11 @@ class DataLoader():
     """
 
     def __init__(self, file_or_dir_name, data_type='original'):
+        """Include the parameter data_type which indicates original/additional data in the constructor
+        so that it can avoid data structure problems given that the two functions in the class have return
+        in different data type
+
+        """
         self.data_path = '{}/data'.format(os.path.pardir)
         self.file_or_dir_name = file_or_dir_name
         self.data_type = data_type
