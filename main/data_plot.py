@@ -58,9 +58,11 @@ class SingleAthleteDataPlotter():
 
     Methods
     -------
-    plot_TSS()
+    _preprocess()
+        preprocess the data so that the one can make PMC from it
+    _plot_TSS()
         Plot TSS points
-    plot_fatigue_and_fitness()
+    _plot_fatigue_and_fitness()
         Plot Fatigue, Fitness and Form
     plot_PMC()
         Plot the PMC
@@ -68,11 +70,11 @@ class SingleAthleteDataPlotter():
 
     def __init__(self, file_name):
         self.file_name = file_name
-        self.athlete_dataframe = self.preprocess()
+        self.athlete_dataframe = self._preprocess()
         self.fig, self.ax = plt.subplots()
         self.ax2 = self.ax.twinx()
 
-    def preprocess(self):
+    def _preprocess(self):
         """Preprocess the athlete's data frame
 
         Returns
@@ -80,7 +82,7 @@ class SingleAthleteDataPlotter():
         preprocessed_df: pandas data frame
             A data frame that is able to generate PMC
         """
-        athlete_dataframe = DataLoader(self.file_name).load_original_data()
+        athlete_dataframe = DataLoader().load_original_data(self.file_name)
         preprocessor = DataPreprocessor(athlete_dataframe)
         activity_types = preprocessor.get_activity_types()
         for activity_type in activity_types:
@@ -90,7 +92,7 @@ class SingleAthleteDataPlotter():
         preprocessed_df = preprocessed_df.sort_values(by=['Date'], ascending=True)
         return preprocessed_df
 
-    def plot_TSS(self):
+    def _plot_TSS(self):
         """Plot TSS
         """
         df = self.athlete_dataframe
@@ -106,7 +108,7 @@ class SingleAthleteDataPlotter():
         # self.ax.set_xlabel('Dates')
         self.ax.set_ylabel('TSS')
 
-    def plot_fatigue_and_fitness(self):
+    def _plot_fatigue_and_fitness(self):
         """Plot Fatigue, Fitness and Form
         """
         df = self.athlete_dataframe[['Date', 'Training Stress Score®']]
@@ -139,23 +141,14 @@ class SingleAthleteDataPlotter():
         """Plot the PMC
         Show the plot or save the plot to the plots folder
         """
-        self.plot_TSS()
-        self.plot_fatigue_and_fitness()
+        self._plot_TSS()
+        self._plot_fatigue_and_fitness()
         plt.title('Performance Management Chart - {}'.format(self.file_name.split('.')[0]))
         plt.legend()
         if save:
             plt.savefig('{}/plots/PMC - {}.jpg'.format(os.path.pardir, self.file_name.split('.')[0]), format='jpg', dpi=1200)
         else:
             plt.show()
-
-
-def plot_PMC():
-    data_path = '{}/data'.format(os.path.pardir)
-    dirs = os.listdir(data_path)
-    for file_name in dirs:
-        # if file_name.endswith(".csv"):
-        if file_name == 'Simon R Gronow (Novice).csv':
-            pass
 
 
 class MultipleAtheletesDataPlotter():
@@ -212,7 +205,7 @@ class MultipleAtheletesDataPlotter():
                       # 'Rach Madden (High Intermediate).csv', # 'Sam Woodland (Advance World Champion).csv',
                       'Sophie Perry (Advance).csv']
         for file_name in file_names:
-            athlete_dataframe = DataLoader(file_name).load_original_data()
+            athlete_dataframe = DataLoader().load_original_data(file_name)
             preprocessor = DataPreprocessor(athlete_dataframe)
             total = preprocessor.athlete_dataframe.shape[0]
             valid = preprocessor.athlete_dataframe[
@@ -250,7 +243,7 @@ class MultipleAtheletesDataPlotter():
         dirs = os.listdir(data_path)
         for file_name in dirs:
             if file_name.endswith(".csv"):
-                athlete_dataframe = DataLoader(file_name).load_original_data()
+                athlete_dataframe = DataLoader().load_original_data(file_name)
                 athlete_name = file_name.split(' ')[0]
                 activity_counts = athlete_dataframe['Activity Type'].value_counts()
                 self.athletes_dict[athlete_name] = {'Running': activity_counts['Running'],
@@ -326,7 +319,7 @@ class MultipleAtheletesDataPlotter():
         for file_name in dirs:
             # if file_name.endswith(".csv"):
             if file_name == 'Andrea Stranna (High Intermediate).csv':
-                athlete_dataframe = DataLoader(file_name).load_original_data()
+                athlete_dataframe = DataLoader().load_original_data(file_name)
                 dates = [date.split(' ')[0] for date in list(athlete_dataframe['Date'].values)]
                 athlete_dataframe['Date'] = athlete_dataframe['Date'].str.split(' ').str[0]
                 fig, ax = plt.subplots(figsize=(8, 4.5))
@@ -341,10 +334,10 @@ if __name__ == '__main__':
     create_plot_folder()
     single_plotter = SingleAthleteDataPlotter('Simon R Gronow (Novice).csv')
     single_plotter.plot_PMC(save=True)
-    multi_plotter = MultipleAtheletesDataPlotter()
-    multi_plotter.plot_valid_TSS_pie()
-    multi_plotter.plot_athlete_level_pie()
-    multi_plotter.plot_activity_tendency_bar(save=True)
-    multi_plotter.plot_frequency(save=True)
+    # multi_plotter = MultipleAtheletesDataPlotter()
+    # multi_plotter.plot_valid_TSS_pie()
+    # multi_plotter.plot_athlete_level_pie()
+    # multi_plotter.plot_activity_tendency_bar(save=True)
+    # multi_plotter.plot_frequency(save=True)
 
 

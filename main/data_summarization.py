@@ -150,7 +150,7 @@ class SummaryGenerater():
 
 
 def _process_summarizing(file_name):
-    athlete_dataframe = DataLoader(file_name).load_original_data()
+    athlete_dataframe = DataLoader().load_original_data(file_name)
     generator = SummaryGenerater(file_name, athlete_dataframe)
     generator.summarize_sport_categories()
     generator.summarize_dataset_shape()

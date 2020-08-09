@@ -80,7 +80,7 @@ class DataLoader():
             return None
         if self.data_type == 'additional':
             dir_path = '{}/csv_{}/fit_csv'.format(self.data_path, '_'.join(athletes_name.lower().split()))
-            return [file_name for file_name in os.listdir(dir_path)
+            return ['{}/{}'.format(dir_path, file_name) for file_name in os.listdir(dir_path)
                     if file_name.startswith(activity_type) and file_name.endswith('{}.csv'.format(split_type))]
 
 

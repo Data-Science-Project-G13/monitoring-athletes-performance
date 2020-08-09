@@ -173,7 +173,7 @@ class DataPreprocessor():
 
 if __name__ == '__main__':
     file_name = 'Ollie Allan (Advance).csv'
-    athlete_dataframe = DataLoader(file_name).load_original_data()
+    athlete_dataframe = DataLoader().load_original_data(file_name)
     preprocessor = DataPreprocessor(athlete_dataframe)
     # preprocessor.view_data()
     activity_types = preprocessor.get_activity_types()

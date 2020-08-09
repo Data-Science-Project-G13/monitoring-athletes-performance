@@ -33,8 +33,8 @@ def main(athlete_df):
 if __name__ == '__main__':
     file_name = 'Simon R Gronow (Novice).csv'
     columns_for_analysis = ['Training Stress Score®', 'Avg HR', 'Avg Power']
-    data_loader = DataLoader(file_name, 'original')
-    athlete_df = data_loader.load_original_data()
+    data_loader = DataLoader('original')
+    athlete_df = data_loader.load_original_data(file_name)
     main(athlete_df)
 
 
