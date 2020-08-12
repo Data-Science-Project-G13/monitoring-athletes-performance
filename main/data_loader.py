@@ -92,6 +92,6 @@ if __name__ == '__main__':
 
     # Load additional data
     data_loader_additional = DataLoader('additional')
-    print(data_loader_additional.load_additional_data('eduardo oliveira'))
-    print(data_loader_additional.load_additional_data('eduardo oliveira', 'swimming', 'real-time'))
+    print(len(data_loader_additional.load_additional_data('eduardo oliveira')))
+    print(len(data_loader_additional.load_additional_data('eduardo oliveira', activity_type='swimming', split_type='real-time')))
 
