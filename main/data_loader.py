@@ -87,11 +87,11 @@ class DataLoader():
 
 if __name__ == '__main__':
     # Load original data
-    data_loader_original = DataLoader()
+    data_loader_original = DataLoader('original')
     print(data_loader_original.load_original_data('Simon R Gronow (Novice).csv').head())
 
     # Load additional data
     data_loader_additional = DataLoader('additional')
-    print(len(data_loader_additional.load_additional_data('eduardo oliveira')))
-    print(len(data_loader_additional.load_additional_data('eduardo oliveira', activity_type='swimming', split_type='real-time')))
+    print(data_loader_additional.load_additional_data('eduardo oliveira'))
+    print(data_loader_additional.load_additional_data(athletes_name='eduardo oliveira', activity_type='swimming', split_type='real-time'))
 
