@@ -93,8 +93,9 @@ class AdditionalDataCleaner():
         if dataframe.empty: return True
         else: return False
 
-    def check_missing_val_perc(self, dataframe):
-        pass
+    def check_missing_val_perc(self, dataframe: pd.DataFrame):
+        missing_val_counts = dataframe.isnull().sum()/dataframe.shape[0]
+        print(missing_val_counts)
 
     def check_outliers(self, dataframe, columns_focus_on=None):
         pass
@@ -142,7 +143,7 @@ if __name__ == '__main__':
         if addtional_data_cleaner.check_empty(df):
             empty_files.append(file_name)
         else:
-            pass
+            addtional_data_cleaner.check_missing_val_perc(df)
     print('For {}\'s additional data, {} out of {} {} files are empty.'.format(athletes_name,
                                                                                len(empty_files),
                                                                                len(file_names),
