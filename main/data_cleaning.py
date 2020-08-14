@@ -8,7 +8,9 @@ environment you are running this script in.
 This file can also be imported as a module
 """
 
+import numpy as np
 import pandas as pd
+from scipy import stats
 from data_loader import DataLoader
 
 # Set the data frame display option
@@ -90,15 +92,26 @@ class AdditionalDataCleaner():
         # self.file_names = file_names
 
     def check_empty(self, dataframe):
-        if dataframe.empty: return True
-        else: return False
+        """Process the data cleaning
 
-    def check_missing_val_perc(self, dataframe: pd.DataFrame):
-        missing_val_counts = dataframe.isnull().sum()/dataframe.shape[0]
-        print(missing_val_counts)
+       Returns
+       -------
+       boolean
+           Whether the data frame is empty
+        """
+        return dataframe.empty
+
+    def check_missing_val_perc(self, dataframe: pd.DataFrame, columns_focus_on=None):
+        if columns_focus_on:
+            missing_val_perc = dataframe[columns_focus_on].isnull().sum() / dataframe.shape[0]
+        else:
+            missing_val_perc = dataframe.isnull().sum() / dataframe.shape[0]
+        print(missing_val_perc)
 
     def check_outliers(self, dataframe, columns_focus_on=None):
-        pass
+        z = np.abs(stats.zscore(dataframe))
+        threshold = 3
+        print(np.where(z > threshold))
 
     def clean_numerical_columns(self, dataframe, columns_focus_on=None):
         pass
@@ -130,7 +143,7 @@ if __name__ == '__main__':
 
     # Clean additional data
     athletes_name = 'Eduardo Oliveira'
-    activity_type = 'swimming'
+    activity_type = 'running'
     split_type = 'real-time'
     data_loader_additional = DataLoader('additional')
     file_names = data_loader_additional.load_additional_data(athletes_name=athletes_name,
@@ -144,6 +157,7 @@ if __name__ == '__main__':
             empty_files.append(file_name)
         else:
             addtional_data_cleaner.check_missing_val_perc(df)
+            addtional_data_cleaner.check_outliers(df)
     print('For {}\'s additional data, {} out of {} {} files are empty.'.format(athletes_name,
                                                                                len(empty_files),
                                                                                len(file_names),
