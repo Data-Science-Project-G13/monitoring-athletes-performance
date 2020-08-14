@@ -16,6 +16,7 @@ functions:
 
 import os
 import pandas as pd
+from configparser import ConfigParser
 
 
 class DataLoader():
@@ -43,6 +44,22 @@ class DataLoader():
         """
         self.data_path = '{}/data'.format(os.path.pardir)
         self.data_type = data_type
+        data_names = '{}/main/config/data_file_names.cfg'.format(os.path.pardir)
+        self.config = ConfigParser()
+        self.config.read(data_names)
+
+    def get_all_original_data_file_names(self):
+        """Get all the original data file names
+
+        Returns
+        -------
+        List of strings
+        """
+        if self.data_type == 'original':
+            return [self.config.get('ORIGINAL-DATA-SETS', key) for key in list(self.config['ORIGINAL-DATA-SETS'].keys())]
+        if self.data_type == 'additional':
+            print('Invalid function call. Given type \'additional\'.')
+            return None
 
     def load_original_data(self, file_name):
         """Load the original data for an athlete
@@ -53,11 +70,30 @@ class DataLoader():
         """
         if self.data_type == 'original':
             file_path = '{}/{}'.format(self.data_path, file_name)
-            return pd.read_csv(file_path, sep=',')
+            if os.path.isfile(file_path):
+                return pd.read_csv(file_path, sep=',')
+            try:
+                file_name = self.config.get('ORIGINAL-DATA-SETS', file_name.lower())
+                file_path = '{}/{}'.format(self.data_path, file_name)
+                return pd.read_csv(file_path, sep=',')
+            except:
+                return None
         if self.data_type == 'additional':
             print('Invalid function call. Given type \'additional\'.')
             return None
 
+    def get_all_additional_data_folder_names(self):
+        """Get all the additional data folder names
+
+        Returns
+        -------
+        List of strings
+        """
+        if self.data_type == 'original':
+            print('Invalid function call. Given type \'original\'.')
+            return None
+        if self.data_type == 'additional':
+            return [self.config.get('ADDITIONAL-DATA-FOLDERS', key) for key in list(self.config['ADDITIONAL-DATA-FOLDERS'].keys())]
 
     def load_additional_data(self, athletes_name, activity_type='', split_type=''):
         """Load the additional data for an athlete
@@ -79,24 +115,37 @@ class DataLoader():
             print('Invalid function call. Given type \'original\'.')
             return None
         if self.data_type == 'additional':
-            dir_path = '{}/csv_{}/fit_csv'.format(self.data_path, '_'.join(athletes_name.lower().split()))
-            return ['{}/{}'.format(dir_path, file_name) for file_name in os.listdir(dir_path)
-                    if file_name.startswith(activity_type) and file_name.endswith('{}.csv'.format(split_type))]
+            if athletes_name.startswith('csv_'):
+                dir_path = '{}/{}/fit_csv'.format(self.data_path, athletes_name)
+            else:
+                dir_path = '{}/csv_{}/fit_csv'.format(self.data_path, '_'.join(athletes_name.lower().split()))
+            if os.path.isdir(dir_path):
+                return ['{}/{}'.format(dir_path, file_name) for file_name in os.listdir(dir_path)
+                        if file_name.startswith(activity_type) and file_name.endswith('{}.csv'.format(split_type))]
+            else:
+                return None
 
 
 
 if __name__ == '__main__':
-    # Load original data
+    # Get all file names of the original data
     data_loader_original = DataLoader('original')
-    print(data_loader_original.load_original_data('Simon R Gronow (Novice).csv').head())
+    orig_data_names = data_loader_original.get_all_original_data_file_names()
+    print('Original data file names: ', orig_data_names)
+    # Load original data in two ways
+    orig_df_example1 = data_loader_original.load_original_data(orig_data_names[0])   # Load with file name
+    orig_df_example2 = data_loader_original.load_original_data('eduardo oliveira')   # Load with athlete's name
+    print(orig_df_example1.head())
+    print(orig_df_example1.head())
 
-    # Load additional data
+    # Get all folder names of the additional data
     data_loader_additional = DataLoader('additional')
-    print(data_loader_additional.load_additional_data('eduardo oliveira'))
-    print(data_loader_additional.load_additional_data(athletes_name='eduardo oliveira', activity_type='swimming', split_type='real-time'))
-    swimming_events = data_loader_additional.load_additional_data(athletes_name='eduardo oliveira', activity_type='', split_type='real-time')
-    for event in swimming_events:
-        df = pd.DataFrame(pd.read_csv(event))
-        print(df.head())
-
-
+    add_data_folder_names = data_loader_additional.get_all_additional_data_folder_names()
+    print('Additional data folder names: ',add_data_folder_names)
+    # Load additional data in two ways
+    add_df_example1 = data_loader_additional.load_additional_data(add_data_folder_names[0])   # Load with folder name
+    add_df_example2 = data_loader_additional.load_additional_data(athletes_name='eduardo oliveira',
+                                                                   activity_type='swimming',
+                                                                   split_type='real-time')  # Load with athlete's name
+    print(add_df_example1)
+    print(add_df_example2)
