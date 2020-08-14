@@ -9,7 +9,11 @@ This file can also be imported as a module
 """
 
 import pandas as pd
+from data_loader import DataLoader
 
+# Set the data frame display option
+pd.set_option('display.max_row', 10)
+pd.set_option('display.max_columns', 20)
 
 class OriginalDataCleaner():
     """
@@ -84,6 +88,21 @@ class AdditionalDataCleaner():
     def __init__(self, file_names):
         self.file_names = file_names
 
+    def check_empty(self):
+        pass
+
+    def check_missing_val_perc(self):
+        pass
+
+    def check_outliers(self):
+        pass
+
+    def clean_numerical_columns(self, df, columns):
+        pass
+
+    def clean_categorical_columns(self, df, columns):
+        pass
+
     def process_data_cleaning(self):
         """Process the data cleaning
 
@@ -94,12 +113,12 @@ class AdditionalDataCleaner():
         """
         pass
 
-    def clean_numerical_columns(self, df, columns):
-        pass
-
-    def clean_categorical_columns(self, df, columns):
-        pass
-
-
 if __name__ == '__main__':
-    addtional_data_cleaner = AdditionalDataCleaner()
+    data_loader_additional = DataLoader('additional')
+    file_names = data_loader_additional.load_additional_data(athletes_name='eduardo oliveira', split_type='real-time')
+    addtional_data_cleaner = AdditionalDataCleaner(file_names)
+    for file_name in file_names:
+        df= pd.DataFrame(pd.read_csv(file_name))
+        if not df.empty:
+            print(df.head())
+            break
