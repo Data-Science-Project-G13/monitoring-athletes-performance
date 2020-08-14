@@ -16,6 +16,7 @@ functions:
 
 import os
 import pandas as pd
+import utility
 from configparser import ConfigParser
 
 
@@ -48,25 +49,13 @@ class DataLoader():
         self.config = ConfigParser()
         self.config.read(data_names)
 
-    def get_all_original_data_file_names(self):
-        """Get all the original data file names
-
-        Returns
-        -------
-        List of strings
-        """
-        if self.data_type == 'original':
-            return [self.config.get('ORIGINAL-DATA-SETS', key) for key in list(self.config['ORIGINAL-DATA-SETS'].keys())]
-        if self.data_type == 'additional':
-            print('Invalid function call. Given type \'additional\'.')
-            return None
 
     def load_original_data(self, file_name):
         """Load the original data for an athlete
 
         Returns
         -------
-        Pandas data frame
+            Pandas data frame
         """
         if self.data_type == 'original':
             file_path = '{}/{}'.format(self.data_path, file_name)
@@ -82,19 +71,6 @@ class DataLoader():
             print('Invalid function call. Given type \'additional\'.')
             return None
 
-    def get_all_additional_data_folder_names(self):
-        """Get all the additional data folder names
-
-        Returns
-        -------
-        List of strings
-        """
-        if self.data_type == 'original':
-            print('Invalid function call. Given type \'original\'.')
-            return None
-        if self.data_type == 'additional':
-            return [self.config.get('ADDITIONAL-DATA-FOLDERS', key) for key in list(self.config['ADDITIONAL-DATA-FOLDERS'].keys())]
-
     def load_additional_data(self, athletes_name, activity_type='', split_type=''):
         """Load the additional data for an athlete
 
@@ -109,7 +85,7 @@ class DataLoader():
 
         Returns
         -------
-        Returns a list of file names in strings converted from fit files
+            List of file names in strings converted from fit files
         """
         if self.data_type == 'original':
             print('Invalid function call. Given type \'original\'.')
@@ -130,7 +106,7 @@ class DataLoader():
 if __name__ == '__main__':
     # Get all file names of the original data
     data_loader_original = DataLoader('original')
-    orig_data_names = data_loader_original.get_all_original_data_file_names()
+    orig_data_names = utility.get_all_original_data_file_names()
     print('Original data file names: ', orig_data_names)
     # Load original data in two ways
     orig_df_example1 = data_loader_original.load_original_data(orig_data_names[0])   # Load with file name
@@ -140,7 +116,7 @@ if __name__ == '__main__':
 
     # Get all folder names of the additional data
     data_loader_additional = DataLoader('additional')
-    add_data_folder_names = data_loader_additional.get_all_additional_data_folder_names()
+    add_data_folder_names = utility.get_all_additional_data_folder_names()
     print('Additional data folder names: ',add_data_folder_names)
     # Load additional data in two ways
     add_df_example1 = data_loader_additional.load_additional_data(add_data_folder_names[0])    # Load with folder name
