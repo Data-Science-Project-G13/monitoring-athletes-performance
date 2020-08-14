@@ -36,28 +36,28 @@ class OriginalDataCleaner():
         Process the data cleaning
     """
 
-    def __init__(self, file_name):
-        self.file_name = file_name
-
-    def show_missing_val_distribution(self):
+    def __init__(self):
         pass
 
-    def show_missing_val_locations(self):
+    def show_missing_val_distribution(self, dataframe):
         pass
 
-    def make_heatmap(self):
+    def show_missing_val_locations(self, dataframe):
         pass
 
-    def make_correlation_plot(self):
+    def make_heatmap(self, dataframe):
         pass
 
-    def replace_missing_vals_with_nan(self):
+    def make_correlation_plot(self, dataframe):
         pass
 
-    def formalize_dates(self):
+    def replace_missing_vals_with_nan(self, dataframe):
         pass
 
-    def process_data_cleaning(self):
+    def formalize_dates(self, dataframe):
+        pass
+
+    def process_data_cleaning(self, dataframe):
         """Process the data cleaning
 
         Returns
@@ -89,19 +89,20 @@ class AdditionalDataCleaner():
         pass
         # self.file_names = file_names
 
-    def check_empty(self):
+    def check_empty(self, dataframe):
+        if dataframe.empty: return True
+        else: return False
+
+    def check_missing_val_perc(self, dataframe):
         pass
 
-    def check_missing_val_perc(self):
+    def check_outliers(self, dataframe, columns_focus_on=None):
         pass
 
-    def check_outliers(self):
+    def clean_numerical_columns(self, dataframe, columns_focus_on=None):
         pass
 
-    def clean_numerical_columns(self, df, columns):
-        pass
-
-    def clean_categorical_columns(self, df, columns):
+    def clean_categorical_columns(self, dataframe, columns_focus_on=None):
         pass
 
     def process_data_cleaning(self):
@@ -114,12 +115,35 @@ class AdditionalDataCleaner():
         """
         pass
 
+
 if __name__ == '__main__':
+
+    # Clean original data
+    data_loader_original = DataLoader('original')
+    orig_data_names = data_loader_original.get_all_original_data_file_names()
+    original_data_cleaner = OriginalDataCleaner()
+    for data_name in orig_data_names:
+        df = data_loader_original.load_original_data(orig_data_names[0])
+        original_data_cleaner.show_missing_val_distribution(df)
+
+
+    # Clean additional data
+    athletes_name = 'Eduardo Oliveira'
+    activity_type = 'swimming'
+    split_type = 'real-time'
     data_loader_additional = DataLoader('additional')
-    file_names = data_loader_additional.load_additional_data(athletes_name='eduardo oliveira', split_type='real-time')
+    file_names = data_loader_additional.load_additional_data(athletes_name=athletes_name,
+                                                             activity_type=activity_type,
+                                                             split_type=split_type)
     addtional_data_cleaner = AdditionalDataCleaner()
+    empty_files = []
     for file_name in file_names:
-        df= pd.DataFrame(pd.read_csv(file_name))
-        if not df.empty:
-            print(df.head())
-            break
+        df = pd.DataFrame(pd.read_csv(file_name))
+        if addtional_data_cleaner.check_empty(df):
+            empty_files.append(file_name)
+        else:
+            pass
+    print('For {}\'s additional data, {} out of {} {} files are empty.'.format(athletes_name,
+                                                                               len(empty_files),
+                                                                               len(file_names),
+                                                                               activity_type))
