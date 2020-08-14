@@ -94,4 +94,9 @@ if __name__ == '__main__':
     data_loader_additional = DataLoader('additional')
     print(data_loader_additional.load_additional_data('eduardo oliveira'))
     print(data_loader_additional.load_additional_data(athletes_name='eduardo oliveira', activity_type='swimming', split_type='real-time'))
+    swimming_events = data_loader_additional.load_additional_data(athletes_name='eduardo oliveira', activity_type='', split_type='real-time')
+    for event in swimming_events:
+        df = pd.DataFrame(pd.read_csv(event))
+        print(df.head())
+
 
