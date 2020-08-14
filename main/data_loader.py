@@ -143,7 +143,7 @@ if __name__ == '__main__':
     add_data_folder_names = data_loader_additional.get_all_additional_data_folder_names()
     print('Additional data folder names: ',add_data_folder_names)
     # Load additional data in two ways
-    add_df_example1 = data_loader_additional.load_additional_data(add_data_folder_names[0])   # Load with folder name
+    add_df_example1 = data_loader_additional.load_additional_data(add_data_folder_names[0])    # Load with folder name
     add_df_example2 = data_loader_additional.load_additional_data(athletes_name='eduardo oliveira',
                                                                    activity_type='swimming',
                                                                    split_type='real-time')  # Load with athlete's name
