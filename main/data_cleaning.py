@@ -11,6 +11,7 @@ This file can also be imported as a module
 import numpy as np
 import pandas as pd
 from scipy import stats
+import utility
 from data_loader import DataLoader
 
 # Set the data frame display option
@@ -39,7 +40,8 @@ class OriginalDataCleaner():
     """
 
     def __init__(self):
-        pass
+        self.numerical_columns = utility.get_original_numerical()
+        self.categorical_columns = utility.get_original_categorical()
 
     def show_missing_val_distribution(self, dataframe):
         pass
@@ -57,6 +59,12 @@ class OriginalDataCleaner():
         pass
 
     def formalize_dates(self, dataframe):
+        pass
+
+    def clean_numerical_columns(self, dataframe, columns_focus_on=None):
+        pass
+
+    def clean_categorical_columns(self, dataframe, columns_focus_on=None):
         pass
 
     def process_data_cleaning(self, dataframe):
@@ -88,8 +96,8 @@ class AdditionalDataCleaner():
     """
 
     def __init__(self):
-        pass
-        # self.file_names = file_names
+        self.numerical_columns = utility.get_additional_numerical()
+        self.categorical_columns = utility.get_additional_categorical()
 
     def check_empty(self, dataframe):
         """Process the data cleaning
@@ -108,10 +116,25 @@ class AdditionalDataCleaner():
             missing_val_perc = dataframe.isnull().sum() / dataframe.shape[0]
         print(missing_val_perc)
 
+    def convert_str_to_num_in_numerical_cols(self, dataframe):
+        for column in self.numerical_columns:
+            # dataframe[column] = dataframe[column].astype(float)
+            dataframe[column] = pd.to_numeric(dataframe[column], errors='coerce')
+        return dataframe
+
     def check_outliers(self, dataframe, columns_focus_on=None):
-        z = np.abs(stats.zscore(dataframe))
+        dataframe = self.convert_str_to_num_in_numerical_cols(dataframe)
+        z = np.abs(stats.zscore(dataframe[self.numerical_columns]))
         threshold = 3
-        print(np.where(z > threshold))
+        outlier_zscores = np.where(z > threshold)
+        outlier_rows_cols = outlier_zscores
+        if len(outlier_zscores[0]) > 0:
+            for row in outlier_zscores[0]:
+                for col in outlier_zscores[1]:
+                    outlier_zscore = z[row][col]
+                    ourlier_value = dataframe.iloc[row, col]
+        return outlier_rows_cols
+
 
     def clean_numerical_columns(self, dataframe, columns_focus_on=None):
         pass
@@ -134,7 +157,7 @@ if __name__ == '__main__':
 
     # Clean original data
     data_loader_original = DataLoader('original')
-    orig_data_names = data_loader_original.get_all_original_data_file_names()
+    orig_data_names = utility.get_all_original_data_file_names()
     original_data_cleaner = OriginalDataCleaner()
     for data_name in orig_data_names:
         df = data_loader_original.load_original_data(orig_data_names[0])
@@ -157,7 +180,7 @@ if __name__ == '__main__':
             empty_files.append(file_name)
         else:
             addtional_data_cleaner.check_missing_val_perc(df)
-            addtional_data_cleaner.check_outliers(df)
+            outlier_rows_cols = addtional_data_cleaner.check_outliers(df)
     print('For {}\'s additional data, {} out of {} {} files are empty.'.format(athletes_name,
                                                                                len(empty_files),
                                                                                len(file_names),
