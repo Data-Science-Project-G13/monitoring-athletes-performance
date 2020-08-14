@@ -85,8 +85,9 @@ class AdditionalDataCleaner():
        Process the data cleaning
     """
 
-    def __init__(self, file_names):
-        self.file_names = file_names
+    def __init__(self):
+        pass
+        # self.file_names = file_names
 
     def check_empty(self):
         pass
@@ -116,7 +117,7 @@ class AdditionalDataCleaner():
 if __name__ == '__main__':
     data_loader_additional = DataLoader('additional')
     file_names = data_loader_additional.load_additional_data(athletes_name='eduardo oliveira', split_type='real-time')
-    addtional_data_cleaner = AdditionalDataCleaner(file_names)
+    addtional_data_cleaner = AdditionalDataCleaner()
     for file_name in file_names:
         df= pd.DataFrame(pd.read_csv(file_name))
         if not df.empty:
