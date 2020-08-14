@@ -24,9 +24,9 @@ pip install -r requirements.txt
 ### Converting .fit files to .csv files
 Put the folder contains .fit files in the `data` directory, for example `fit_eduardo_oliveira`, then run the following
 command in `main` module. A folder contains converted .csv files will show up in `data` directory.
-
-     python3 fit_file_convert/process_all.py --subject-dir=../data --subject-name=csv_eduardo_oliveira --fit-source=../data/fit_eduardo_oliveira
-
+```
+python3 fit_file_convert/process_all.py --subject-dir=../data --subject-name=csv_eduardo_oliveira --fit-source=../data/fit_eduardo_oliveira
+```
 
 
 ## Authors
