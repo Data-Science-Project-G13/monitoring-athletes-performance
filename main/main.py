@@ -16,6 +16,16 @@ from models import ModelBuilder
 
 
 def get_nonzero_TSS_rows(athlete_df):
+    '''
+
+    Parameters
+    ----------
+    athlete_df
+
+    Returns
+    -------
+
+    '''
     valid_df = athlete_df.loc[athlete_df['Training Stress Score®'] != 0]
     return valid_df
 
