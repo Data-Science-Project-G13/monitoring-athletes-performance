@@ -7,7 +7,7 @@
 # import packages
 import os
 import pandas as pd
-import pandas_profiling
+#import pandas_profiling
 import numpy as np
 
 import warnings
@@ -45,9 +45,9 @@ import missingno as msno
 
 
 #reading data 
-os.listdir('/Users/sindhuveluguleti/Desktop/Semester -2 /Project/data files of project/data sets old ')
-#data_path = '{}/data'.format(os.path.pardir)
-#athlete_csv_file = '{}/{}'.format(data_path, 'Eduardo Oliveira (Intermediate).csv')
+#os.listdir('/Users/sindhuveluguleti/Desktop/Semester -2 /Project/data files of project/data sets old ')
+data_path = '{}/data'.format(os.path.pardir)
+athlete_csv_file = '{}/{}'.format(data_path, 'Eduardo Oliveira (Intermediate).csv')
 #print(athlete_csv_file)
 
 
@@ -55,8 +55,8 @@ os.listdir('/Users/sindhuveluguleti/Desktop/Semester -2 /Project/data files of p
 
 
 #reading eddy data and print its shape and data type
-#eddy=pd.read_csv(athlete_csv_file)
-eddy=pd.read_csv('/Users/sindhuveluguleti/Desktop/Semester -2 /Project/data files of project/data sets old /Eddy.csv')
+eddy=pd.read_csv(athlete_csv_file)
+#eddy=pd.read_csv('/Users/sindhuveluguleti/Desktop/Semester -2 /Project/data files of project/data sets old /Eddy.csv')
 print('eddy data shape: ', eddy.shape)#shape 
 print(eddy.dtypes)#data type
 
@@ -84,7 +84,7 @@ print(eddy)
 # In[7]:
 
 
-eddy.columns= eddy.columns.str.replace(',', '')
+eddy.columns= eddy.columns.str.replace(',', '') ##############Why is this needed?
 print(eddy.columns)
 
 
@@ -112,22 +112,22 @@ print(eddy)
 
 # In[11]:
 
-
+##############Are we not using this anymore?
 #formats
 eddy['Elev Gain'] = eddy['Elev Gain'].str.replace(',', '')
-eddy['Elev Gain'] = eddy['Elev Gain'].astype(float)
+eddy['Elev Gain'] = eddy['Elev Gain'].astype(int)
 
 
 # In[12]:
 
-
+############## If pd.numeric works why are we not using it everywhere else similar to Elev Gain does it do anything different?
 eddy["Elev Gain"] = pd.to_numeric(eddy["Elev Gain"])
 print(eddy.dtypes)
 
 
 # In[13]:
 
-
+############## If pd.numeric works why are we not using it everywhere else similar to Elev Gain?
 eddy['Elev Loss'] = eddy['Elev Loss'].str.replace(',', '')
 eddy['Elev Loss'] = eddy['Elev Loss'].astype(float)
 
@@ -141,10 +141,10 @@ print(eddy.dtypes)
 
 # In[15]:
 
-
+############## If pd.numeric works why are we not using it everywhere else similar to Elev Gain?
 eddy['Distance'] = eddy['Distance'].str.replace(',', '')
 eddy['Distance'] = eddy['Distance'].astype(float)
-
+print(eddy.dtypes)
 
 # In[16]:
 
@@ -206,8 +206,12 @@ print(eddy["Date"])
 
 
 # In[23]:
+#######################Dealing with speed
+eddy.loc[eddy['Avg Speed'].str.contains(":", na=False)]=np.nan
+eddy['Avg Speed'] = pd.to_numeric(eddy['Avg Speed'])
 
-
+eddy.loc[eddy['Max Speed'].str.contains(":", na=False)]=np.nan
+eddy['Max Speed'] = pd.to_numeric(eddy['Max Speed'])
 print(eddy.dtypes)
 
 
