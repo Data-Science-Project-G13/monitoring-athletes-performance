@@ -85,6 +85,12 @@ class SingleAthleteDataPlotter():
         """
         athlete_dataframe = DataLoader().load_original_data(self.file_name)
         preprocessor = DataPreprocessor(athlete_dataframe)
+        # activity_types = preprocessor.get_activity_types()
+        # for activity_type in activity_types:
+        #     preprocessor._fill_out_tss(activity_type)
+        # preprocessed_df = preprocessor.athlete_dataframe
+        # preprocessed_df['Date'] = pd.to_datetime(preprocessed_df.Date, dayfirst=True)
+        # preprocessed_df = preprocessed_df.sort_values(by=['Date'], ascending=True)
         preprocessed_df = preprocessor.preprocess_for_pmc()
         return preprocessed_df
 
@@ -327,16 +333,16 @@ class MultipleAtheletesDataPlotter():
 
 
 if __name__ == '__main__':
-    create_plot_folder()
-    single_plotter = SingleAthleteDataPlotter('Simon R Gronow (Novice).csv')
-    single_plotter.plot_PMC(save=True)
+    # create_plot_folder()
+    # single_plotter = SingleAthleteDataPlotter('Ollie Allan (Advance).csv')
+    # single_plotter.plot_PMC(save=True)
 
-    # # Note functions in MultipleAtheletesDataPlotter() and functions in SingleAthleteDataPlotter()
-    # # cannot run at the same time because of the characteristic of matplotlib.pyplot
-    # multi_plotter = MultipleAtheletesDataPlotter()
-    # multi_plotter.plot_valid_TSS_pie()
-    # multi_plotter.plot_athlete_level_pie()
-    # multi_plotter.plot_activity_tendency_bar(save=True)
-    # multi_plotter.plot_frequency(save=True)
+    # Note functions in MultipleAtheletesDataPlotter() and functions in SingleAthleteDataPlotter()
+    # cannot run at the same time because of the characteristic of matplotlib.pyplot
+    multi_plotter = MultipleAtheletesDataPlotter()
+    multi_plotter.plot_valid_TSS_pie()
+    multi_plotter.plot_athlete_level_pie()
+    multi_plotter.plot_activity_tendency_bar(save=True)
+    multi_plotter.plot_frequency(save=True)
 
 
