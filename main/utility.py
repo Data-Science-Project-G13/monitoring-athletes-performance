@@ -6,19 +6,30 @@ This script requires that `pandas` be installed.
 
 This file can be imported as a module and contains the following
 functions:
-    * get_original_numerical - returns a pandas data_frame
-    * get_original_categorical
-    * get_additional_numerical
-    * get_additional_categorical
+
+    * get_all_original_data_file_names - return a list of original data file names
+    * get_all_additional_data_folder_names - return a list of additional data folder names
+
+    * get_original_numerical - returns a list of numerical variables in original data
+    * get_original_categorical - returns a list of categorical variables in original data
+    * get_additional_numerical - returns a list of numerical variables in additional data
+    * get_additional_categorical - returns a list of categorical variables in additional data
+
+    * get_original_activity_types - returns a list of activity types in original data
+    * get_additional_activity_types - returns a list of activity types in additional data
+
 """
 
 import os
+import re
 from configparser import ConfigParser
 
 
 config_parser = ConfigParser()
 data_names_config = '{}/main/config/data_file_names.cfg'.format(os.path.pardir)
 column_data_types_config = '{}/main/config/column_data_types.cfg'.format(os.path.pardir)
+activity_types_config = '{}/main/config/activity_types.cfg'.format(os.path.pardir)
+pattern = re.compile("^\s+|\s*,\s*|\s+$")
 
 
 def get_all_original_data_file_names():
@@ -51,7 +62,7 @@ def get_original_numerical():
         List of strings
     """
     config_parser.read(column_data_types_config)
-    return config_parser.get('ORIGINAL', 'numerical').split(',')
+    return pattern.split(config_parser.get('ORIGINAL', 'numerical'))
 
 
 def get_original_categorical():
@@ -62,7 +73,7 @@ def get_original_categorical():
         List of strings
     """
     config_parser.read(column_data_types_config)
-    return config_parser.get('ORIGINAL', 'categorical').split(',')
+    return pattern.split(config_parser.get('ORIGINAL', 'categorical'))
 
 
 def get_additional_numerical():
@@ -73,7 +84,7 @@ def get_additional_numerical():
         List of strings
     """
     config_parser.read(column_data_types_config)
-    return config_parser.get('ADDITIONAL', 'numerical').split(',')
+    return pattern.split(config_parser.get('ADDITIONAL', 'numerical'))
 
 
 def get_additional_categorical():
@@ -84,5 +95,38 @@ def get_additional_categorical():
         List of strings
     """
     config_parser.read(column_data_types_config)
-    return config_parser.get('ADDITIONAL', 'categorical').split(',')
+    return pattern.split(config_parser.get('ADDITIONAL', 'categorical'))
 
+
+def get_original_activity_types():
+    """Get all the activity types in original data
+
+    Returns
+    -------
+        List of strings
+    """
+    config_parser.read(activity_types_config)
+    return pattern.split(config_parser.get('ORIGINAL', 'activity_types'))
+
+
+def get_additional_activity_types():
+    """Get all the activity types in additional data
+
+    Returns
+    -------
+        List of strings
+    """
+    config_parser.read(activity_types_config)
+    return pattern.split(config_parser.get('ADDITIONAL', 'activity_types'))
+
+
+if __name__ == '__main__':
+    # The lines below are for test
+    print(get_all_original_data_file_names())
+    print(get_all_additional_data_folder_names())
+    print(get_original_numerical())
+    print(get_original_categorical())
+    print(get_additional_numerical())
+    print(get_additional_categorical())
+    print(get_original_activity_types())
+    print(get_additional_activity_types())
