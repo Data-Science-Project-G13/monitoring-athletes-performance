@@ -162,18 +162,18 @@ class AdditionalDataCleaner():
         self.dataframe.insert(1, 'time_in_seconds', time_in_seconds, True)
 
     def apply_univariate_imputation(self, column):
-        trainingData = self.dataframe.iloc[:, :].values
-        # imputer = imputer.fit(trainingData['time_in_seconds', column])
-        # imputer.transform(dataset['time_in_seconds', column])
         new_data = self.dataframe.copy()
-
         imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
         new_data = pd.DataFrame(imputer.fit_transform(new_data[[column]]))
         new_data.columns = [column]
         self.dataframe[column] = new_data[column]
 
-    def apply_multivariate_imputation(self):
-        pass
+    def apply_multivariate_imputation(self, columns):
+        new_data = self.dataframe.copy()
+        iter_imputer = IterativeImputer(max_iter=10, random_state=0)
+        new_data = pd.DataFrame(iter_imputer.fit_transform(new_data[[columns]]))
+        new_data.columns = [columns]
+        self.dataframe[columns] = new_data[columns]
 
     def apply_nearest_neighbor_imputation(self, missing_values=np.nan, strategy='mean'):
         pass
