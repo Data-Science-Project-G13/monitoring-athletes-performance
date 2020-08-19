@@ -11,6 +11,7 @@ This file can also be imported as a module
 import numpy as np
 import pandas as pd
 import os
+import datetime
 import utility
 from scipy import stats
 from sklearn.experimental import enable_iterative_imputer
@@ -19,8 +20,8 @@ from data_loader import DataLoader
 from configparser import ConfigParser
 
 # Set the data frame display option
-pd.set_option('display.max_row', 200)
-pd.set_option('display.max_columns', 20)
+pd.set_option('display.max_row', 20)
+pd.set_option('display.max_columns', 10)
 
 class OriginalDataCleaner():
     """
@@ -127,6 +128,11 @@ class AdditionalDataCleaner():
         missing_val_perc = self.dataframe.isnull().sum() / self.dataframe.shape[0]
         return missing_val_perc
 
+    def get_columns_with_missing_values(self):
+        cols_with_missing = [col for col in self.dataframe.columns
+                             if self.dataframe[col].isnull().any()]
+        return cols_with_missing
+
     def convert_str_to_num_in_numerical_cols(self):
         for column in self.numerical_ordered_columns+self.numerical_fluctuating_columns:
             # dataframe[column] = dataframe[column].astype(float)
@@ -149,20 +155,22 @@ class AdditionalDataCleaner():
 
     def add_column_time_in_seconds(self):
         time_in_seconds = []
-        self.dataframe.insert(3, 'Time in Seconds', time_in_seconds, True)
-        pass
+        for time in self.dataframe['timestamp']:
+            t = datetime.datetime.strptime(time[:-6], '%Y-%m-%d %H:%M:%S')
+            seconds = int(datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second).total_seconds())
+            time_in_seconds.append(seconds)
+        self.dataframe.insert(1, 'time_in_seconds', time_in_seconds, True)
 
     def apply_univariate_imputation(self, column):
-        imp = SimpleImputer(strategy="most_frequent")
-
         trainingData = self.dataframe.iloc[:, :].values
-        dataset = self.dataframe.iloc[:, :].values
+        # imputer = imputer.fit(trainingData['time_in_seconds', column])
+        # imputer.transform(dataset['time_in_seconds', column])
+        new_data = self.dataframe.copy()
 
-        imputer = SimpleImputer(missing_values=np.nan, strategy="mean")
-        imputer = imputer.fit(trainingData[[column]])
-        dataset[[column]] = imputer.transform(dataset[[column]])
-
-        # self.dataframe[column] = imp.fit_transform(self.dataframe[column])
+        imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
+        new_data = pd.DataFrame(imputer.fit_transform(new_data[[column]]))
+        new_data.columns = [column]
+        self.dataframe[column] = new_data[column]
 
     def apply_multivariate_imputation(self):
         pass
@@ -170,18 +178,27 @@ class AdditionalDataCleaner():
     def apply_nearest_neighbor_imputation(self, missing_values=np.nan, strategy='mean'):
         pass
 
+    def apply_imputations(self, columns_need_imputation):
+        for column in columns_need_imputation:
+            if not self.dataframe[column].isnull().all():
+                if column in self.categorical_columns:
+                    pass
+                if column in self.numerical_ordered_columns:
+                    self.apply_univariate_imputation(column)
+                if column in self.numerical_fluctuating_columns:
+                    self.apply_univariate_imputation(column)
+            else:
+                print('All the values in {} are null. Not able to apply imputation.'.format(column))
+
     def handle_missing_values(self):
         self.format_missing_val_with_nan()
-        missingl_perc = self.check_missing_val_perc()
-        print(missingl_perc)
-        for column in self.numerical_ordered_columns:
-            pass
-        for column in self.numerical_fluctuating_columns:
-            self.apply_univariate_imputation(column)
-        for column in self.categorical_columns:
-            pass
-        missingl_perc = self.check_missing_val_perc()
-        print(missingl_perc)
+        missing_perc = self.check_missing_val_perc()
+        print(missing_perc)
+
+        columns_need_imputation = self.get_columns_with_missing_values()
+        if columns_need_imputation:
+            self.add_column_time_in_seconds()
+            self.apply_imputations(columns_need_imputation)
 
     def handle_outliers_timestamp(self):
         pass
