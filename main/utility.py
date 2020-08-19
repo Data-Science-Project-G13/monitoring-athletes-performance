@@ -76,7 +76,20 @@ def get_original_categorical():
     return pattern.split(config_parser.get('ORIGINAL', 'categorical'))
 
 
-def get_additional_numerical():
+def get_all_original_data_columns():
+    """Get all the column names in original data
+
+    Returns
+    -------
+        columns: List of strings
+            All the column names in original data
+    """
+    columns = get_original_numerical() + \
+              get_original_categorical()
+    return columns
+
+
+def get_additional_numerical_ordered():
     """Get all the numerical column names in additional data
 
     Returns
@@ -84,7 +97,18 @@ def get_additional_numerical():
         List of strings
     """
     config_parser.read(column_data_types_config)
-    return pattern.split(config_parser.get('ADDITIONAL', 'numerical'))
+    return pattern.split(config_parser.get('ADDITIONAL', 'numerical_ordered'))
+
+
+def get_additional_numerical_fluctuating():
+    """Get all the numerical column names in additional data
+
+    Returns
+    -------
+        List of strings
+    """
+    config_parser.read(column_data_types_config)
+    return pattern.split(config_parser.get('ADDITIONAL', 'numerical_fluctuating'))
 
 
 def get_additional_categorical():
@@ -96,6 +120,20 @@ def get_additional_categorical():
     """
     config_parser.read(column_data_types_config)
     return pattern.split(config_parser.get('ADDITIONAL', 'categorical'))
+
+
+def get_all_additional_data_columns():
+    """Get all the column names in additional data
+
+    Returns
+    -------
+        columns: List of strings
+            All the column names in additional data
+    """
+    columns = get_additional_numerical_ordered() + \
+              get_additional_numerical_fluctuating() + \
+              get_additional_categorical()
+    return columns
 
 
 def get_original_activity_types():
@@ -126,7 +164,7 @@ if __name__ == '__main__':
     print(get_all_additional_data_folder_names())
     print(get_original_numerical())
     print(get_original_categorical())
-    print(get_additional_numerical())
+    print(get_additional_numerical_ordered())
     print(get_additional_categorical())
     print(get_original_activity_types())
     print(get_additional_activity_types())
