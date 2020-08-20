@@ -177,16 +177,19 @@ class AdditionalDataCleaner():
         self.dataframe[column] = new_data[column]
 
     def apply_multivariate_imputation(self, columns):
-        new_data = self.dataframe.copy()
-        iter_imputer = IterativeImputer(max_iter=10, random_state=0)
-        new_data = pd.DataFrame(iter_imputer.fit_transform(new_data[columns]))
-        print(new_data.head())
-        print(columns)
-        if not new_data.empty:
-            new_data.columns = columns
-            self.dataframe[columns] = new_data[columns]
+        null_cols = [col for col in columns if self.dataframe[col].isnull().all()]
+        if not null_cols:
+            new_data = self.dataframe.copy()
+            iter_imputer = IterativeImputer(max_iter=10, random_state=0)
+            new_data = pd.DataFrame(iter_imputer.fit_transform(new_data[columns]))
+            if not new_data.empty:
+                new_data.columns = columns
+                self.dataframe[columns] = new_data[columns]
+            else:
+                print("All the values in columns {} are missing. Not able to apply imputation.".format(columns))
         else:
-            print("All the values in columns {} are missing. Not able to apply imputation.".format(columns))
+            # TODO: Apply regression or ignore
+            pass
 
     def apply_interpolation_imputation(self, columns):
         for column in columns:
@@ -277,15 +280,15 @@ def main(data_type='original', athletes_name=None, activity_type=None, split_typ
             orig_file_names = utility.get_all_original_data_file_names()
             for file_name in orig_file_names:
                 df = data_loader_original.load_original_data(file_name)
-                original_data_cleaner = OriginalDataCleaner()
-                cleaned_df = original_data_cleaner.process_data_cleaning(df)
+                original_data_cleaner = OriginalDataCleaner(df)
+                cleaned_df = original_data_cleaner.process_data_cleaning()
                 # cleaned_df.to_csv('{}/data/cleaned_original/{}'.format(os.path.pardir, file_name))
                 # print('Cleaned {} data saved!'.format(file_name))
         else:
             # Clean data for an athlete
             df = data_loader_original.load_original_data(athletes_name)
-            original_data_cleaner = OriginalDataCleaner()
-            cleaned_df = original_data_cleaner.process_data_cleaning(df)
+            original_data_cleaner = OriginalDataCleaner(df)
+            cleaned_df = original_data_cleaner.process_data_cleaning()
             file_name = data_loader_original.config.get('ORIGINAL-DATA-SETS', athletes_name.lower())
             # cleaned_df.to_csv('{}/data/cleaned_original/{}'.format(os.path.pardir, file_name))
             # print('Cleaned {} data saved!'.format(file_name))
