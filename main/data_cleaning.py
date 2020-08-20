@@ -44,9 +44,10 @@ class OriginalDataCleaner():
         Process the data cleaning
     """
 
-    def __init__(self):
+    def __init__(self, dataframe: pd.DataFrame):
         self.numerical_columns = utility.get_original_numerical()
         self.categorical_columns = utility.get_original_categorical()
+        self.dataframe = dataframe
 
     def show_missing_val_distribution(self):
         pass
@@ -66,22 +67,22 @@ class OriginalDataCleaner():
     def formalize_dates(self):
         pass
 
-    def clean_numerical_columns(self, dataframe: pd.DataFrame, columns_focus_on=None):
+    def clean_numerical_columns(self):
         pass
 
-    def clean_categorical_columns(self, dataframe: pd.DataFrame, columns_focus_on=None):
+    def clean_categorical_columns(self):
         pass
 
-    def process_data_cleaning(self, dataframe: pd.DataFrame):
+    def process_data_cleaning(self):
         """
         Returns
         -------
         cleaned_df : pandas DataFrame
             Cleaned athlete CoachingMate data
         """
-        self.clean_numerical_columns(dataframe)
-        self.clean_categorical_columns(dataframe)
-        return dataframe
+        self.clean_numerical_columns()
+        self.clean_categorical_columns()
+        return self.dataframe
 
 
 class AdditionalDataCleaner():
@@ -179,15 +180,18 @@ class AdditionalDataCleaner():
         new_data = self.dataframe.copy()
         iter_imputer = IterativeImputer(max_iter=10, random_state=0)
         new_data = pd.DataFrame(iter_imputer.fit_transform(new_data[columns]))
-        # print(new_data.head())
+        print(new_data.head())
+        print(columns)
         if not new_data.empty:
             new_data.columns = columns
             self.dataframe[columns] = new_data[columns]
         else:
             print("All the values in columns {} are missing. Not able to apply imputation.".format(columns))
 
-    def apply_interpolation_imputation(self):
-        pass
+    def apply_interpolation_imputation(self, columns):
+        for column in columns:
+            interpolated_column = self.dataframe[column].interpolate(method='spline', order=2, limit=2)
+            self.dataframe[column] = interpolated_column
 
     def apply_nearest_neighbor_imputation(self, missing_values=np.nan, strategy="mean"):
         pass
@@ -295,11 +299,7 @@ def main(data_type='original', athletes_name=None, activity_type=None, split_typ
         if not os.path.exists(athlete_cleaned_additional_data_folder):
             os.mkdir(athlete_cleaned_additional_data_folder)
         empty_files = []
-        ## TODO: Remove acc
-        acc = 0
         for file_name in additional_file_names:
-            if acc < 2: acc += 1
-            else: break
             print('\nCleaning {} ...'.format(file_name[3:]))
             df = pd.DataFrame(pd.read_csv(file_name))
             addtional_data_cleaner = AdditionalDataCleaner(df)
