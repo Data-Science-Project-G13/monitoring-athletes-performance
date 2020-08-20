@@ -102,6 +102,10 @@ class AdditionalDataCleaner():
     """
 
     def __init__(self, dataframe: pd.DataFrame):
+        self.column_groups_imputation = {'univariate': {'timezone'},
+                                         'multivariate1': {"distance", "timestamp"},
+                                         'multivariate2': {"speed", "heart_rate", "cadence"},
+                                         'interpolation': {"timestamp", "position_lat", "position_long", "altitude"}}
         self.numerical_ordered_columns = utility.get_additional_numerical_ordered()
         self.numerical_fluctuating_columns = utility.get_additional_numerical_fluctuating()
         self.categorical_columns = utility.get_additional_categorical()
@@ -125,12 +129,18 @@ class AdditionalDataCleaner():
         #     missing_val_perc = dataframe[columns_focus_on].isnull().sum() / dataframe.shape[0]
         # else:
         #     missing_val_perc = dataframe.isnull().sum() / dataframe.shape[0]
+        no_missing = True
         missing_val_perc = self.dataframe.isnull().sum() / self.dataframe.shape[0]
+        for column_name in missing_val_perc.keys():
+            if float(missing_val_perc[column_name]) != 0:
+                no_missing = False
+                print('{} has {} missing'.format(column_name, missing_val_perc[column_name]))
+        if no_missing:
+            print('Great! No missing values!')
         return missing_val_perc
 
     def get_columns_with_missing_values(self):
-        cols_with_missing = [col for col in self.dataframe.columns
-                             if self.dataframe[col].isnull().any()]
+        cols_with_missing = {col for col in self.dataframe.columns if self.dataframe[col].isnull().any()}
         return cols_with_missing
 
     def convert_str_to_num_in_numerical_cols(self):
@@ -150,9 +160,6 @@ class AdditionalDataCleaner():
                     ourlier_value = self.dataframe.iloc[row, col]
         return outlier_rows_cols
 
-    def drop_column(self, column):
-        pass
-
     def add_column_time_in_seconds(self):
         time_in_seconds = []
         for time in self.dataframe['timestamp']:
@@ -171,34 +178,44 @@ class AdditionalDataCleaner():
     def apply_multivariate_imputation(self, columns):
         new_data = self.dataframe.copy()
         iter_imputer = IterativeImputer(max_iter=10, random_state=0)
-        new_data = pd.DataFrame(iter_imputer.fit_transform(new_data[[columns]]))
-        new_data.columns = [columns]
-        self.dataframe[columns] = new_data[columns]
+        new_data = pd.DataFrame(iter_imputer.fit_transform(new_data[columns]))
+        # print(new_data.head())
+        if not new_data.empty:
+            new_data.columns = columns
+            self.dataframe[columns] = new_data[columns]
+        else:
+            print("All the values in columns {} are missing. Not able to apply imputation.".format(columns))
 
-    def apply_nearest_neighbor_imputation(self, missing_values=np.nan, strategy='mean'):
+    def apply_interpolation_imputation(self):
+        pass
+
+    def apply_nearest_neighbor_imputation(self, missing_values=np.nan, strategy="mean"):
+        pass
+
+    def apply_regression_prediction_interpolation(self, column_names):
+        # TODO: for whole column missing
         pass
 
     def apply_imputations(self, columns_need_imputation):
-        for column in columns_need_imputation:
-            if not self.dataframe[column].isnull().all():
-                if column in self.categorical_columns:
-                    pass
-                if column in self.numerical_ordered_columns:
-                    self.apply_univariate_imputation(column)
-                if column in self.numerical_fluctuating_columns:
-                    self.apply_univariate_imputation(column)
-            else:
-                print('All the values in {} are null. Not able to apply imputation.'.format(column))
+        for impute_tech, column_names in self.column_groups_imputation.items():
+            column_intersection = column_names.intersection(columns_need_imputation)
+            if column_intersection:
+                if impute_tech == "univariate":
+                    self.apply_univariate_imputation(list(column_intersection))
+                elif impute_tech == "multivariate1" or "multivariate2":
+                    self.apply_multivariate_imputation(list(column_intersection))
+                elif impute_tech == "interpolation":
+                    self.apply_regression_prediction_interpolation(list(column_intersection))
 
     def handle_missing_values(self):
         self.format_missing_val_with_nan()
-        missing_perc = self.check_missing_val_perc()
-        print(missing_perc)
-
+        self.check_missing_val_perc()
         columns_need_imputation = self.get_columns_with_missing_values()
         if columns_need_imputation:
             self.add_column_time_in_seconds()
             self.apply_imputations(columns_need_imputation)
+        print('After imputation: ')
+        self.check_missing_val_perc()
 
     def handle_outliers_timestamp(self):
         pass
@@ -240,7 +257,8 @@ def make_cleaned_data_folder(data_type):
 
 
 def main(data_type='original', athletes_name=None, activity_type=None, split_type=None):
-    """Process the data cleaning
+    """The main function of processing data cleaning
+    Clean the data and save the cleaned data
 
     Returns
     -------
@@ -282,7 +300,7 @@ def main(data_type='original', athletes_name=None, activity_type=None, split_typ
         for file_name in additional_file_names:
             if acc < 2: acc += 1
             else: break
-            print('Cleaning {} ...'.format(file_name[3:]))
+            print('\nCleaning {} ...'.format(file_name[3:]))
             df = pd.DataFrame(pd.read_csv(file_name))
             addtional_data_cleaner = AdditionalDataCleaner(df)
             if addtional_data_cleaner.check_empty():
@@ -292,7 +310,7 @@ def main(data_type='original', athletes_name=None, activity_type=None, split_typ
                 # cleaned_df.to_csv('{}/{}'.format(athlete_cleaned_additional_data_folder, file_name[-41:]))
                 # print('Cleaned {} data saved'.format(file_name[-41:]))
 
-        print('For {}\'s additional data, {} out of {} {} files are empty.'.format(athletes_name,
+        print('\nFor {}\'s additional data, {} out of {} {} files are empty.'.format(athletes_name,
                                                                                    len(empty_files),
                                                                                    len(additional_file_names),
                                                                                    activity_type))
@@ -307,5 +325,5 @@ if __name__ == '__main__':
     athletes_name = 'Eduardo Oliveira'
     activity_type = 'cycling'
     split_type = 'real-time'
-    main('additional', athletes_name, activity_type, split_type)
+    main('additional', athletes_name, activity_type, split_type)  # clean all additional data
 
