@@ -29,12 +29,3 @@ python3 fit_file_convert/process_all.py --subject-dir=../data --subject-name=csv
 ```
 
 
-## Authors
-* [**Lin Mi**]() (983667) 
-* [**Tingli Qiu**](https://github.com/qiutingli) (990497)
-* [**Spoorthi Suresh Avvanna**](https://github.com/spoorthiavvanna) (1037470)
-* [**Chitra Naga Durga Sindhusha Veluguleti**](https://github.com/sveluguleti) (1045391)
-* [**Yuhan Zhao**](https://github.com/Zouyushui) (1042775)
-
-Data Science Project 2020 Group 13, The University of Melbourne
-
