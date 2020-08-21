@@ -111,6 +111,15 @@ class AdditionalDataCleaner():
         self.numerical_fluctuating_columns = utility.get_additional_numerical_fluctuating()
         self.categorical_columns = utility.get_additional_categorical()
         self.dataframe = dataframe
+        self.color_labels = ['blue', 'orange', 'green', 'purple', 'brown', 'pink', 'grey', 'olive', 'cyan', 'black',
+                             'maroon', 'chocolate', 'gold', 'yellow', 'lawngreen', 'aqua', 'steelblue', 'navy',
+                             'indigo',
+                             'magenta', 'crimson', 'red']
+        self.OUTLIER_COLOR_LABEL = len(self.color_labels) - 1
+        self.TIME_DIFF_THRESHOLD = 3 * 60  # Configurable
+        self.ROW_COUNT_THRESHOLD = 150  # Configurable
+        self.num_recs = -1
+        self.time_sgmt_num = 0
 
     def check_empty(self):
         """Check whether the data frame is empty
@@ -135,7 +144,7 @@ class AdditionalDataCleaner():
         for column_name in missing_val_perc.keys():
             if float(missing_val_perc[column_name]) != 0:
                 no_missing = False
-                print('{} has {}% missing'.format(column_name, round(missing_val_perc[column_name]*100, 3)))
+                print('{} has {}% missing'.format(column_name, round(missing_val_perc[column_name] * 100, 3)))
         if no_missing:
             print('Great! No missing values!')
         return missing_val_perc
@@ -145,21 +154,21 @@ class AdditionalDataCleaner():
         return cols_with_missing
 
     def convert_str_to_num_in_numerical_cols(self):
-        for column in self.numerical_ordered_columns+self.numerical_fluctuating_columns:
+        for column in self.numerical_ordered_columns + self.numerical_fluctuating_columns:
             # dataframe[column] = dataframe[column].astype(float)
             self.dataframe[column] = pd.to_numeric(self.dataframe[column], errors='coerce')
 
-    def check_outliers(self):
-        z = np.abs(stats.zscore(self.dataframe[self.numerical_ordered_columns]))
-        threshold = 3
-        outlier_zscores = np.where(z > threshold)
-        outlier_rows_cols = outlier_zscores
-        if len(outlier_zscores[0]) > 0:
-            for row in outlier_zscores[0]:
-                for col in outlier_zscores[1]:
-                    outlier_zscore = z[row][col]
-                    ourlier_value = self.dataframe.iloc[row, col]
-        return outlier_rows_cols
+    # def check_outliers(self):
+    #     z = np.abs(stats.zscore(self.dataframe[self.numerical_ordered_columns]))
+    #     threshold = 3
+    #     outlier_zscores = np.where(z > threshold)
+    #     outlier_rows_cols = outlier_zscores
+    #     if len(outlier_zscores[0]) > 0:
+    #         for row in outlier_zscores[0]:
+    #             for col in outlier_zscores[1]:
+    #                 outlier_zscore = z[row][col]
+    #                 ourlier_value = self.dataframe.iloc[row, col]
+    #     return outlier_rows_cols
 
     def add_column_time_in_seconds(self):
         time_in_seconds = []
@@ -191,7 +200,6 @@ class AdditionalDataCleaner():
                 self.dataframe[columns] = new_data[columns]
             else:
                 print("All the values in columns {} are missing. Not able to apply imputation.".format(columns))
-
 
     def apply_interpolation_imputation(self, columns):
         for column in columns:
@@ -226,29 +234,200 @@ class AdditionalDataCleaner():
         print('After imputation: ')
         self.check_missing_val_perc()
 
-    def handle_outliers_timestamp(self):
-        pass
+    # def handle_outliers_timestamp(self):
+    #     pass
+    #
+    # def handle_outliers_numerical_ordered(self):
+    #     pass
+    #
+    # def handle_outliers_numerical_fluctuating(self):
+    #     pass
+    #
+    # def handle_outliers(self):
+    #     self.handle_outliers_timestamp()
+    #     self.handle_outliers_numerical_ordered()
+    #     self.handle_outliers_numerical_fluctuating()
 
-    def handle_outliers_numerical_ordered(self):
-        pass
+    def __date_time_str_to_secs(self, dataframe):
+        first_ts_datetime = dt.datetime.strptime(dataframe['timestamp'][0][:-6], "%Y-%m-%d %H:%M:%S")
+        ts_secs = []
+        for ts in dataframe['timestamp']:
+            parsed_datetime = dt.datetime.strptime(ts[:-6], "%Y-%m-%d %H:%M:%S")
+            ts_secs.append((parsed_datetime - first_ts_datetime).total_seconds())
+        ts_secs = np.array(ts_secs)
+        return ts_secs
 
-    def handle_outliers_numerical_fluctuating(self):
-        pass
+    def __filter_by_repetition(self, dataframe, rec_color):
+        df = dataframe.drop(columns=['timestamp', 'timestamp_utc', 'timezone'])
+        dup_df = df[df.duplicated()]
+        idx_list = dup_df.index.tolist()
+        for i in idx_list:
+            rec_color[i] = self.OUTLIER_COLOR_LABEL
+            print("[OUTLIER DETECTED!] Index == %d Reason: DUPLICATE ROW!" % (i))
 
-    def handle_outliers(self):
-        self.handle_outliers_timestamp()
-        self.handle_outliers_numerical_ordered()
-        self.handle_outliers_numerical_fluctuating()
+    def __filter_by_timestamp(self, ts_secs, OUTLIER_COLOR_LABEL, rec_color):
+        # Some Initializations
+        self.num_recs = len(ts_secs)
+        self.time_sgmt_num = 0
+        this_time_sgmt_row_cnt = 1
+
+        for i in range(1, self.num_recs):
+            secs_diff = ts_secs[i]-ts_secs[i-1]
+            # Timestamps must be non-decreasing
+            if (secs_diff < 0) :
+                rec_color[i] = OUTLIER_COLOR_LABEL
+                print("[OUTLIER DETECTED!] Index == %d Reason: DECREASING TIME STAMP!" % (i))
+
+            # continuous training?
+            elif (secs_diff >= self.TIME_DIFF_THRESHOLD):
+                # Does the previous time segment have enough rows? If not, categorize all rows as outliers
+                if (this_time_sgmt_row_cnt < self.ROW_COUNT_THRESHOLD):
+                    for j in range(i-this_time_sgmt_row_cnt, i):
+
+                        rec_color[j] = OUTLIER_COLOR_LABEL
+                        print("[OUTLIER DETECTED!] Index == %d Reason: FEWER RECORDS ON THIS TIME SEGMENT(<%d)!" % (j, self.ROW_COUNT_THRESHOLD))
+
+                # Setting up the new time segment
+                self.time_sgmt_num += 1
+                this_time_sgmt_row_cnt = 1
+            else:
+                this_time_sgmt_row_cnt += 1
+                rec_color[i] = self.time_sgmt_num
+
+        # Special treatment for the last time segment
+        i += 1
+        if (this_time_sgmt_row_cnt < self.ROW_COUNT_THRESHOLD):
+            for j in range(i - this_time_sgmt_row_cnt, i):
+                # -1 is the color number for outliers
+                rec_color[j] = OUTLIER_COLOR_LABEL
+                print("[OUTLIER DETECTED!] Index == %d Reason: FEWER RECORDS FOR THIS TIME SEGMENT(<%d)!" % (
+                j, self.ROW_COUNT_THRESHOLD))
+
+    def __filter_by_continuity_assumption(self, dataframe, rec_color):
+        ## 1. The change of temperature should not exceed 1 degree
+        for i in range(1, self.num_recs):
+            if (rec_color[i] == rec_color[i-1] and rec_color[i] != self.OUTLIER_COLOR_LABEL):
+                diff = abs(dataframe.loc[i, 'temperature'] - dataframe.loc[i-1, 'temperature'])
+                if  diff > 1:
+                    rec_color[i] = self.OUTLIER_COLOR_LABEL
+                    print("[OUTLIER DETECTED!] Index == %d Reason: TEMPERATURE CHANGE TOO FAST!" % (i))
+
+    def __filter_by_logical_inconsistency(self, dataframe, rec_color):
+        ## 1. distance, enhanced_speed, speed, heart_rate and cadence must be greater than 0
+        for i in range(self.num_recs):
+            if dataframe['distance'][i] <= 0:
+                rec_color[i] = self.OUTLIER_COLOR_LABEL
+                print("[OUTLIER DETECTED!] Index == %d Reason: LOGICAL ERROR, distance has to be POSITIVE!" % (i))
+            if dataframe['enhanced_speed'][i] <= 0:
+                rec_color[i] = self.OUTLIER_COLOR_LABEL
+                print("[OUTLIER DETECTED!] Index == %d Reason: LOGICAL ERROR, enhanced_speed has to be POSITIVE!" % (i))
+            if dataframe['speed'][i] <= 0:
+                rec_color[i] = self.OUTLIER_COLOR_LABEL
+                print("[OUTLIER DETECTED!] Index == %d Reason: LOGICAL ERROR, speed has to be POSITIVE!" % (i))
+            if dataframe['heart_rate'][i] <= 0:
+                rec_color[i] = self.OUTLIER_COLOR_LABEL
+                print("[OUTLIER DETECTED!] Index == %d Reason: LOGICAL ERROR, heart_rate has to be POSITIVE!" % (i))
+            if dataframe['cadence'][i] <= 0:
+                rec_color[i] = self.OUTLIER_COLOR_LABEL
+                print("[OUTLIER DETECTED!] Index == %d Reason: LOGICAL ERROR, cadence has to be POSITIVE!" % (i))
+
+    def __filter_by_zscore(self, dataframe, rec_color):
+        # Configuraing different tolerace for different columns
+        columns = ['position_lat', 'position_long', 'enhanced_altitude', 'altitude', 'heart_rate', 'cadence']
+        tolerances = [2, 2, 3, 3, 3, 3]  # Configurable
+        dataframe['color'] = rec_color
+        for k in range(self.time_sgmt_num):
+            df = dataframe.loc[dataframe['color'] == k]
+            for j in range(len(columns)):
+                # Actual Z-score test
+                z = np.abs(stats.zscore(df[columns[j]]))
+                outlier_rows = np.where(z > tolerances[j])
+                print("\n====For Column:%s, There are %d outliers ===\n" % (columns[j], len(outlier_rows[0])))
+                for i in outlier_rows[0]:
+                    rec_color[i] = self.OUTLIER_COLOR_LABEL
+                    print("[OUTLIER DETECTED!] Index == %d Reason: Z-SCORE(%f) EXCEEDS THE TOLERANCE(%f)" % (
+                        i, z[i], tolerances[j]))
+
+    def __plot_time_sgmt(self, ts_secs, colors):
+        num_recs = len(ts_secs)
+        zeros = np.zeros(num_recs).reshape(num_recs, 1)
+        ts_secs = ts_secs.reshape(num_recs, 1)
+        X = np.concatenate((ts_secs, zeros), axis=1)
+        plt.scatter(X[:, 0], X[:, 1], c=colors)
+        plt.show()
+
+    def __cidx_to_clabels(self, rec_color):
+        colors = []
+        for i in range(len(rec_color)):
+            colors.append(self.color_labels[rec_color[i]])
+
+        return colors
+
+    def __cidx_to_outlier_mask(self, rec_color):
+        outlier_mask = []
+        for i in range(self.num_recs):
+            if rec_color[i] == self.OUTLIER_COLOR_LABEL:
+                outlier_mask.append(1)
+            else:
+                outlier_mask.append(0)
+
+        return outlier_mask
+
+    # Returning (outlier_mask, df_outlier_free)
+    # outlier_mask: 0 <==> not outlier; 1 <==> outlier
+    # df_outlier_free: dataframe without possible outliers
+    def check_outliers(self, dataframe, columns_focus_on=None):
+        self.convert_str_to_num_in_numerical_cols()
+        dataframe = self.dataframe
+        self.num_recs = len(dataframe)
+
+        # Some Initializations
+        rec_color = np.zeros(self.num_recs, dtype=np.int32)
+
+        # Convert time strings to epoch seconds
+        ts_secs = self.__date_time_str_to_secs(dataframe)
+
+
+        # Filter outliers away by timestamp
+        self.__filter_by_timestamp(ts_secs, self.OUTLIER_COLOR_LABEL, rec_color)
+
+
+        # Filter outliers away by removing repetitive rows
+        self.__filter_by_repetition(dataframe, rec_color)
+
+        # Convert color index to labels
+        colors = self.__cidx_to_clabels(rec_color)
+
+        # Plot Time Segments
+        self.__plot_time_sgmt(ts_secs, colors)
+
+        # filter outliers away by continuity assumption
+        self.__filter_by_continuity_assumption(dataframe, rec_color)
+
+        # filter outliers away by logical inconsistency
+        self.__filter_by_logical_inconsistency(dataframe, rec_color)
+
+        # filter outliers away by z-scores
+        self.__filter_by_zscore(dataframe, rec_color)
+
+        # Convert color index to outlier mask
+        outlier_mask = self.__cidx_to_outlier_mask(rec_color)
+
+        # Assembly return value
+        df_outlier_free = dataframe.loc[dataframe['color'] != self.OUTLIER_COLOR_LABEL]
+        df_outlier_free = df_outlier_free.drop('color', 1)
+        return (outlier_mask, df_outlier_free)
+
 
     def process_data_cleaning(self):
-        """
+        """Process the data cleaning
         Returns
         -------
         cleaned_df : pandas data frame
             Cleaned athlete CoachingMate data
         """
         self.handle_missing_values()
-        self.handle_outliers()
+        # self.handle_outliers()
         return self.dataframe
 
 
@@ -328,8 +507,8 @@ if __name__ == '__main__':
     main('original', 'eduardo oliveira')  # clean original data for one athlete
 
     # Clean additional data
-    athletes_name = 'Eduardo Oliveira'
-    activity_type = 'cycling'
+    athletes_names = ['Eduardo Oliveira']
+    activity_type = ['cycling', 'running', 'swimming']
     split_type = 'real-time'
-    main('additional', athletes_name, activity_type, split_type)  # clean all additional data
+    main('additional', athletes_names[0], activity_type[0], split_type)  # clean all additional data with given condition
 
