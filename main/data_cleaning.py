@@ -135,7 +135,7 @@ class AdditionalDataCleaner():
         for column_name in missing_val_perc.keys():
             if float(missing_val_perc[column_name]) != 0:
                 no_missing = False
-                print('{} has {} missing'.format(column_name, missing_val_perc[column_name]))
+                print('{} has {}% missing'.format(column_name, round(missing_val_perc[column_name]*100, 3)))
         if no_missing:
             print('Great! No missing values!')
         return missing_val_perc
@@ -178,7 +178,11 @@ class AdditionalDataCleaner():
 
     def apply_multivariate_imputation(self, columns):
         null_cols = [col for col in columns if self.dataframe[col].isnull().all()]
-        if not null_cols:
+        if null_cols:
+            # If there are columns with all values missing, apply regression or ignore the column first.
+            print("All the values in columns {} are missing. Not able to apply imputation.".format(null_cols))
+            pass
+        else:
             new_data = self.dataframe.copy()
             iter_imputer = IterativeImputer(max_iter=10, random_state=0)
             new_data = pd.DataFrame(iter_imputer.fit_transform(new_data[columns]))
@@ -187,9 +191,7 @@ class AdditionalDataCleaner():
                 self.dataframe[columns] = new_data[columns]
             else:
                 print("All the values in columns {} are missing. Not able to apply imputation.".format(columns))
-        else:
-            # TODO: Apply regression or ignore
-            pass
+
 
     def apply_interpolation_imputation(self, columns):
         for column in columns:
@@ -307,6 +309,7 @@ def main(data_type='original', athletes_name=None, activity_type=None, split_typ
             df = pd.DataFrame(pd.read_csv(file_name))
             addtional_data_cleaner = AdditionalDataCleaner(df)
             if addtional_data_cleaner.check_empty():
+                print('File is empty.')
                 empty_files.append(file_name)
             else:
                 cleaned_df = addtional_data_cleaner.process_data_cleaning()
