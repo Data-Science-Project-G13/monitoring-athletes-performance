@@ -12,17 +12,58 @@ import numpy as np
 import pandas as pd
 import os
 import datetime as dt
+import matplotlib as plt
 import utility
 from scipy import stats
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import SimpleImputer, IterativeImputer, KNNImputer
 from data_loader import DataLoader
 
-from configparser import ConfigParser
+
+import pandas_profiling
+
+import warnings
+warnings.filterwarnings('ignore')
+
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer
+from sklearn.preprocessing import OrdinalEncoder
+from sklearn.ensemble import (GradientBoostingRegressor, GradientBoostingClassifier)
+pd.set_option('max.columns',100)
+pd.set_option('max.rows',500)
+
+
+import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
+import matplotlib
+plt.style.use('ggplot')
+from matplotlib.pyplot import figure
+
+matplotlib.rcParams['figure.figsize'] = (12,8)
+
+pd.options.mode.chained_assignment = None
+
+import seaborn as sns
+
+from sklearn import preprocessing
+from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
+from sklearn.linear_model import LogisticRegression
+from IPython.display import Image
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import DBSCAN
+from sklearn.neighbors import LocalOutlierFactor
+sns.set(style="darkgrid", palette="pastel", color_codes=True)
+sns.set_context('talk')
+from sklearn.impute import KNNImputer
+
+import missingno as msno
+from datetime import datetime
+
 
 # Set the data frame display option
 pd.set_option('display.max_row', 20)
 pd.set_option('display.max_columns', 10)
+
 
 class OriginalDataCleaner():
     """
@@ -50,11 +91,52 @@ class OriginalDataCleaner():
         self.categorical_columns = utility.get_original_categorical()
         self.dataframe = dataframe
 
-    def show_missing_val_distribution(self):
-        pass
+    def _drop_columns(self):
+        # TODO: Choose columns instead of dropping them
+        columns_to_drop = ['Favorite', 'Aerobic TE', 'Avg Run Cadence', 'Max Run Cadence', 'Avg Stride Length', 'Avg Vertical Ratio',
+             'Avg Vertical Oscillation', 'Avg Ground Contact Time'
+                , 'Avg GCT Balance', 'L/R Balance', 'Grit', 'Flow', 'Total Reps', 'Total Sets', 'Bottom Time',
+             'Min Temp', 'Surface Interval', 'Decompression', 'Best Lap Time', 'Max Temp']
+        # self.dataframe.drop(columns_to_drop, axis=1, inplace=True)
 
-    def show_missing_val_locations(self):
-        pass
+    def _convert_strings_to_lower_case(self):
+        self.dataframe['Activity Type'] = self.dataframe['Activity Type'].str.lower()
+        self.dataframe['Title'] = self.dataframe['Title'].str.lower()
+
+    def _handle_commas(self):
+        # TODO: Figure out for different columns, how do we treat comma. Is 1,000 1000 or 1.000?
+        columns_remove_comma = self.dataframe.columns
+        # columns_remove_comma = ['Max Avg Power (20 min)', 'Avg Power', 'Avg Stroke Rate', 'Avg HR', 'Max HR', 'Total Strokes',
+        #            'Avg. Swolf', 'Avg Bike Cadence', 'Max Bike Cadence', 'Normalized Power® (NP®)',
+        #            'Number of Laps']
+        for column in columns_remove_comma:
+            self.dataframe[column] = self.dataframe[column].astype(str).str.replace(',', '')
+        # self.dataframe.apply(lambda x: x.str.replace(',', '.'))
+
+    def _format_missing_val_with_nan(self):
+        # TODO: Missing value situations in config and in functions to handle
+        self.dataframe = self.dataframe.replace({ "--": np.nan, "...": np.nan })
+        self.dataframe.loc[self.dataframe['Max Speed'].str.contains(":", na=False), 'Max Speed'] = np.nan
+        self.dataframe.loc[self.dataframe['Avg Speed'].str.contains(":", na=False), 'Avg Speed'] = np.nan
+
+    def _convert_columns_to_numeric(self):
+        # TODO: columns in config
+        columns_to_numeric = ['Max Avg Power (20 min)', 'Avg Power', 'Avg Stroke Rate', 'Avg HR', 'Max HR', 'Total Strokes',
+                   'Avg. Swolf', 'Avg Bike Cadence', 'Max Bike Cadence', 'Normalized Power® (NP®)',
+                   'Number of Laps']
+        self.dataframe[columns_to_numeric] = self.dataframe[columns_to_numeric].apply(pd.to_numeric)
+
+    def _convert_column_types_to_float(self):
+        columns_to_float = ['Calories', 'Max Power', 'Max Speed', 'Avg Speed']
+        for column in columns_to_float:
+            self.dataframe[column].astype(float)
+
+    def _format_datetime(self):
+        self.dataframe['Date_extracted'] = pd.to_datetime(self.dataframe["Date"]).dt.normalize()
+        self.dataframe['Time_extracted'] = pd.to_datetime(self.dataframe["Date"]).dt.time
+        self.dataframe['Date'] = pd.to_datetime(self.dataframe['Date'])
+        self.dataframe['Time_sec'] = pd.to_timedelta(
+            pd.to_datetime(self.dataframe["Time"]).dt.strftime('%H:%M:%S')).dt.total_seconds()
 
     def make_heatmap(self):
         pass
@@ -65,7 +147,7 @@ class OriginalDataCleaner():
     def replace_missing_vals_with_nan(self):
         pass
 
-    def formalize_dates(self):
+    def formalize_da_format_missing_val_with_nantes(self):
         pass
 
     def clean_numerical_columns(self):
@@ -81,8 +163,13 @@ class OriginalDataCleaner():
         cleaned_df : pandas DataFrame
             Cleaned athlete CoachingMate data
         """
-        self.clean_numerical_columns()
-        self.clean_categorical_columns()
+        self._drop_columns()
+        self._convert_strings_to_lower_case()
+        self._handle_commas()
+        self._format_missing_val_with_nan()
+        self._convert_columns_to_numeric()
+        self._convert_column_types_to_float()
+        self._format_datetime()
         return self.dataframe
 
 
@@ -174,8 +261,8 @@ class AdditionalDataCleaner():
     def add_column_time_in_seconds(self):
         time_in_seconds = []
         for time in self.dataframe['timestamp']:
-            t = datetime.datetime.strptime(time[:-6], '%Y-%m-%d %H:%M:%S')
-            seconds = int(datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second).total_seconds())
+            t = dt.datetime.strptime(time[:-6], '%Y-%m-%d %H:%M:%S')
+            seconds = int(dt.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second).total_seconds())
             time_in_seconds.append(seconds)
         self.dataframe.insert(1, 'time_in_seconds', time_in_seconds, True)
 
@@ -249,7 +336,7 @@ class AdditionalDataCleaner():
     #     self.handle_outliers_numerical_ordered()
     #     self.handle_outliers_numerical_fluctuating()
 
-    def __date_time_str_to_secs(self, dataframe):
+    def _date_time_str_to_secs(self, dataframe):
         first_ts_datetime = dt.datetime.strptime(dataframe['timestamp'][0][:-6], "%Y-%m-%d %H:%M:%S")
         ts_secs = []
         for ts in dataframe['timestamp']:
@@ -258,7 +345,7 @@ class AdditionalDataCleaner():
         ts_secs = np.array(ts_secs)
         return ts_secs
 
-    def __filter_by_repetition(self, dataframe, rec_color):
+    def _filter_by_repetition(self, dataframe, rec_color):
         df = dataframe.drop(columns=['timestamp', 'timestamp_utc', 'timezone'])
         dup_df = df[df.duplicated()]
         idx_list = dup_df.index.tolist()
@@ -266,12 +353,13 @@ class AdditionalDataCleaner():
             rec_color[i] = self.OUTLIER_COLOR_LABEL
             print("[OUTLIER DETECTED!] Index == %d Reason: DUPLICATE ROW!" % (i))
 
-    def __filter_by_timestamp(self, ts_secs, OUTLIER_COLOR_LABEL, rec_color):
+    def _filter_by_timestamp(self, ts_secs, OUTLIER_COLOR_LABEL, rec_color):
         # Some Initializations
         self.num_recs = len(ts_secs)
         self.time_sgmt_num = 0
         this_time_sgmt_row_cnt = 1
 
+        i = 0
         for i in range(1, self.num_recs):
             secs_diff = ts_secs[i]-ts_secs[i-1]
             # Timestamps must be non-decreasing
@@ -304,7 +392,7 @@ class AdditionalDataCleaner():
                 print("[OUTLIER DETECTED!] Index == %d Reason: FEWER RECORDS FOR THIS TIME SEGMENT(<%d)!" % (
                 j, self.ROW_COUNT_THRESHOLD))
 
-    def __filter_by_continuity_assumption(self, dataframe, rec_color):
+    def _filter_by_continuity_assumption(self, dataframe, rec_color):
         ## 1. The change of temperature should not exceed 1 degree
         for i in range(1, self.num_recs):
             if (rec_color[i] == rec_color[i-1] and rec_color[i] != self.OUTLIER_COLOR_LABEL):
@@ -313,7 +401,7 @@ class AdditionalDataCleaner():
                     rec_color[i] = self.OUTLIER_COLOR_LABEL
                     print("[OUTLIER DETECTED!] Index == %d Reason: TEMPERATURE CHANGE TOO FAST!" % (i))
 
-    def __filter_by_logical_inconsistency(self, dataframe, rec_color):
+    def _filter_by_logical_inconsistency(self, dataframe, rec_color):
         ## 1. distance, enhanced_speed, speed, heart_rate and cadence must be greater than 0
         for i in range(self.num_recs):
             if dataframe['distance'][i] <= 0:
@@ -332,7 +420,7 @@ class AdditionalDataCleaner():
                 rec_color[i] = self.OUTLIER_COLOR_LABEL
                 print("[OUTLIER DETECTED!] Index == %d Reason: LOGICAL ERROR, cadence has to be POSITIVE!" % (i))
 
-    def __filter_by_zscore(self, dataframe, rec_color):
+    def _filter_by_zscore(self, dataframe, rec_color):
         # Configuraing different tolerace for different columns
         columns = ['position_lat', 'position_long', 'enhanced_altitude', 'altitude', 'heart_rate', 'cadence']
         tolerances = [2, 2, 3, 3, 3, 3]  # Configurable
@@ -349,7 +437,7 @@ class AdditionalDataCleaner():
                     print("[OUTLIER DETECTED!] Index == %d Reason: Z-SCORE(%f) EXCEEDS THE TOLERANCE(%f)" % (
                         i, z[i], tolerances[j]))
 
-    def __plot_time_sgmt(self, ts_secs, colors):
+    def _plot_time_sgmt(self, ts_secs, colors):
         num_recs = len(ts_secs)
         zeros = np.zeros(num_recs).reshape(num_recs, 1)
         ts_secs = ts_secs.reshape(num_recs, 1)
@@ -357,14 +445,14 @@ class AdditionalDataCleaner():
         plt.scatter(X[:, 0], X[:, 1], c=colors)
         plt.show()
 
-    def __cidx_to_clabels(self, rec_color):
+    def _cidx_to_clabels(self, rec_color):
         colors = []
         for i in range(len(rec_color)):
             colors.append(self.color_labels[rec_color[i]])
 
         return colors
 
-    def __cidx_to_outlier_mask(self, rec_color):
+    def _cidx_to_outlier_mask(self, rec_color):
         outlier_mask = []
         for i in range(self.num_recs):
             if rec_color[i] == self.OUTLIER_COLOR_LABEL:
@@ -377,7 +465,7 @@ class AdditionalDataCleaner():
     # Returning (outlier_mask, df_outlier_free)
     # outlier_mask: 0 <==> not outlier; 1 <==> outlier
     # df_outlier_free: dataframe without possible outliers
-    def check_outliers(self, dataframe, columns_focus_on=None):
+    def handle_outliers(self):
         self.convert_str_to_num_in_numerical_cols()
         dataframe = self.dataframe
         self.num_recs = len(dataframe)
@@ -386,39 +474,36 @@ class AdditionalDataCleaner():
         rec_color = np.zeros(self.num_recs, dtype=np.int32)
 
         # Convert time strings to epoch seconds
-        ts_secs = self.__date_time_str_to_secs(dataframe)
-
+        ts_secs = self._date_time_str_to_secs(dataframe)
 
         # Filter outliers away by timestamp
-        self.__filter_by_timestamp(ts_secs, self.OUTLIER_COLOR_LABEL, rec_color)
-
+        self._filter_by_timestamp(ts_secs, self.OUTLIER_COLOR_LABEL, rec_color)
 
         # Filter outliers away by removing repetitive rows
-        self.__filter_by_repetition(dataframe, rec_color)
+        self._filter_by_repetition(dataframe, rec_color)
 
         # Convert color index to labels
-        colors = self.__cidx_to_clabels(rec_color)
+        colors = self._cidx_to_clabels(rec_color)
 
         # Plot Time Segments
-        self.__plot_time_sgmt(ts_secs, colors)
+        self._plot_time_sgmt(ts_secs, colors)
 
         # filter outliers away by continuity assumption
-        self.__filter_by_continuity_assumption(dataframe, rec_color)
+        self._filter_by_continuity_assumption(dataframe, rec_color)
 
         # filter outliers away by logical inconsistency
-        self.__filter_by_logical_inconsistency(dataframe, rec_color)
+        self._filter_by_logical_inconsistency(dataframe, rec_color)
 
         # filter outliers away by z-scores
-        self.__filter_by_zscore(dataframe, rec_color)
+        self._filter_by_zscore(dataframe, rec_color)
 
         # Convert color index to outlier mask
-        outlier_mask = self.__cidx_to_outlier_mask(rec_color)
+        outlier_mask = self._cidx_to_outlier_mask(rec_color)
 
         # Assembly return value
         df_outlier_free = dataframe.loc[dataframe['color'] != self.OUTLIER_COLOR_LABEL]
         df_outlier_free = df_outlier_free.drop('color', 1)
         return (outlier_mask, df_outlier_free)
-
 
     def process_data_cleaning(self):
         """Process the data cleaning
@@ -471,7 +556,7 @@ def main(data_type='original', athletes_name=None, activity_type=None, split_typ
             df = data_loader_original.load_original_data(athletes_name)
             original_data_cleaner = OriginalDataCleaner(df)
             cleaned_df = original_data_cleaner.process_data_cleaning()
-            file_name = data_loader_original.config.get('ORIGINAL-DATA-SETS', athletes_name.lower())
+            # file_name = data_loader_original.config.get('ORIGINAL-DATA-SETS', athletes_name.lower())
             # cleaned_df.to_csv('{}/data/cleaned_original/{}'.format(os.path.pardir, file_name))
             # print('Cleaned {} data saved!'.format(file_name))
 
@@ -504,12 +589,12 @@ def main(data_type='original', athletes_name=None, activity_type=None, split_typ
 
 if __name__ == '__main__':
     # Clean original data
-    main('original')  # clean all original data
+    # main('original')  # clean all original data
     main('original', 'eduardo oliveira')  # clean original data for one athlete
 
-    # Clean additional data
-    athletes_names = ['Eduardo Oliveira']
-    activity_type = ['cycling', 'running', 'swimming']
-    split_type = 'real-time'
-    main('additional', athletes_names[0], activity_type[0], split_type)  # clean all additional data with given condition
+    # # Clean additional data
+    # athletes_names = ['Eduardo Oliveira']
+    # activity_type = ['cycling', 'running', 'swimming']
+    # split_type = 'real-time'
+    # main('additional', athletes_names[0], activity_type[0], split_type)  # clean all additional data with given condition
 
