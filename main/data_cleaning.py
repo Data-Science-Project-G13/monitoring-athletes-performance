@@ -472,6 +472,17 @@ class AdditionalDataCleaner():
                     print("[OUTLIER DETECTED!] Index == %d Reason: Z-SCORE(%f) EXCEEDS THE TOLERANCE(%f)" % (
                         i, z[i], tolerances[j]))
 
+    def __boxplot(self, df, rec_color):
+        plt.boxplot(df, sym="o", whis=1.5)
+        plt.show()
+        Q1 = df.quantile(0.25)
+        Q3 = df.quantile(0.75)
+        IQR = Q3 - Q1
+        IQR_predicate = (df < Q1 - 1.5 * IQR) | (df > Q3 + 1.5 * IQR)
+        dropped = df[IQR_predicate]
+        for idx in dropped:
+            rec_color[idx] = self.OUTLIER_COLOR_LABEL
+
     def _plot_time_sgmt(self, ts_secs, colors):
         num_recs = len(ts_secs)
         zeros = np.zeros(num_recs).reshape(num_recs, 1)
