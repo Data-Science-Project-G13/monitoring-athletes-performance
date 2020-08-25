@@ -472,6 +472,7 @@ class AdditionalDataCleaner():
                     print("[OUTLIER DETECTED!] Index == %d Reason: Z-SCORE(%f) EXCEEDS THE TOLERANCE(%f)" % (
                         i, z[i], tolerances[j]))
 
+    # boxplot
     def __boxplot(self, df, rec_color):
         plt.boxplot(df, sym="o", whis=1.5)
         plt.show()
