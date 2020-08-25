@@ -138,23 +138,56 @@ class OriginalDataCleaner():
         self.dataframe['Time_sec'] = pd.to_timedelta(
             pd.to_datetime(self.dataframe["Time"]).dt.strftime('%H:%M:%S')).dt.total_seconds()
 
+    # handling irregular data
+    # select numeric columns
+    def get_numerical_columns(self):
+        numeric_columns = self.dataframe.select_dtypes(include=[np.number])
+        numeric_column_values = numeric_columns.columns.values
+        return numeric_columns
+
+    def get_categorical_columns(self):
+        categorical_columns = self.dataframe.select_dtypes(exclude=[np.number])
+        categoric_values = categorical_columns.columns.values
+        return categorical_columns
+
+    def find_missing_percent(self):
+        """
+        Returns dataframe containing the total missing values and percentage of total
+        missing values of a column.
+        """
+        missing_val_df = pd.DataFrame({'ColumnName': [], 'TotalMissingVals': [], 'PercentMissing': []})
+        for col in self.dataframe.columns:
+            sum_miss_val = self.dataframe[col].isnull().sum()
+            percent_miss_val = round((sum_miss_val / self.dataframe.shape[0]) * 100, 2)
+            missing_val_df = missing_val_df.append(dict(zip(missing_val_df.columns, [col, sum_miss_val, percent_miss_val])),
+                                         ignore_index=True)
+        '''Columns with missing values'''
+        print(f"Number of columns with missing values: {str(missing_val_df[missing_val_df['PercentMissing'] > 0.0].shape[0])}")
+        return missing_val_df
+
+    def plot_missing_val_bar(self):
+        graph = msno.bar(self.dataframe)
+        return graph
+
+    def get_missingno_matrix(self):
+        matrix = msno.matrix(self.dataframe)
+        return matrix
+
     def make_heatmap(self):
-        pass
+        heatmap = msno.heatmap(self.dataframe)
+        return heatmap
 
-    def make_correlation_plot(self):
-        pass
+    def get_deno_gram(self):
+        dendogram = msno.dendrogram(self.dataframe)
+        return (dendogram)
 
-    def replace_missing_vals_with_nan(self):
-        pass
+    def get_profile_report(self):
+        return pandas_profiling.ProfileReport(self.dataframe)
 
-    def formalize_da_format_missing_val_with_nantes(self):
-        pass
-
-    def clean_numerical_columns(self):
-        pass
-
-    def clean_categorical_columns(self):
-        pass
+    def apply_mean_imputation(self, numeric_columns):
+        for col in numeric_columns:
+            mean = self.dataframe[col].mean()
+            self.dataframe[col] = self.dataframe[col].fillna(mean)
 
     def process_data_cleaning(self):
         """
@@ -170,7 +203,9 @@ class OriginalDataCleaner():
         self._convert_columns_to_numeric()
         self._convert_column_types_to_float()
         self._format_datetime()
-        return self.dataframe
+        numerical_cols = self.get_numerical_columns()
+        self.apply_mean_imputation(numerical_cols)
+
 
 
 class AdditionalDataCleaner():
