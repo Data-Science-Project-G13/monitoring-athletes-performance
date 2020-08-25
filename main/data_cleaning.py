@@ -33,10 +33,10 @@ pd.set_option('max.columns',100)
 pd.set_option('max.rows',500)
 
 
-import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
+import matplotlib.pyplot as pyplot
 import matplotlib
-plt.style.use('ggplot')
+pyplot.style.use('ggplot')
 from matplotlib.pyplot import figure
 
 matplotlib.rcParams['figure.figsize'] = (12,8)
@@ -477,8 +477,8 @@ class AdditionalDataCleaner():
         zeros = np.zeros(num_recs).reshape(num_recs, 1)
         ts_secs = ts_secs.reshape(num_recs, 1)
         X = np.concatenate((ts_secs, zeros), axis=1)
-        plt.scatter(X[:, 0], X[:, 1], c=colors)
-        plt.show()
+        # plt.scatter(X[:, 0], X[:, 1], c=colors)
+        # plt.show()
 
     def _cidx_to_clabels(self, rec_color):
         colors = []
