@@ -242,6 +242,7 @@ class AdditionalDataCleaner():
     """
 
     def __init__(self, dataframe: pd.DataFrame):
+        self.dataframe = dataframe
         self.column_groups_imputation = {'univariate': {'timezone'},
                                          'multivariate1': {"distance", "timestamp"},
                                          'multivariate2': {"speed", "heart_rate", "cadence"},
@@ -249,11 +250,9 @@ class AdditionalDataCleaner():
         self.numerical_ordered_columns = utility.get_additional_numerical_ordered()
         self.numerical_fluctuating_columns = utility.get_additional_numerical_fluctuating()
         self.categorical_columns = utility.get_additional_categorical()
-        self.dataframe = dataframe
         self.color_labels = ['blue', 'orange', 'green', 'purple', 'brown', 'pink', 'grey', 'olive', 'cyan', 'black',
                              'maroon', 'chocolate', 'gold', 'yellow', 'lawngreen', 'aqua', 'steelblue', 'navy',
-                             'indigo',
-                             'magenta', 'crimson', 'red']
+                             'indigo', 'magenta', 'crimson', 'red']
         self.OUTLIER_COLOR_LABEL = len(self.color_labels) - 1
         self.TIME_DIFF_THRESHOLD = 3 * 60  # Configurable
         self.ROW_COUNT_THRESHOLD = 150  # Configurable
@@ -297,18 +296,6 @@ class AdditionalDataCleaner():
             # dataframe[column] = dataframe[column].astype(float)
             self.dataframe[column] = pd.to_numeric(self.dataframe[column], errors='coerce')
 
-    # def check_outliers(self):
-    #     z = np.abs(stats.zscore(self.dataframe[self.numerical_ordered_columns]))
-    #     threshold = 3
-    #     outlier_zscores = np.where(z > threshold)
-    #     outlier_rows_cols = outlier_zscores
-    #     if len(outlier_zscores[0]) > 0:
-    #         for row in outlier_zscores[0]:
-    #             for col in outlier_zscores[1]:
-    #                 outlier_zscore = z[row][col]
-    #                 ourlier_value = self.dataframe.iloc[row, col]
-    #     return outlier_rows_cols
-
     def add_column_time_in_seconds(self):
         time_in_seconds = []
         for time in self.dataframe['timestamp']:
@@ -317,14 +304,14 @@ class AdditionalDataCleaner():
             time_in_seconds.append(seconds)
         self.dataframe.insert(1, 'time_in_seconds', time_in_seconds, True)
 
-    def apply_univariate_imputation(self, columns):
+    def _apply_univariate_imputation(self, columns):
         new_data = self.dataframe.copy()
         imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
         new_data = pd.DataFrame(imputer.fit_transform(new_data[[columns]]))
         new_data.columns = [columns]
         self.dataframe[columns] = new_data[columns]
 
-    def apply_multivariate_imputation(self, columns):
+    def _apply_multivariate_imputation(self, columns):
         null_cols = [col for col in columns if self.dataframe[col].isnull().all()]
         if null_cols:
             # If there are columns with all values missing, apply regression or ignore the column first.
@@ -340,28 +327,25 @@ class AdditionalDataCleaner():
             else:
                 print("All the values in columns {} are missing. Not able to apply imputation.".format(columns))
 
-    def apply_interpolation_imputation(self, columns):
+    def _apply_interpolation_imputation(self, columns):
         for column in columns:
             interpolated_column = self.dataframe[column].interpolate(method='spline', order=2, limit=2)
             self.dataframe[column] = interpolated_column
 
-    def apply_nearest_neighbor_imputation(self, missing_values=np.nan, strategy="mean"):
-        pass
-
-    def apply_regression_prediction_interpolation(self, column_names):
+    def _apply_regression_prediction_imputation(self, column_names):
         # TODO: for whole column missing
         pass
 
-    def apply_imputations(self, columns_need_imputation):
+    def _apply_imputations(self, columns_need_imputation):
         for impute_tech, column_names in self.column_groups_imputation.items():
             column_intersection = column_names.intersection(columns_need_imputation)
             if column_intersection:
                 if impute_tech == "univariate":
-                    self.apply_univariate_imputation(list(column_intersection))
+                    self._apply_univariate_imputation(list(column_intersection))
                 elif impute_tech == "multivariate1" or "multivariate2":
-                    self.apply_multivariate_imputation(list(column_intersection))
+                    self._apply_multivariate_imputation(list(column_intersection))
                 elif impute_tech == "interpolation":
-                    self.apply_regression_prediction_interpolation(list(column_intersection))
+                    self._apply_regression_prediction_imputation(list(column_intersection))
 
     def handle_missing_values(self):
         self.format_missing_val_with_nan()
@@ -369,23 +353,9 @@ class AdditionalDataCleaner():
         columns_need_imputation = self.get_columns_with_missing_values()
         if columns_need_imputation:
             self.add_column_time_in_seconds()
-            self.apply_imputations(columns_need_imputation)
+            self._apply_imputations(columns_need_imputation)
         print('After imputation: ')
         self.check_missing_val_perc()
-
-    # def handle_outliers_timestamp(self):
-    #     pass
-    #
-    # def handle_outliers_numerical_ordered(self):
-    #     pass
-    #
-    # def handle_outliers_numerical_fluctuating(self):
-    #     pass
-    #
-    # def handle_outliers(self):
-    #     self.handle_outliers_timestamp()
-    #     self.handle_outliers_numerical_ordered()
-    #     self.handle_outliers_numerical_fluctuating()
 
     def _date_time_str_to_secs(self, dataframe):
         first_ts_datetime = dt.datetime.strptime(dataframe['timestamp'][0][:-6], "%Y-%m-%d %H:%M:%S")
@@ -505,8 +475,8 @@ class AdditionalDataCleaner():
         zeros = np.zeros(num_recs).reshape(num_recs, 1)
         ts_secs = ts_secs.reshape(num_recs, 1)
         X = np.concatenate((ts_secs, zeros), axis=1)
-        # plt.scatter(X[:, 0], X[:, 1], c=colors)
-        # plt.show()
+        pyplot.scatter(X[:, 0], X[:, 1], c=colors)
+        pyplot.show()
 
     def _cidx_to_clabels(self, rec_color):
         colors = []
@@ -524,6 +494,32 @@ class AdditionalDataCleaner():
                 outlier_mask.append(0)
 
         return outlier_mask
+
+    def get_outliers_by_zscore(self):
+        z = np.abs(stats.zscore(self.dataframe[self.numerical_ordered_columns]))
+        threshold = 3
+        outlier_zscores = np.where(z > threshold)
+        outlier_rows_cols = outlier_zscores
+        if len(outlier_zscores[0]) > 0:
+            for row in outlier_zscores[0]:
+                for col in outlier_zscores[1]:
+                    outlier_zscore = z[row][col]
+                    ourlier_value = self.dataframe.iloc[row, col]
+        return outlier_rows_cols
+
+    def get_outliers_timestamp(self):
+        pass
+    #
+    # def handle_outliers_numerical_ordered(self):
+    #     pass
+    #
+    # def handle_outliers_numerical_fluctuating(self):
+    #     pass
+    #
+    # def handle_outliers(self):
+    #     self.handle_outliers_timestamp()
+    #     self.handle_outliers_numerical_ordered()
+    #     self.handle_outliers_numerical_fluctuating()
 
     # Returning (outlier_mask, df_outlier_free)
     # outlier_mask: 0 <==> not outlier; 1 <==> outlier
@@ -576,7 +572,7 @@ class AdditionalDataCleaner():
             Cleaned athlete CoachingMate data
         """
         self.handle_missing_values()
-        # self.handle_outliers()
+        self.handle_outliers()
         return self.dataframe
 
 
@@ -655,9 +651,9 @@ if __name__ == '__main__':
     # main('original')  # clean all original data
     main('original', 'eduardo oliveira')  # clean original data for one athlete
 
-    # # Clean additional data
-    # athletes_names = ['Eduardo Oliveira']
-    # activity_type = ['cycling', 'running', 'swimming']
-    # split_type = 'real-time'
-    # main('additional', athletes_names[0], activity_type[0], split_type)  # clean all additional data with given condition
+    # Clean additional data
+    athletes_names = ['Eduardo Oliveira']
+    activity_type = ['cycling', 'running', 'swimming']
+    split_type = 'real-time'
+    main('additional', athletes_names[0], activity_type[0], split_type)  # clean all additional data with given condition
 
