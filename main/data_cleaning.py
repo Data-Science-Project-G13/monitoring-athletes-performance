@@ -29,8 +29,6 @@ from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.ensemble import (GradientBoostingRegressor, GradientBoostingClassifier)
-pd.set_option('max.columns',100)
-pd.set_option('max.rows',500)
 
 
 import matplotlib.mlab as mlab
@@ -87,17 +85,17 @@ class OriginalDataCleaner():
     """
 
     def __init__(self, dataframe: pd.DataFrame):
-        self.numerical_columns = utility.get_original_numerical()
-        self.categorical_columns = utility.get_original_categorical()
+        # self.numerical_columns = utility.get_original_numerical()
+        # self.categorical_columns = utility.get_original_categorical()
         self.dataframe = dataframe
 
     def _drop_columns(self):
         # TODO: Choose columns instead of dropping them
-        columns_to_drop = ['Favorite', 'Aerobic TE', 'Avg Run Cadence', 'Max Run Cadence', 'Avg Stride Length', 'Avg Vertical Ratio',
-             'Avg Vertical Oscillation', 'Avg Ground Contact Time'
-                , 'Avg GCT Balance', 'L/R Balance', 'Grit', 'Flow', 'Total Reps', 'Total Sets', 'Bottom Time',
-             'Min Temp', 'Surface Interval', 'Decompression', 'Best Lap Time', 'Max Temp']
-        # self.dataframe.drop(columns_to_drop, axis=1, inplace=True)
+        columns_to_drop = ['Favorite', 'Aerobic TE', 'Avg Run Cadence', 'Max Run Cadence', 'Avg Stride Length',
+                           'Avg Vertical Ratio', 'Avg Vertical Oscillation', 'Avg Ground Contact Time',
+                           'Avg GCT Balance', 'L/R Balance', 'Grit', 'Flow', 'Total Reps', 'Total Sets',
+                           'Bottom Time', 'Min Temp', 'Surface Interval', 'Decompression', 'Best Lap Time', 'Max Temp']
+        self.dataframe.drop(columns_to_drop, axis=1, inplace=True)
 
     def _convert_strings_to_lower_case(self):
         self.dataframe['Activity Type'] = self.dataframe['Activity Type'].str.lower()
@@ -111,6 +109,8 @@ class OriginalDataCleaner():
         #            'Number of Laps']
         for column in columns_remove_comma:
             self.dataframe[column] = self.dataframe[column].astype(str).str.replace(',', '')
+            # TODO: Handling semicolon
+            # self.dataframe[column] = self.dataframe[column].astype(str).str.replace(':', '')
         # self.dataframe.apply(lambda x: x.str.replace(',', '.'))
 
     def _format_missing_val_with_nan(self):
@@ -137,18 +137,6 @@ class OriginalDataCleaner():
         self.dataframe['Date'] = pd.to_datetime(self.dataframe['Date'])
         self.dataframe['Time_sec'] = pd.to_timedelta(
             pd.to_datetime(self.dataframe["Time"]).dt.strftime('%H:%M:%S')).dt.total_seconds()
-
-    # handling irregular data
-    # select numeric columns
-    def get_numerical_columns(self):
-        numeric_columns = self.dataframe.select_dtypes(include=[np.number])
-        numeric_column_values = numeric_columns.columns.values
-        return numeric_columns
-
-    def get_categorical_columns(self):
-        categorical_columns = self.dataframe.select_dtypes(exclude=[np.number])
-        categoric_values = categorical_columns.columns.values
-        return categorical_columns
 
     def find_missing_percent(self):
         """
@@ -184,10 +172,39 @@ class OriginalDataCleaner():
     def get_profile_report(self):
         return pandas_profiling.ProfileReport(self.dataframe)
 
-    def apply_mean_imputation(self, numeric_columns):
-        for col in numeric_columns:
-            mean = self.dataframe[col].mean()
-            self.dataframe[col] = self.dataframe[col].fillna(mean)
+    # handling irregular data
+    # select numeric columns
+    def get_numerical_columns(self):
+        numeric_column_df = self.dataframe.select_dtypes(include=[np.number])
+        numeric_column_values = numeric_column_df.columns.values
+        return numeric_column_df
+
+    def get_categorical_columns(self):
+        categorical_columns = self.dataframe.select_dtypes(exclude=[np.number])
+        categoric_values = categorical_columns.columns.values
+        return categorical_columns
+
+    def _apply_mean_imputation(self, columns):
+        """Apply mean imputation for the given columns
+        # TODO: A reminder to Sindhu: For this function, input is a list of column names which are strings,
+        # TODO: no output, just modify self.dataframe.
+        # TODO: So after calling this function, self.dataframe has the specified columns imputated.
+        Parameters
+        -------
+        columns: [str]
+           List of column names
+        """
+        pass
+
+    def _apply_regression_imputation(self, columns):
+        """Apply regression imputation for the given columns
+
+        Parameters
+        -------
+        columns: [str]
+           List of column names
+        """
+        pass
 
     def process_data_cleaning(self):
         """
@@ -196,6 +213,8 @@ class OriginalDataCleaner():
         cleaned_df : pandas DataFrame
             Cleaned athlete CoachingMate data
         """
+        # TODO: A reminder to Sindhu: MAIN FUNCTION FOR THE CLASS
+        # TODO: Everytime you finish a function, call it below, and test below.
         self._drop_columns()
         self._convert_strings_to_lower_case()
         self._handle_commas()
@@ -203,9 +222,6 @@ class OriginalDataCleaner():
         self._convert_columns_to_numeric()
         self._convert_column_types_to_float()
         self._format_datetime()
-        numerical_cols = self.get_numerical_columns()
-        self.apply_mean_imputation(numerical_cols)
-
 
 
 class AdditionalDataCleaner():
@@ -301,12 +317,12 @@ class AdditionalDataCleaner():
             time_in_seconds.append(seconds)
         self.dataframe.insert(1, 'time_in_seconds', time_in_seconds, True)
 
-    def apply_univariate_imputation(self, column):
+    def apply_univariate_imputation(self, columns):
         new_data = self.dataframe.copy()
         imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
-        new_data = pd.DataFrame(imputer.fit_transform(new_data[[column]]))
-        new_data.columns = [column]
-        self.dataframe[column] = new_data[column]
+        new_data = pd.DataFrame(imputer.fit_transform(new_data[[columns]]))
+        new_data.columns = [columns]
+        self.dataframe[columns] = new_data[columns]
 
     def apply_multivariate_imputation(self, columns):
         null_cols = [col for col in columns if self.dataframe[col].isnull().all()]
@@ -474,8 +490,8 @@ class AdditionalDataCleaner():
 
     # boxplot
     def __boxplot(self, df, rec_color):
-        plt.boxplot(df, sym="o", whis=1.5)
-        plt.show()
+        pyplot.boxplot(df, sym="o", whis=1.5)
+        pyplot.show()
         Q1 = df.quantile(0.25)
         Q3 = df.quantile(0.75)
         IQR = Q3 - Q1
