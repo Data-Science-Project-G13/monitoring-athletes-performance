@@ -222,6 +222,12 @@ class OriginalDataCleaner():
         self._convert_columns_to_numeric()
         self._convert_column_types_to_float()
         self._format_datetime()
+        # columns = ['Max HR', 'Calories']
+        numerical_columns = self.get_numerical_columns()
+        self._apply_mean_imputation(numerical_columns)
+
+        categorical_columns = self.get_categorical_columns()
+        self._apply_regression_imputation(categorical_columns)
 
 
 class AdditionalDataCleaner():
@@ -572,7 +578,7 @@ class AdditionalDataCleaner():
             Cleaned athlete CoachingMate data
         """
         self.handle_missing_values()
-        self.handle_outliers()
+        # self.handle_outliers()
         return self.dataframe
 
 
