@@ -595,13 +595,15 @@ def _create_cleaned_data_folder(data_type):
         raise Exception('No {} type of datasets'.format(data_type))
 
 
-def _create_log_folders(data_type):
+def _create_log_folders(data_type, athletes_name=None):
     if data_type == 'original':
         log_folder_names = ['original_missing_value_log',
                              'original_outlier_log']
     elif data_type == 'additional':
         log_folder_names = ['additional_missing_value_log',
                             'additional_outlier_log']
+        if athletes_name:
+            log_folder_names.extend(['{}/{}'.format(name, athletes_name) for name in log_folder_names])
     else:
         raise Exception('No {} type of datasets'.format(data_type))
     for log_folder_name in log_folder_names:
@@ -624,11 +626,15 @@ def _save_cleaned_df(data_type, athletes_name, file_name, cleaned_df):
         print('{}\'s cleaned {} data saved'.format(athletes_name.capitalize(), file_name[-41:]))
 
 
-def _save_log(log_type, log_df, file_name, athletes_name=None):
-    if log_type == 'missing value':
-        pass
-    elif log_type == 'outlier':
-        log_df.to_csv('{}/log/additional_outlier_log/{}/{}'.format(os.path.pardir, athletes_name, file_name[-41:]))
+def _save_log(data_type, log_type, file_name, log_df, athletes_name=None):
+    if data_type == 'original':
+        log_file_path = '{}/log/{}_{}_log/{}'.format(os.path.pardir, data_type, log_type, file_name[-41:])
+    elif data_type == 'additional':
+        log_file_path = '{}/log/{}_{}_log/{}/{}'.format(os.path.pardir, data_type, log_type, athletes_name, file_name[-41:])
+    else:
+        raise Exception('No {} type of datasets'.format(data_type))
+    log_df.to_csv(log_file_path)
+
 
 
 def _main_helper_original(athletes_name=None, file_name: str=None):
@@ -662,10 +668,9 @@ def _main_helper_additional(athletes_name, activity_type, split_type):
             addtional_data_cleaner.process_data_cleaning()
             cleaned_df = addtional_data_cleaner.dataframe
             _save_cleaned_df('additional', athletes_name, file_name, cleaned_df)
-
-            # outlier_log_df = pd.DataFrame(addtional_data_cleaner.outlier_dict_logger)
-            # _save_log(log_type='outlier', log_df=outlier_log_df, file_name=file_name, athletes_name=athletes_name)
-
+            outlier_log_df = pd.DataFrame(addtional_data_cleaner.outlier_dict_logger)
+            _save_log(data_type='additional', log_type='outlier', file_name=file_name,
+                      athletes_name=athletes_name, log_df=outlier_log_df)
     print('\nFor {}\'s additional data, {} out of {} {} files are empty.'.format(athletes_name,
                                                                                  len(empty_files),
                                                                                  len(additional_file_names),
@@ -674,6 +679,7 @@ def _main_helper_additional(athletes_name, activity_type, split_type):
 
 def main(data_type='original', athletes_name:str=None, activity_type:str=None, split_type:str=None):
     """The main function of processing data cleaning
+
     Parameters
     -------
     data_type: str
@@ -688,7 +694,7 @@ def main(data_type='original', athletes_name:str=None, activity_type:str=None, s
         Eg. 'laps', 'real-time', 'starts'.
     """
     _create_cleaned_data_folder(data_type)
-    _create_log_folders(data_type)
+    _create_log_folders(data_type, athletes_name)
 
     if data_type == 'original':
         if athletes_name is None:
