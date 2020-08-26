@@ -657,9 +657,8 @@ if __name__ == '__main__':
     # main('original')  # clean all original data
     main('original', 'eduardo oliveira')  # clean original data for one athlete
 
-    # Clean additional data
-    athletes_names = ['Eduardo Oliveira']
-    activity_type = ['cycling', 'running', 'swimming']
-    split_type = 'real-time'
-    main('additional', athletes_names[0], activity_type[0], split_type)  # clean all additional data with given condition
-
+    # # Clean additional data
+    # athletes_names = ['Eduardo Oliveira']
+    # activity_type = ['cycling', 'running', 'swimming']
+    # split_type = 'real-time'
+    # main('additional', athletes_names[0], activity_type[0], split_type)  # clean all additional data with given condition
