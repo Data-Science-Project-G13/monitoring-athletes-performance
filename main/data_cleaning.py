@@ -222,12 +222,17 @@ class OriginalDataCleaner():
         self._convert_columns_to_numeric()
         self._convert_column_types_to_float()
         self._format_datetime()
+
+
+
         # columns = ['Max HR', 'Calories']
         numerical_columns = self.get_numerical_columns()
         self._apply_mean_imputation(numerical_columns)
 
         categorical_columns = self.get_categorical_columns()
         self._apply_regression_imputation(categorical_columns)
+
+        return self.dataframe
 
 
 class AdditionalDataCleaner():
@@ -247,8 +252,9 @@ class AdditionalDataCleaner():
        Process the data cleaning
     """
 
-    def __init__(self, dataframe: pd.DataFrame):
+    def __init__(self, dataframe: pd.DataFrame, file_name: str=None):
         self.dataframe = dataframe
+        self.file_name = file_name
         self.column_groups_imputation = {'univariate': {'timezone'},
                                          'multivariate1': {"distance", "timestamp"},
                                          'multivariate2': {"speed", "heart_rate", "cadence"},
@@ -256,13 +262,16 @@ class AdditionalDataCleaner():
         self.numerical_ordered_columns = utility.get_additional_numerical_ordered()
         self.numerical_fluctuating_columns = utility.get_additional_numerical_fluctuating()
         self.categorical_columns = utility.get_additional_categorical()
+        self.outlier_dict_logger = {'Outlier Index': [], 'Column': [], 'Reason': []}
+        self.outlier_rows_cols = []
+
         self.color_labels = ['blue', 'orange', 'green', 'purple', 'brown', 'pink', 'grey', 'olive', 'cyan', 'black',
                              'maroon', 'chocolate', 'gold', 'yellow', 'lawngreen', 'aqua', 'steelblue', 'navy',
                              'indigo', 'magenta', 'crimson', 'red']
         self.OUTLIER_COLOR_LABEL = len(self.color_labels) - 1
         self.TIME_DIFF_THRESHOLD = 3 * 60  # Configurable
         self.ROW_COUNT_THRESHOLD = 150  # Configurable
-        self.num_recs = -1
+        self.num_records = -1
         self.time_sgmt_num = 0
 
     def check_empty(self):
@@ -279,10 +288,6 @@ class AdditionalDataCleaner():
         self.dataframe.replace('None', np.nan)
 
     def check_missing_val_perc(self):
-        # if columns_focus_on:
-        #     missing_val_perc = dataframe[columns_focus_on].isnull().sum() / dataframe.shape[0]
-        # else:
-        #     missing_val_perc = dataframe.isnull().sum() / dataframe.shape[0]
         no_missing = True
         missing_val_perc = self.dataframe.isnull().sum() / self.dataframe.shape[0]
         for column_name in missing_val_perc.keys():
@@ -358,50 +363,48 @@ class AdditionalDataCleaner():
         self.check_missing_val_perc()
         columns_need_imputation = self.get_columns_with_missing_values()
         if columns_need_imputation:
-            self.add_column_time_in_seconds()
             self._apply_imputations(columns_need_imputation)
         print('After imputation: ')
         self.check_missing_val_perc()
 
-    def _date_time_str_to_secs(self, dataframe):
-        first_ts_datetime = dt.datetime.strptime(dataframe['timestamp'][0][:-6], "%Y-%m-%d %H:%M:%S")
-        ts_secs = []
-        for ts in dataframe['timestamp']:
-            parsed_datetime = dt.datetime.strptime(ts[:-6], "%Y-%m-%d %H:%M:%S")
-            ts_secs.append((parsed_datetime - first_ts_datetime).total_seconds())
-        ts_secs = np.array(ts_secs)
-        return ts_secs
+    def _log_outlier(self, outlier_index, column, reason):
+        self.outlier_dict_logger['Outlier Index'].append(outlier_index)
+        self.outlier_dict_logger['Column'].append(column)
+        self.outlier_dict_logger['Reason'].append(reason)
 
-    def _filter_by_repetition(self, dataframe, rec_color):
-        df = dataframe.drop(columns=['timestamp', 'timestamp_utc', 'timezone'])
+    def _filter_by_repetition(self, rec_color):
+        df = self.dataframe.drop(columns=['timestamp', 'timestamp_utc', 'timezone'])
         dup_df = df[df.duplicated()]
         idx_list = dup_df.index.tolist()
         for i in idx_list:
             rec_color[i] = self.OUTLIER_COLOR_LABEL
-            print("[OUTLIER DETECTED!] Index == %d Reason: DUPLICATE ROW!" % (i))
+            self._log_outlier(i, 'ALL', 'DUPLICATE ROW')
+            # print("[OUTLIER DETECTED!] Index == %d Reason: DUPLICATE ROW!" % (i))
 
-    def _filter_by_timestamp(self, ts_secs, OUTLIER_COLOR_LABEL, rec_color):
+    def _filter_by_timestamp(self, ts_secs, rec_color):
         # Some Initializations
-        self.num_recs = len(ts_secs)
+        self.num_records = len(ts_secs)
         self.time_sgmt_num = 0
         this_time_sgmt_row_cnt = 1
 
         i = 0
-        for i in range(1, self.num_recs):
+        for i in range(1, self.num_records):
             secs_diff = ts_secs[i]-ts_secs[i-1]
             # Timestamps must be non-decreasing
             if (secs_diff < 0) :
-                rec_color[i] = OUTLIER_COLOR_LABEL
-                print("[OUTLIER DETECTED!] Index == %d Reason: DECREASING TIME STAMP!" % (i))
+                rec_color[i] = self.OUTLIER_COLOR_LABEL
+                self._log_outlier(i, 'timestamp', 'DECREASING TIME STAMP')
+                # print("[OUTLIER DETECTED!] Index == %d Reason: DECREASING TIME STAMP!" % (i))
 
-            # continuous training?
+            # Check if it is a continuous training
             elif (secs_diff >= self.TIME_DIFF_THRESHOLD):
-                # Does the previous time segment have enough rows? If not, categorize all rows as outliers
+                # If the previous time segment does not have enough rows, categorize all rows as outliers
                 if (this_time_sgmt_row_cnt < self.ROW_COUNT_THRESHOLD):
                     for j in range(i-this_time_sgmt_row_cnt, i):
-
-                        rec_color[j] = OUTLIER_COLOR_LABEL
-                        print("[OUTLIER DETECTED!] Index == %d Reason: FEWER RECORDS ON THIS TIME SEGMENT(<%d)!" % (j, self.ROW_COUNT_THRESHOLD))
+                        rec_color[j] = self.OUTLIER_COLOR_LABEL
+                        self._log_outlier(i, 'timestamp',
+                                          'FEWER RECORDS ON THIS TIME SEGMENT(<%d)!' % (self.ROW_COUNT_THRESHOLD))
+                        # print("[OUTLIER DETECTED!] Index == %d Reason: FEWER RECORDS ON THIS TIME SEGMENT(<%d)!" % (j, self.ROW_COUNT_THRESHOLD))
 
                 # Setting up the new time segment
                 self.time_sgmt_num += 1
@@ -415,37 +418,30 @@ class AdditionalDataCleaner():
         if (this_time_sgmt_row_cnt < self.ROW_COUNT_THRESHOLD):
             for j in range(i - this_time_sgmt_row_cnt, i):
                 # -1 is the color number for outliers
-                rec_color[j] = OUTLIER_COLOR_LABEL
-                print("[OUTLIER DETECTED!] Index == %d Reason: FEWER RECORDS FOR THIS TIME SEGMENT(<%d)!" % (
-                j, self.ROW_COUNT_THRESHOLD))
+                rec_color[j] = self.OUTLIER_COLOR_LABEL
+                self._log_outlier(j, 'timestamp',
+                                  'FEWER RECORDS FOR THIS TIME SEGMENT(<%d)!' % (self.ROW_COUNT_THRESHOLD))
+                # print("[OUTLIER DETECTED!] Index == %d Reason: FEWER RECORDS FOR THIS TIME SEGMENT(<%d)!" % (
+                # j, self.ROW_COUNT_THRESHOLD))
 
-    def _filter_by_continuity_assumption(self, dataframe, rec_color):
+    def _filter_by_continuity_assumption(self, rec_color):
         ## 1. The change of temperature should not exceed 1 degree
-        for i in range(1, self.num_recs):
+        for i in range(1, self.num_records):
             if (rec_color[i] == rec_color[i-1] and rec_color[i] != self.OUTLIER_COLOR_LABEL):
-                diff = abs(dataframe.loc[i, 'temperature'] - dataframe.loc[i-1, 'temperature'])
+                diff = abs(self.dataframe.loc[i, 'temperature'] - self.dataframe.loc[i-1, 'temperature'])
                 if  diff > 1:
                     rec_color[i] = self.OUTLIER_COLOR_LABEL
-                    print("[OUTLIER DETECTED!] Index == %d Reason: TEMPERATURE CHANGE TOO FAST!" % (i))
+                    self._log_outlier(i, 'temperature', 'TEMPERATURE CHANGES TOO FAST')
+                    # print("[OUTLIER DETECTED!] Index == %d Reason: TEMPERATURE CHANGES TOO FAST!" % (i))
 
     def _filter_by_logical_inconsistency(self, dataframe, rec_color):
-        ## 1. distance, enhanced_speed, speed, heart_rate and cadence must be greater than 0
-        for i in range(self.num_recs):
-            if dataframe['distance'][i] <= 0:
-                rec_color[i] = self.OUTLIER_COLOR_LABEL
-                print("[OUTLIER DETECTED!] Index == %d Reason: LOGICAL ERROR, distance has to be POSITIVE!" % (i))
-            if dataframe['enhanced_speed'][i] <= 0:
-                rec_color[i] = self.OUTLIER_COLOR_LABEL
-                print("[OUTLIER DETECTED!] Index == %d Reason: LOGICAL ERROR, enhanced_speed has to be POSITIVE!" % (i))
-            if dataframe['speed'][i] <= 0:
-                rec_color[i] = self.OUTLIER_COLOR_LABEL
-                print("[OUTLIER DETECTED!] Index == %d Reason: LOGICAL ERROR, speed has to be POSITIVE!" % (i))
-            if dataframe['heart_rate'][i] <= 0:
-                rec_color[i] = self.OUTLIER_COLOR_LABEL
-                print("[OUTLIER DETECTED!] Index == %d Reason: LOGICAL ERROR, heart_rate has to be POSITIVE!" % (i))
-            if dataframe['cadence'][i] <= 0:
-                rec_color[i] = self.OUTLIER_COLOR_LABEL
-                print("[OUTLIER DETECTED!] Index == %d Reason: LOGICAL ERROR, cadence has to be POSITIVE!" % (i))
+        # distance, enhanced_speed, speed, heart_rate and cadence must be greater than 0
+        for i in range(self.num_records):
+            for column in ['distance', 'enhanced_speed', 'speed', 'heart_rate', 'cadence']:
+                if dataframe[column][i] <= 0:
+                    rec_color[i] = self.OUTLIER_COLOR_LABEL
+                    self._log_outlier(i, column, 'LOGICAL ERROR, {} has to be POSITIVE!'.format(column))
+                    # print("[OUTLIER DETECTED!] Index == {} Reason: LOGICAL ERROR, {} has to be POSITIVE!".format(i, column))
 
     def _filter_by_zscore(self, dataframe, rec_color):
         # Configuraing different tolerace for different columns
@@ -461,11 +457,16 @@ class AdditionalDataCleaner():
                 print("\n====For Column:%s, There are %d outliers ===\n" % (columns[j], len(outlier_rows[0])))
                 for i in outlier_rows[0]:
                     rec_color[i] = self.OUTLIER_COLOR_LABEL
-                    print("[OUTLIER DETECTED!] Index == %d Reason: Z-SCORE(%f) EXCEEDS THE TOLERANCE(%f)" % (
-                        i, z[i], tolerances[j]))
+                    self._log_outlier(i, columns[j], 'Z-SCORE({}) EXCEEDS THE TOLERANCE ({})'.format(z[i], tolerances[j]))
+                    # print("[OUTLIER DETECTED!] Index == %d Reason: Z-SCORE(%f) EXCEEDS THE TOLERANCE(%f)" % (
+                    #     i, z[i], tolerances[j]))
 
-    # boxplot
-    def __boxplot(self, df, rec_color):
+    def _boxplot(self, df, rec_color):
+        """ Boxplot for the outliers
+        :param df:
+        :param rec_color:
+        :return:
+        """
         pyplot.boxplot(df, sym="o", whis=1.5)
         pyplot.show()
         Q1 = df.quantile(0.25)
@@ -488,17 +489,10 @@ class AdditionalDataCleaner():
         colors = []
         for i in range(len(rec_color)):
             colors.append(self.color_labels[rec_color[i]])
-
         return colors
 
     def _cidx_to_outlier_mask(self, rec_color):
-        outlier_mask = []
-        for i in range(self.num_recs):
-            if rec_color[i] == self.OUTLIER_COLOR_LABEL:
-                outlier_mask.append(1)
-            else:
-                outlier_mask.append(0)
-
+        outlier_mask = [1  if rec_color[i] == self.OUTLIER_COLOR_LABEL else 0 for i in range(self.num_records)]
         return outlier_mask
 
     def get_outliers_by_zscore(self):
@@ -515,7 +509,7 @@ class AdditionalDataCleaner():
 
     def get_outliers_timestamp(self):
         pass
-    #
+
     # def handle_outliers_numerical_ordered(self):
     #     pass
     #
@@ -527,25 +521,29 @@ class AdditionalDataCleaner():
     #     self.handle_outliers_numerical_ordered()
     #     self.handle_outliers_numerical_fluctuating()
 
-    # Returning (outlier_mask, df_outlier_free)
-    # outlier_mask: 0 <==> not outlier; 1 <==> outlier
-    # df_outlier_free: dataframe without possible outliers
+
     def handle_outliers(self):
+        """
+
+        :return: (outlier_mask, df_outlier_free)
+            outlier_mask: 0 <==> not outlier; 1 <==> outlier
+            df_outlier_free: dataframe without possible outliers
+        """
         self.convert_str_to_num_in_numerical_cols()
         dataframe = self.dataframe
-        self.num_recs = len(dataframe)
+        self.num_records = len(dataframe)
 
         # Some Initializations
-        rec_color = np.zeros(self.num_recs, dtype=np.int32)
+        rec_color = np.zeros(self.num_records, dtype=np.int32)
 
         # Convert time strings to epoch seconds
-        ts_secs = self._date_time_str_to_secs(dataframe)
+        ts_secs = np.array(self.dataframe['time_in_seconds'])
 
         # Filter outliers away by timestamp
-        self._filter_by_timestamp(ts_secs, self.OUTLIER_COLOR_LABEL, rec_color)
+        self._filter_by_timestamp(ts_secs, rec_color)
 
         # Filter outliers away by removing repetitive rows
-        self._filter_by_repetition(dataframe, rec_color)
+        self._filter_by_repetition(rec_color)
 
         # Convert color index to labels
         colors = self._cidx_to_clabels(rec_color)
@@ -554,7 +552,7 @@ class AdditionalDataCleaner():
         self._plot_time_sgmt(ts_secs, colors)
 
         # filter outliers away by continuity assumption
-        self._filter_by_continuity_assumption(dataframe, rec_color)
+        self._filter_by_continuity_assumption(rec_color)
 
         # filter outliers away by logical inconsistency
         self._filter_by_logical_inconsistency(dataframe, rec_color)
@@ -570,6 +568,7 @@ class AdditionalDataCleaner():
         df_outlier_free = df_outlier_free.drop('color', 1)
         return (outlier_mask, df_outlier_free)
 
+
     def process_data_cleaning(self):
         """Process the data cleaning
         Returns
@@ -577,12 +576,13 @@ class AdditionalDataCleaner():
         cleaned_df : pandas data frame
             Cleaned athlete CoachingMate data
         """
+        self.add_column_time_in_seconds()
         self.handle_missing_values()
-        # self.handle_outliers()
+        self.handle_outliers()
         return self.dataframe
 
 
-def make_cleaned_data_folder(data_type):
+def _create_cleaned_data_folder(data_type):
     if data_type == 'original':
         cleaned_original_folder = '{}/data/cleaned_original'.format(os.path.pardir)
         if not os.path.exists(cleaned_original_folder):
@@ -595,70 +595,124 @@ def make_cleaned_data_folder(data_type):
         raise Exception('No {} type of datasets'.format(data_type))
 
 
-def main(data_type='original', athletes_name=None, activity_type=None, split_type=None):
-    """The main function of processing data cleaning
-    Clean the data and save the cleaned data
-
-    Returns
-    -------
-    boolean
-       Whether the data frame is empty
-    """
-    make_cleaned_data_folder(data_type)
+def _create_log_folders(data_type):
     if data_type == 'original':
-        data_loader_original = DataLoader('original')
-        if athletes_name == None:
+        log_folder_names = ['original_missing_value_log',
+                             'original_outlier_log']
+    elif data_type == 'additional':
+        log_folder_names = ['additional_missing_value_log',
+                            'additional_outlier_log']
+    else:
+        raise Exception('No {} type of datasets'.format(data_type))
+    for log_folder_name in log_folder_names:
+        folder = '{}/log/{}'.format(os.path.pardir, log_folder_name)
+        if not os.path.exists(folder):
+            os.mkdir(folder)
+
+
+def _save_cleaned_df(data_type, athletes_name, file_name, cleaned_df):
+    if data_type == 'original':
+        cleaned_df.to_csv('{}/data/cleaned_original/{}'.format(os.path.pardir, file_name))
+        print('Cleaned {} data saved!'.format(file_name))
+
+    elif data_type == 'additional':
+        athlete_cleaned_additional_data_folder = '{}/data/cleaned_additional/{}'.format(os.path.pardir,
+                                                                                        athletes_name.lower())
+        if not os.path.exists(athlete_cleaned_additional_data_folder):
+            os.mkdir(athlete_cleaned_additional_data_folder)
+        cleaned_df.to_csv('{}/{}'.format(athlete_cleaned_additional_data_folder, file_name[-41:]))
+        print('{}\'s cleaned {} data saved'.format(athletes_name.capitalize(), file_name[-41:]))
+
+
+def _save_log(log_type, log_df, file_name, athletes_name=None):
+    if log_type == 'missing value':
+        pass
+    elif log_type == 'outlier':
+        log_df.to_csv('{}/log/additional_outlier_log/{}/{}'.format(os.path.pardir, athletes_name, file_name[-41:]))
+
+
+def _main_helper_original(athletes_name=None, file_name: str=None):
+    # TODO: Create missing value and outlier log for original data
+    data_loader_original = DataLoader('original')
+    if file_name:
+        athlete_df = data_loader_original.load_original_data(file_name)
+    else:
+        athlete_df = data_loader_original.load_original_data(athletes_name)
+        file_name = data_loader_original.config.get('ORIGINAL-DATA-SETS', athletes_name.lower())
+    original_data_cleaner = OriginalDataCleaner(athlete_df)
+    original_data_cleaner.process_data_cleaning()
+    cleaned_df = original_data_cleaner.dataframe
+    _save_cleaned_df('original', athletes_name, file_name, cleaned_df)
+
+
+def _main_helper_additional(athletes_name, activity_type, split_type):
+    data_loader_additional = DataLoader('additional')
+    additional_file_names = data_loader_additional.load_additional_data(athletes_name=athletes_name,
+                                                                        activity_type=activity_type,
+                                                                        split_type=split_type)
+    empty_files = []
+    for file_name in additional_file_names:
+        print('\nCleaning {} ...'.format(file_name[3:]))
+        athlete_df = pd.DataFrame(pd.read_csv(file_name))
+        addtional_data_cleaner = AdditionalDataCleaner(athlete_df, file_name)
+        if addtional_data_cleaner.check_empty():
+            print('File is empty.')
+            empty_files.append(file_name)
+        else:
+            addtional_data_cleaner.process_data_cleaning()
+            cleaned_df = addtional_data_cleaner.dataframe
+            _save_cleaned_df('additional', athletes_name, file_name, cleaned_df)
+
+            # outlier_log_df = pd.DataFrame(addtional_data_cleaner.outlier_dict_logger)
+            # _save_log(log_type='outlier', log_df=outlier_log_df, file_name=file_name, athletes_name=athletes_name)
+
+    print('\nFor {}\'s additional data, {} out of {} {} files are empty.'.format(athletes_name,
+                                                                                 len(empty_files),
+                                                                                 len(additional_file_names),
+                                                                                 activity_type))
+
+
+def main(data_type='original', athletes_name:str=None, activity_type:str=None, split_type:str=None):
+    """The main function of processing data cleaning
+    Parameters
+    -------
+    data_type: str
+       The type of the data, original or additional.
+    athletes_name: str
+        The name of the athlete whose data is about to clean.
+    activity_type: str
+        The activity type of the data. Only available for additional datasets.
+        Eg. 'cycling', 'running', 'swimming'.
+    split_type: str
+        The split type of the fit files. Only available for additional datasets.
+        Eg. 'laps', 'real-time', 'starts'.
+    """
+    _create_cleaned_data_folder(data_type)
+    _create_log_folders(data_type)
+
+    if data_type == 'original':
+        if athletes_name is None:
             # Clean all original data
             orig_file_names = utility.get_all_original_data_file_names()
             for file_name in orig_file_names:
-                df = data_loader_original.load_original_data(file_name)
-                original_data_cleaner = OriginalDataCleaner(df)
-                cleaned_df = original_data_cleaner.process_data_cleaning()
-                # cleaned_df.to_csv('{}/data/cleaned_original/{}'.format(os.path.pardir, file_name))
-                # print('Cleaned {} data saved!'.format(file_name))
+                _main_helper_original(file_name=file_name)
         else:
-            # Clean data for an athlete
-            df = data_loader_original.load_original_data(athletes_name)
-            original_data_cleaner = OriginalDataCleaner(df)
-            cleaned_df = original_data_cleaner.process_data_cleaning()
-            # file_name = data_loader_original.config.get('ORIGINAL-DATA-SETS', athletes_name.lower())
-            # cleaned_df.to_csv('{}/data/cleaned_original/{}'.format(os.path.pardir, file_name))
-            # print('Cleaned {} data saved!'.format(file_name))
+            # Clean data for the given athlete
+            _main_helper_original(athletes_name=athletes_name)
 
     elif data_type == 'additional':
-        data_loader_additional = DataLoader('additional')
-        additional_file_names = data_loader_additional.load_additional_data(athletes_name=athletes_name,
-                                                                 activity_type=activity_type,
-                                                                 split_type=split_type)
-        athlete_cleaned_additional_data_folder = '{}/data/cleaned_additional/{}'.format(os.path.pardir, athletes_name.lower())
-        if not os.path.exists(athlete_cleaned_additional_data_folder):
-            os.mkdir(athlete_cleaned_additional_data_folder)
-        empty_files = []
-        for file_name in additional_file_names:
-            print('\nCleaning {} ...'.format(file_name[3:]))
-            df = pd.DataFrame(pd.read_csv(file_name))
-            addtional_data_cleaner = AdditionalDataCleaner(df)
-            if addtional_data_cleaner.check_empty():
-                print('File is empty.')
-                empty_files.append(file_name)
-            else:
-                cleaned_df = addtional_data_cleaner.process_data_cleaning()
-                # cleaned_df.to_csv('{}/{}'.format(athlete_cleaned_additional_data_folder, file_name[-41:]))
-                # print('Cleaned {} data saved'.format(file_name[-41:]))
-
-        print('\nFor {}\'s additional data, {} out of {} {} files are empty.'.format(athletes_name,
-                                                                                   len(empty_files),
-                                                                                   len(additional_file_names),
-                                                                                   activity_type))
+        # Clean all additional data for the given athlete
+        _main_helper_additional(athletes_name, activity_type, split_type)
 
 
 if __name__ == '__main__':
+    athletes_names = ['eduardo oliveira']
+
     # Clean original data
     # main('original')  # clean all original data
-    main('original', 'eduardo oliveira')  # clean original data for one athlete
+    main('original', athletes_names[0])  # clean original data for one athlete
 
-    # # Clean additional data
-    # athletes_names = ['Eduardo Oliveira']
-    # activity_type = ['cycling', 'running', 'swimming']
-    # split_type = 'real-time'
-    # main('additional', athletes_names[0], activity_type[0], split_type)  # clean all additional data with given condition
+    # Clean additional data
+    activity_type = ['cycling', 'running', 'swimming']
+    split_type = 'real-time'
+    main('additional', athletes_name=athletes_names[0], activity_type=activity_type[0], split_type=split_type)
