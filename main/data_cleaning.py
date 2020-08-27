@@ -177,7 +177,7 @@ class OriginalDataCleaner():
     def get_numerical_columns(self):
         numeric_column_df = self.dataframe.select_dtypes(include=[np.number])
         numeric_column_values = numeric_column_df.columns.values
-        return numeric_column_df
+        return numeric_column_values
 
     def get_categorical_columns(self):
         categorical_columns = self.dataframe.select_dtypes(exclude=[np.number])
@@ -222,6 +222,8 @@ class OriginalDataCleaner():
         self._convert_columns_to_numeric()
         self._convert_column_types_to_float()
         self._format_datetime()
+        #self._convert_columns_to_numeric()
+        print(self.get_numerical_columns())
 
 
 
@@ -712,7 +714,7 @@ if __name__ == '__main__':
     # main('original')  # clean all original data
     main('original', athletes_names[0])  # clean original data for one athlete
 
-    # Clean additional data
-    activity_type = ['cycling', 'running', 'swimming']
-    split_type = 'real-time'
-    main('additional', athletes_name=athletes_names[0], activity_type=activity_type[0], split_type=split_type)
+    # # Clean additional data
+    # activity_type = ['cycling', 'running', 'swimming']
+    # split_type = 'real-time'
+    # main('additional', athletes_name=athletes_names[0], activity_type=activity_type[0], split_type=split_type)
