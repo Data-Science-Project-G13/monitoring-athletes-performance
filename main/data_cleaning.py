@@ -58,7 +58,7 @@ import missingno as msno
 from datetime import datetime
 
 
-# Set the data frame display option
+## Set the data frame display option
 pd.set_option('display.max_row', 20)
 pd.set_option('display.max_columns', 10)
 
