@@ -202,39 +202,16 @@ class OriginalDataCleaner() :
             data_numeric[col] = data_numeric[col].fillna(mean)
         return data_numeric
 
-    # def _apply_regression_imputation(self, columns):
-    #     # """Apply regression imputation for the given columns
-    #     #
-    #     # Parameters
-    #     # -------
-    #     # columns: [str]
-    #     #    List of column names
-    #     # """
-    #     # pass
-    #     # regression imputaion
+    def _apply_Linear_interpolation(self,numeric_column_df):
+        for col in numeric_column_df.columns:
+            numeric = numeric_column_df.interpolate(method='linear', limit_direction='forward', axis=0).ffill().bfill()
+        return (numeric)
 
-    def _find_missing_index(self, data_numeric_regr, target_cols) :
-        miss_index_dict = {}
-        for tcol in target_cols :
-            index = data_numeric_regr[tcol][data_numeric_regr[tcol].isnull()].index
-            miss_index_dict[tcol] = index
-        return miss_index_dict
+    #eddy_Linearinterpolation = Linear_interpolation(eddy_numeric)
 
-    def _apply_regression_imputation(self, data_numeric_regr, target_cols, miss_index_dict) :
-        '''Predictors for regression imputation'''
-        predictors = data_numeric_regr.drop(target_cols, axis=1)
-        for tcol in target_cols :
-            y = data_numeric_regr[tcol]
-            '''Initially impute the column with mean'''
-            y = y.fillna(y.mean())
-            xgb = xgboost.XGBRegressor(objective="reg:squarederror", random_state=42)
-            '''Fit the model where y is the target column which is to be imputed'''
-            xgb.fit(predictors, y)
-            predictions = pd.Series(xgb.predict(predictors), index=y.index)
-            index = miss_index_dict[tcol]
-            '''Replace the missing values with the predictions'''
-            data_numeric_regr[tcol].loc[index] = predictions.loc[index]
-        return data_numeric_regr
+
+
+
 
     def process_data_cleaning(self) :
         """
@@ -257,21 +234,10 @@ class OriginalDataCleaner() :
         categorical_columns, categoric_values = self.get_categorical_columns()
         data_numeric = self.dataframe[numeric_column_values]
         self._apply_mean_imputation(data_numeric)
-        data_numeric_regr = self.dataframe[numeric_column_values]
-        # # # # # '''Numeric columns with missing values which acts as target in training'''
-        target_cols = ['Avg HR', 'Max HR', 'Avg Bike Cadence', 'Max Bike Cadence']
-        predictors = data_numeric_regr.drop(target_cols, axis=1)
-        miss_index_dict = self._find_missing_index(data_numeric_regr, target_cols)
-        self._apply_regression_imputation(data_numeric_regr, target_cols, miss_index_dict)
+        self._apply_Linear_interpolation(numeric_column_df)
 
-        # # columns = ['Max HR', 'Calories']
-        # numerical_columns = self.get_numerical_columns()
-        # self._apply_mean_imputation(numerical_columns)
-        #
-        # categorical_columns = self.get_categorical_columns()
-        # self._apply_regression_imputation(categorical_columns)
-        #
-        # return self.dataframe
+
+
 
 
 class AdditionalDataCleaner() :
