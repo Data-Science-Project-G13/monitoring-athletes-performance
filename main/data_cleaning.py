@@ -299,9 +299,35 @@ class OriginalDataCleaner() :
         df2 = self.dataframe[self.dataframe[column] < lower]
         return print('Total number of outliers are', df1.shape[0] + df2.shape[0])
 
+    def out_std(self, column) :
+        global lower, upper
+        # calculate the mean and standard deviation of the data frame
+        data_mean, data_std = self.dataframe[column].mean(), self.dataframe[column].std()
+        # calculate the cutoff value
+        cut_off = data_std * 3
+        # calculate the lower and upper bound value
+        lower, upper = data_mean - cut_off, data_mean + cut_off
+        print('The lower bound value is', lower)
+        print('The upper bound value is', upper)
+        # Calculate the number of records below and above lower and above bound value respectively
+        df1 = self.dataframe[self.dataframe[column] > upper]
+        df2 = self.dataframe[self.dataframe[column] < lower]
+        return print('Total number of outliers are', df1.shape[0] + df2.shape[0])
 
-
-
+    # def out_zscore(self,column):
+    #     global outliers, zscore
+    #     outliers = []
+    #     zscore = []
+    #     threshold = 3
+    #     data_mean, data_std = self.dataframe[column].mean(), self.dataframe[column].std()
+    #     #mean = np.mean(self.dataframe)
+    #     #std = np.std(self.dataframe)
+    #     for i in self.dataframe :
+    #         z_score = (i - data_mean) / data_std
+    #         zscore.append(z_score)
+    #         if np.abs(z_score) > threshold :
+    #             outliers.append(i)
+    #     return print("Total number of outliers are", len(outliers))
 
     def process_data_cleaning(self) :
         """
@@ -344,6 +370,8 @@ class OriginalDataCleaner() :
         print(self.dataframe.isna().any())
         print(self.dataframe.isna().sum())
         self.out_iqr("Distance")
+        self.out_std('Max Power')
+        # print(self.out_zscore(['Elev Gain']))
 
 
 
