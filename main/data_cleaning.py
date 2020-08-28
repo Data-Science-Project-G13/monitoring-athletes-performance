@@ -261,6 +261,28 @@ class OriginalDataCleaner() :
             categorical_columns[col] = categorical_columns[col].fillna(mode)
         return categorical_columns
 
+    def mice_imputation_categoric(self,categorical_columns):
+        ordinal_dict = {}
+        for col in categorical_columns.columns:
+            ordinal_dict[col] = OrdinalEncoder()
+            nn_vals = np.array(categorical_columns[col][categorical_columns[col].notnull()]).reshape(-1, 1)
+            nn_vals_arr = np.array(ordinal_dict[col].fit_transform(nn_vals)).reshape(-1, )
+            categorical_columns[col].loc[categorical_columns[col].notnull()] = nn_vals_arr
+        '''Impute the data using MICE with Gradient Boosting Classifier'''
+        iter_imp_categoric = IterativeImputer(GradientBoostingClassifier(), max_iter=5,
+                                              initial_strategy='most_frequent')
+        imputed_eddy = iter_imp_categoric.fit_transform(categorical_columns)
+        eddy_categoric_imp = pd.DataFrame(imputed_eddy, columns=categorical_columns.columns,
+                                          index=categorical_columns.index).astype(int)
+        '''Inverse Transform'''
+        for col in eddy_categoric_imp.columns:
+            oe = ordinal_dict[col]
+            eddy_arr = np.array(eddy_categoric_imp[col]).reshape(-1, 1)
+            eddy_categoric_imp[col] = oe.inverse_transform(eddy_arr)
+        return eddy_categoric_imp
+
+
+
 
 
 
@@ -300,6 +322,7 @@ class OriginalDataCleaner() :
         self.get_minmax(numeric_column_df, numeric_column_values)
         self._apply_knn_imputation(numeric_column_df, numeric_column_values)
         self._apply_mode_imputation(categorical_columns)
+        self.mice_imputation_categoric(categorical_columns)
 
 
 
