@@ -261,26 +261,43 @@ class OriginalDataCleaner() :
             categorical_columns[col] = categorical_columns[col].fillna(mode)
         return categorical_columns
 
-    def mice_imputation_categoric(self,categorical_columns):
-        ordinal_dict = {}
-        for col in categorical_columns.columns:
-            ordinal_dict[col] = OrdinalEncoder()
-            nn_vals = np.array(categorical_columns[col][categorical_columns[col].notnull()]).reshape(-1, 1)
-            nn_vals_arr = np.array(ordinal_dict[col].fit_transform(nn_vals)).reshape(-1, )
-            categorical_columns[col].loc[categorical_columns[col].notnull()] = nn_vals_arr
-        '''Impute the data using MICE with Gradient Boosting Classifier'''
-        iter_imp_categoric = IterativeImputer(GradientBoostingClassifier(), max_iter=5,
-                                              initial_strategy='most_frequent')
-        imputed_eddy = iter_imp_categoric.fit_transform(categorical_columns)
-        eddy_categoric_imp = pd.DataFrame(imputed_eddy, columns=categorical_columns.columns,
-                                          index=categorical_columns.index).astype(int)
-        '''Inverse Transform'''
-        for col in eddy_categoric_imp.columns:
-            oe = ordinal_dict[col]
-            eddy_arr = np.array(eddy_categoric_imp[col]).reshape(-1, 1)
-            eddy_categoric_imp[col] = oe.inverse_transform(eddy_arr)
-        return eddy_categoric_imp
 
+
+    # def mice_imputation_categoric(self,categorical_columns):
+    #     ordinal_dict = {}
+    #     for col in categorical_columns.columns:
+    #         ordinal_dict[col] = OrdinalEncoder()
+    #         nn_vals = np.array(categorical_columns[col][categorical_columns[col].notnull()]).reshape(-1, 1)
+    #         nn_vals_arr = np.array(ordinal_dict[col].fit_transform(nn_vals)).reshape(-1, )
+    #         categorical_columns[col].loc[categorical_columns[col].notnull()] = nn_vals_arr
+    #     '''Impute the data using MICE with Gradient Boosting Classifier'''
+    #     iter_imp_categoric = IterativeImputer(GradientBoostingClassifier(), max_iter=5,
+    #                                           initial_strategy='most_frequent')
+    #     imputed_eddy = iter_imp_categoric.fit_transform(categorical_columns)
+    #     eddy_categoric_imp = pd.DataFrame(imputed_eddy, columns=categorical_columns.columns,
+    #                                       index=categorical_columns.index).astype(int)
+    #     '''Inverse Transform'''
+    #     for col in eddy_categoric_imp.columns:
+    #         oe = ordinal_dict[col]
+    #         eddy_arr = np.array(eddy_categoric_imp[col]).reshape(-1, 1)
+    #         eddy_categoric_imp[col] = oe.inverse_transform(eddy_arr)
+    #     return eddy_categoric_imp
+    def out_iqr(self, column):
+        global lower, upper
+        q25, q75 = np.quantile(self.dataframe[column], 0.25), np.quantile(self.dataframe[column], 0.75)
+        # calculate the IQR
+        iqr = q75 - q25
+        # calculate the outlier cutoff
+        cut_off = iqr * 1.5
+        # calculate the lower and upper bound value
+        lower, upper = q25 - cut_off, q75 + cut_off
+        print('The IQR is', iqr)
+        print('The lower bound value is', lower)
+        print('The upper bound value is', upper)
+        # Calculate the number of records below and above lower and above bound value respectively
+        df1 = self.dataframe[self.dataframe[column] > upper]
+        df2 = self.dataframe[self.dataframe[column] < lower]
+        return print('Total number of outliers are', df1.shape[0] + df2.shape[0])
 
 
 
@@ -306,25 +323,27 @@ class OriginalDataCleaner() :
         self._format_datetime()
         self._convert_columns_to_numeric()
         numeric_column_df, numeric_column_values = self.get_numerical_columns()
-        print(self.get_numerical_columns())
+        #print(self.get_numerical_columns())
         categorical_columns, categoric_values = self.get_categorical_columns()
-        print(self.get_categorical_columns())
+        #print(self.get_categorical_columns())
         data_numeric = self.dataframe[numeric_column_values]
         self._apply_mean_imputation(data_numeric)
         data_numeric_regr = self.dataframe[numeric_column_values]
         # # # # # '''Numeric columns with missing values which acts as target in training'''
-        target_cols = ['Avg HR', 'Max HR', 'Avg Bike Cadence', 'Max Bike Cadence']
+        target_cols = ['Avg. Swolf','Total Strokes','Avg Speed','Avg HR', 'Max HR', 'Avg Bike Cadence', 'Max Bike Cadence',"Distance","Calories","Avg Stroke Rate","Number of Laps"]
         predictors = data_numeric_regr.drop(target_cols, axis=1)
         miss_index_dict = self._find_missing_index(data_numeric_regr, target_cols)
         self._apply_regression_imputation(data_numeric_regr, target_cols, miss_index_dict)
+        #print(self._apply_regression_imputation(data_numeric_regr, target_cols, miss_index_dict))
         self._apply_linear_interpolation(numeric_column_df)
         eddy_numeric_imp = self._apply_mice_imputation_numeric(numeric_column_df)
         self.get_minmax(numeric_column_df, numeric_column_values)
-        self._apply_knn_imputation(numeric_column_df, numeric_column_values)
+        self.dataframe=self._apply_knn_imputation(numeric_column_df, numeric_column_values)#assigning imputaion can change later
         self._apply_mode_imputation(categorical_columns)
-        self.mice_imputation_categoric(categorical_columns)
-
-
+        # self.mice_imputation_categoric(categorical_columns)
+        print(self.dataframe.isna().any())
+        print(self.dataframe.isna().sum())
+        self.out_iqr("Distance")
 
 
 
