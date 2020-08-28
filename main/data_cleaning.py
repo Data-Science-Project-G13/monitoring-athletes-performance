@@ -253,12 +253,8 @@ class OriginalDataCleaner() :
         self._convert_column_types_to_float()
         self._format_datetime()
         self._convert_columns_to_numeric()
-
         numeric_column_df, numeric_column_values = self.get_numerical_columns()
-        print(numeric_column_df)
-
-        # categorical_columns, categoric_values = self.get_categorical_columns()
-        # self.get_categorical_columns()
+        categorical_columns, categoric_values = self.get_categorical_columns()
         # # #print(self.get_categorical_columns())
         # data_numeric = self.dataframe[numeric_column_values]
         # self._apply_mean_imputation(data_numeric)
