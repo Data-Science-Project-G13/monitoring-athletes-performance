@@ -29,6 +29,7 @@ from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.ensemble import (GradientBoostingRegressor, GradientBoostingClassifier)
+from sklearn.preprocessing import MinMaxScaler
 
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as pyplot
@@ -236,6 +237,14 @@ class OriginalDataCleaner() :
         eddy_numeric_imp = pd.DataFrame(imputed_eddy, columns=numeric_column_df.columns, index=numeric_column_df.index)
         return eddy_numeric_imp
 
+    def get_minmax(self, numeric_column_df, numeric_column_values):
+        'when imputing a knn data must be normalised to reduce the bias in the imoutation'
+        scaler = MinMaxScaler()
+        scaling = pd.DataFrame(scaler.fit_transform(numeric_column_df), columns=numeric_column_values)
+        return scaling
+
+
+
     #eddy_numeric_imp = mice_imputation_numeric(eddy_numeric)
 
     def process_data_cleaning(self) :
@@ -267,6 +276,7 @@ class OriginalDataCleaner() :
         self._apply_regression_imputation(data_numeric_regr, target_cols, miss_index_dict)
         self._apply_linear_interpolation(numeric_column_df)
         eddy_numeric_imp = self._apply_mice_imputation_numeric(numeric_column_df)
+        self.get_minmax(numeric_column_df, numeric_column_values)
 
 
 
