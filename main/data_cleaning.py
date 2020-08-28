@@ -243,6 +243,10 @@ class OriginalDataCleaner() :
         scaling = pd.DataFrame(scaler.fit_transform(numeric_column_df), columns=numeric_column_values)
         return scaling
 
+    def _apply_knn_imputation(self, numeric_column_df, numeric_column_values):
+        imputer = KNNImputer(n_neighbors=23)
+        imputed_KNN = pd.DataFrame(imputer.fit_transform(numeric_column_df), columns=numeric_column_values)
+        return imputed_KNN
 
 
     #eddy_numeric_imp = mice_imputation_numeric(eddy_numeric)
@@ -277,6 +281,7 @@ class OriginalDataCleaner() :
         self._apply_linear_interpolation(numeric_column_df)
         eddy_numeric_imp = self._apply_mice_imputation_numeric(numeric_column_df)
         self.get_minmax(numeric_column_df, numeric_column_values)
+        self._apply_knn_imputation(numeric_column_df, numeric_column_values)
 
 
 
