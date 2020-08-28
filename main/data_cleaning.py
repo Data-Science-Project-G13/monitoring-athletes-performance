@@ -257,15 +257,12 @@ class OriginalDataCleaner() :
         categorical_columns, categoric_values = self.get_categorical_columns()
         data_numeric = self.dataframe[numeric_column_values]
         self._apply_mean_imputation(data_numeric)
-        # self._apply_mean_imputation(data_numeric)
-        # data_numeric_regr = self.dataframe[numeric_column_values]
-        # # # # '''Numeric columns with missing values which acts as target in training'''
-        # target_cols = ['Distance', 'Calories', 'Avg HR', 'Max HR', 'Elev Gain', 'Elev Loss', 'Avg Bike Cadence']
-        # predictors = data_numeric_regr.drop(target_cols, axis=1)
-        # self._find_missing_index(data_numeric_regr, target_cols)
-        # miss_index_dict = self._find_missing_index(data_numeric_regr, target_cols)
-        # self._apply_regression_imputation(data_numeric_regr, target_cols, miss_index_dict)
-        # # print(self._apply_regression_imputation(data_numeric_regr, target_cols, miss_index_dict))
+        data_numeric_regr = self.dataframe[numeric_column_values]
+        # # # # # '''Numeric columns with missing values which acts as target in training'''
+        target_cols = ['Avg HR', 'Max HR', 'Avg Bike Cadence', 'Max Bike Cadence']
+        predictors = data_numeric_regr.drop(target_cols, axis=1)
+        miss_index_dict = self._find_missing_index(data_numeric_regr, target_cols)
+        self._apply_regression_imputation(data_numeric_regr, target_cols, miss_index_dict)
 
         # # columns = ['Max HR', 'Calories']
         # numerical_columns = self.get_numerical_columns()
