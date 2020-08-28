@@ -122,25 +122,29 @@ class OriginalDataCleaner() :
 
     def _convert_columns_to_numeric(self) :
         # TODO: columns in config
-        columns_to_numeric = ['Max Avg Power (20 min)', 'Avg Power', 'Avg Stroke Rate', 'Avg HR', 'Max HR',
-                              'Total Strokes',
-                              'Avg. Swolf', 'Avg Bike Cadence', 'Max Bike Cadence', 'Normalized Power® (NP®)',
+        columns_to_numeric = ['Max Avg Power (20 min)', 'Avg Power', 'Avg Stroke Rate', 'Avg HR', 'Max HR',"Distance",'Training Stress Score®',
+                              'Total Strokes','Elev Gain', 'Elev Loss','Calories', 'Max Power','Max Speed', 'Avg Speed'
+                              ,'Avg. Swolf', 'Avg Bike Cadence', 'Max Bike Cadence', 'Normalized Power® (NP®)',
                               'Number of Laps']
         self.dataframe[columns_to_numeric] = self.dataframe[columns_to_numeric].apply(pd.to_numeric)
 
-    def _convert_column_types_to_float(self) :
-        columns_to_float = ['Calories', 'Max Power', 'Max Speed', 'Avg Speed']
-        for column in columns_to_float :
-            self.dataframe[column].astype(float)
+    # def _convert_column_types_to_float(self):
+    # TODO:fred for some reason this fucntion is not working,is htere any diff to above
+    #     columns_to_float = [ 'Max Speed', 'Avg Speed']
+    #     for column in columns_to_float:
+    #         #self.dataframe[column].astype(float)
+    #          self.dataframe[column].apply(pd.to_numeric)
+    #
+    #     #print(self.dataframe["Max Power"].dtypes())
 
-    def _format_datetime(self) :
+    def _format_datetime(self):
         self.dataframe['Date_extracted'] = pd.to_datetime(self.dataframe["Date"]).dt.normalize()
         self.dataframe['Time_extracted'] = pd.to_datetime(self.dataframe["Date"]).dt.time
         self.dataframe['Date'] = pd.to_datetime(self.dataframe['Date'])
         self.dataframe['Time_sec'] = pd.to_timedelta(
             pd.to_datetime(self.dataframe["Time"]).dt.strftime('%H:%M:%S')).dt.total_seconds()
 
-    def find_missing_percent(self) :
+    def find_missing_percent(self):
         """
         Returns dataframe containing the total missing values and percentage of total
         missing values of a column.
@@ -248,8 +252,17 @@ class OriginalDataCleaner() :
         imputed_KNN = pd.DataFrame(imputer.fit_transform(numeric_column_df), columns=numeric_column_values)
         return imputed_KNN
 
+    def _apply_mode_imputation(self,categorical_columns):
+        """
+        Mode Imputation
+        """
+        for col in categorical_columns.columns :
+            mode = categorical_columns[col].mode().iloc[0]
+            categorical_columns[col] = categorical_columns[col].fillna(mode)
+        return categorical_columns
 
-    #eddy_numeric_imp = mice_imputation_numeric(eddy_numeric)
+
+
 
     def process_data_cleaning(self) :
         """
@@ -265,11 +278,15 @@ class OriginalDataCleaner() :
         self._handle_commas()
         self._format_missing_val_with_nan()
         self._convert_columns_to_numeric()
-        self._convert_column_types_to_float()
+
+        #self._convert_column_types_to_float()
+        #print(self._convert_column_types_to_float())
         self._format_datetime()
         self._convert_columns_to_numeric()
         numeric_column_df, numeric_column_values = self.get_numerical_columns()
+        print(self.get_numerical_columns())
         categorical_columns, categoric_values = self.get_categorical_columns()
+        print(self.get_categorical_columns())
         data_numeric = self.dataframe[numeric_column_values]
         self._apply_mean_imputation(data_numeric)
         data_numeric_regr = self.dataframe[numeric_column_values]
@@ -282,6 +299,7 @@ class OriginalDataCleaner() :
         eddy_numeric_imp = self._apply_mice_imputation_numeric(numeric_column_df)
         self.get_minmax(numeric_column_df, numeric_column_values)
         self._apply_knn_imputation(numeric_column_df, numeric_column_values)
+        self._apply_mode_imputation(categorical_columns)
 
 
 
