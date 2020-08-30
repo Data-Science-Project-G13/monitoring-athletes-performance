@@ -89,11 +89,13 @@ class OriginalDataCleaner() :
         # self.numerical_columns = utility.get_original_numerical()
         # self.categorical_columns = utility.get_original_categorical()
         self.dataframe = dataframe
+        #self.main_dataframe = dataframe
         #self.dataframe_swim=pd.DataFrame()
         #self.dataframe_cycle = pd.DataFrame()
         #self.dataframe_run = pd.DataFrame()
         #self.dataframe_others=pd.DataFrame()
         #self._split_dataframe_by_activity()
+        #del self.main_dataframe
 
     def _split_dataframe_by_activity(self):
         self.dataframe_swim = self.dataframe.loc[self.dataframe['Activity Type'].isin(['Pool Swimming','Open Water Swimming','Swimming'])]
