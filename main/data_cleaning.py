@@ -32,10 +32,10 @@ from sklearn.ensemble import (GradientBoostingRegressor, GradientBoostingClassif
 from sklearn.preprocessing import MinMaxScaler
 
 import matplotlib.mlab as mlab
-import matplotlib.pyplot as pyplot
+import matplotlib.pyplot as plt
 import matplotlib
 
-pyplot.style.use('ggplot')
+plt.style.use('ggplot')
 from matplotlib.pyplot import figure
 
 matplotlib.rcParams['figure.figsize'] = (12, 8)
@@ -282,6 +282,7 @@ class OriginalDataCleaner() :
     #         eddy_arr = np.array(eddy_categoric_imp[col]).reshape(-1, 1)
     #         eddy_categoric_imp[col] = oe.inverse_transform(eddy_arr)
     #     return eddy_categoric_imp
+
     def out_iqr(self, column):
         global lower, upper
         q25, q75 = np.quantile(self.dataframe[column], 0.25), np.quantile(self.dataframe[column], 0.75)
@@ -298,6 +299,13 @@ class OriginalDataCleaner() :
         df1 = self.dataframe[self.dataframe[column] > upper]
         df2 = self.dataframe[self.dataframe[column] < lower]
         return print('Total number of outliers are', df1.shape[0] + df2.shape[0])
+
+    def out_iqr_plot(self, column):
+        plt.figure(figsize=(10, 6))
+        sns.distplot(self.dataframe[column], kde=False)
+        plt.axvspan(xmin=lower, xmax=self.dataframe[column].min(), alpha=0.2, color='red')
+        plt.axvspan(xmin=upper, xmax=self.dataframe[column].max(), alpha=0.2, color='red')
+        plt.show()
 
     def out_std(self, column) :
         global lower, upper
@@ -370,6 +378,7 @@ class OriginalDataCleaner() :
         print(self.dataframe.isna().any())
         print(self.dataframe.isna().sum())
         self.out_iqr("Distance")
+        self.out_iqr_plot("Distance")
         self.out_std('Max Power')
         # print(self.out_zscore(['Elev Gain']))
 
@@ -855,6 +864,7 @@ if __name__ == '__main__':
     main('original', athletes_names[0])  # clean original data for one athlete
 
     # # Clean additional data
-    # activity_type = ['cycling', 'running', 'swimming']
-    # split_type = 'real-time'
-    # main('additional', athletes_name=athletes_names[0], activity_type=activity_type[0], split_type=split_type)
+    #activity_type = ['cycling', 'running', 'swimming']
+    #print("Hello")
+    #split_type = 'real-time'
+    #main('additional', athletes_name=athletes_names[0], activity_type=activity_type[0], split_type=split_type)
