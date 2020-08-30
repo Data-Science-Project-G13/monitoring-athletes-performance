@@ -89,6 +89,24 @@ class OriginalDataCleaner() :
         # self.numerical_columns = utility.get_original_numerical()
         # self.categorical_columns = utility.get_original_categorical()
         self.dataframe = dataframe
+        #self.dataframe_swim=pd.DataFrame()
+        #self.dataframe_cycle = pd.DataFrame()
+        #self.dataframe_run = pd.DataFrame()
+        #self.dataframe_others=pd.DataFrame()
+        #self._split_dataframe_by_activity()
+
+    def _split_dataframe_by_activity(self):
+        self.dataframe_swim = self.dataframe.loc[self.dataframe['Activity Type'].isin(['Pool Swimming','Open Water Swimming','Swimming'])]
+        self.dataframe_cycle = self.dataframe.loc[
+            self.dataframe['Activity Type'].isin(['Virtual_Cycling', 'Indoor_Cycling', 'Road_Cycling','Cycling'])]
+        self.dataframe_run = self.dataframe.loc[
+            self.dataframe['Activity Type'].isin(['Running', 'Treadmill Running'])]
+        self.dataframe_others = self.dataframe.loc[
+            self.dataframe['Activity Type'].isin(['Strength Training', 'Hiking', 'Multisport', 'Indoor Rowing'])]
+
+    def _concat_dataframe_by_activity(self):
+        self.dataframe=pd.concat([self.dataframe_swim,self.dataframe_cycle,self.dataframe_run,self.dataframe_others])
+        del self.dataframe_swim,self.dataframe_cycle,self.dataframe_run,self.dataframe_others
 
     def _drop_columns(self) :
         # TODO: Choose columns instead of dropping them
