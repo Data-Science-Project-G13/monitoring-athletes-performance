@@ -306,6 +306,8 @@ class OriginalDataCleaner() :
         plt.axvspan(xmin=lower, xmax=self.dataframe[column].min(), alpha=0.2, color='red')
         plt.axvspan(xmin=upper, xmax=self.dataframe[column].max(), alpha=0.2, color='red')
         plt.show()
+        sns.distplot(self.dataframe[column])
+        plt.show()
 
     def out_std(self, column) :
         global lower, upper
