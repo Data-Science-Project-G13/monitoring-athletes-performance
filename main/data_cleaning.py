@@ -300,7 +300,7 @@ class OriginalDataCleaner() :
         df2 = self.dataframe[self.dataframe[column] < lower]
         return print('Total number of outliers are', df1.shape[0] + df2.shape[0])
 
-    def out_iqr_plot(self, column):
+    def out_plot(self, column):
         plt.figure(figsize=(10, 6))
         sns.distplot(self.dataframe[column], kde=False)
         plt.axvspan(xmin=lower, xmax=self.dataframe[column].min(), alpha=0.2, color='red')
@@ -380,8 +380,9 @@ class OriginalDataCleaner() :
         print(self.dataframe.isna().any())
         print(self.dataframe.isna().sum())
         self.out_iqr("Distance")
-        self.out_iqr_plot("Distance")
+        self.out_plot("Distance")
         self.out_std('Max Power')
+        self.out_plot('Max Power')
         # print(self.out_zscore(['Elev Gain']))
 
 
