@@ -109,6 +109,7 @@ class OriginalDataCleaner() :
     def _concat_dataframe_by_activity(self):
         self.dataframe=pd.concat([self.dataframe_swim,self.dataframe_cycle,self.dataframe_run,self.dataframe_others])
         del self.dataframe_swim,self.dataframe_cycle,self.dataframe_run,self.dataframe_others
+        self.dataframe=self.dataframe.sort_index(inplace=True)
 
     def _drop_columns(self) :
         # TODO: Choose columns instead of dropping them
