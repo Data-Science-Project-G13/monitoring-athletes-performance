@@ -349,8 +349,38 @@ class OriginalDataCleaner() :
         df2 = self.dataframe[self.dataframe < lower]
         return print('Total number of outliers are', df1.shape[0] + df2.shape[0])
 
+    #def _IsolationForest(self) :
 
-
+    # cols = ['Distance', 'Avg HR', 'Max HR']
+    #     fig, axs = plt.subplots(1, 3, figsize=(20, 6), facecolor='w', edgecolor='k')
+    #     axs = axs.ravel()
+    #
+    #     for i, column in enumerate(cols) :
+    #         isolation_forest = IsolationForest(contamination='auto')
+    #         isolation_forest.fit(self.dataframe[column].values.reshape(-1, 1))
+    #         xx = np.linspace(self.dataframe[column].min(), self.dataframe[column].max(), len(self.dataframe)).reshape(-1, 1)
+    #         anomaly_score = isolation_forest.decision_function(xx)
+    #         outlier = isolation_forest.predict(xx)
+    #         axs[i].plot(xx, anomaly_score, label='anomaly score')
+    #         axs[i].fill_between(xx.T[0], np.min(anomaly_score), np.max(anomaly_score), where=outlier == -1, color='g',
+    #                             alpha=.4, label='outlier region')
+    #         axs[i].legend()
+    #         axs[i].set_title(column)
+    #         fig.tight_layout()
+    # def out_zscore(self):
+    #     global outliers, zscore
+    #     outliers = []
+    #     zscore = []
+    #     threshold = 3
+    #     # mean,std = eddy.mean(), eddy.std()
+    #     mean = np.mean(self.dataframe)
+    #     std = np.std(self.dataframe)
+    #     for i in self.dataframe:
+    #         z_score = (i - mean) / std
+    #         zscore.append(z_score)
+    #         if np.abs(z_score) > threshold :
+    #             outliers.append(i)
+    #     return print("Total number of outliers are", len(outliers))
 
     def process_data_cleaning(self) :
         """
@@ -628,8 +658,8 @@ class AdditionalDataCleaner() :
         :param rec_color:
         :return:
         """
-        pyplot.boxplot(df, sym="o", whis=1.5)
-        pyplot.show()
+        plt.boxplot(df, sym="o", whis=1.5)
+        plt.show()
         Q1 = df.quantile(0.25)
         Q3 = df.quantile(0.75)
         IQR = Q3 - Q1
@@ -644,8 +674,8 @@ class AdditionalDataCleaner() :
         zeros = np.zeros(num_recs).reshape(num_recs, 1)
         ts_secs = ts_secs.reshape(num_recs, 1)
         X = np.concatenate((ts_secs, zeros), axis=1)
-        pyplot.scatter(X[:, 0], X[:, 1], c=colors)
-        pyplot.show()
+        plt.scatter(X[:, 0], X[:, 1], c=colors)
+        plt.show()
 
     def _cidx_to_clabels(self, rec_color) :
         colors = []
