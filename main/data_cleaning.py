@@ -300,10 +300,10 @@ class OriginalDataCleaner() :
         df2 = self.dataframe[self.dataframe < lower]
         return print('Total number of outliers are', df1.shape[0] + df2.shape[0])
 
-    def out_std(self, column) :
+    def out_std(self) :
         global lower, upper
         # calculate the mean and standard deviation of the data frame
-        data_mean, data_std = self.dataframe[column].mean(), self.dataframe[column].std()
+        data_mean, data_std = self.dataframe.mean(), self.dataframe.std()
         # calculate the cutoff value
         cut_off = data_std * 3
         # calculate the lower and upper bound value
@@ -311,8 +311,8 @@ class OriginalDataCleaner() :
         print('The lower bound value is', lower)
         print('The upper bound value is', upper)
         # Calculate the number of records below and above lower and above bound value respectively
-        df1 = self.dataframe[self.dataframe[column] > upper]
-        df2 = self.dataframe[self.dataframe[column] < lower]
+        df1 = self.dataframe[self.dataframe > upper]
+        df2 = self.dataframe[self.dataframe < lower]
         return print('Total number of outliers are', df1.shape[0] + df2.shape[0])
 
 
@@ -359,7 +359,7 @@ class OriginalDataCleaner() :
         print(self.dataframe.isna().any())
         print(self.dataframe.isna().sum())
         self.out_iqr()
-        #self.out_std('Max Power')
+        self.out_std()
 
 
 
