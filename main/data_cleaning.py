@@ -32,7 +32,7 @@ from sklearn.ensemble import (GradientBoostingRegressor, GradientBoostingClassif
 from sklearn.preprocessing import MinMaxScaler
 
 import matplotlib.mlab as mlab
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as pyplot
 import matplotlib
 
 plt.style.use('ggplot')
@@ -51,6 +51,7 @@ from IPython.display import Image
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import DBSCAN
 from sklearn.neighbors import LocalOutlierFactor
+from sklearn.ensemble import IsolationForest
 
 sns.set(style="darkgrid", palette="pastel", color_codes=True)
 sns.set_context('talk')
@@ -89,27 +90,6 @@ class OriginalDataCleaner() :
         # self.numerical_columns = utility.get_original_numerical()
         # self.categorical_columns = utility.get_original_categorical()
         self.dataframe = dataframe
-        #self.main_dataframe = dataframe
-        #self.dataframe_swim=pd.DataFrame()
-        #self.dataframe_cycle = pd.DataFrame()
-        #self.dataframe_run = pd.DataFrame()
-        #self.dataframe_others=pd.DataFrame()
-        #self._split_dataframe_by_activity()
-        #del self.main_dataframe
-
-    def _split_dataframe_by_activity(self):
-        self.dataframe_swim = self.dataframe.loc[self.dataframe['Activity Type'].isin(['Pool Swimming','Open Water Swimming','Swimming'])]
-        self.dataframe_cycle = self.dataframe.loc[
-            self.dataframe['Activity Type'].isin(['Virtual_Cycling', 'Indoor_Cycling', 'Road_Cycling','Cycling'])]
-        self.dataframe_run = self.dataframe.loc[
-            self.dataframe['Activity Type'].isin(['Running', 'Treadmill Running'])]
-        self.dataframe_others = self.dataframe.loc[
-            self.dataframe['Activity Type'].isin(['Strength Training', 'Hiking', 'Multisport', 'Indoor Rowing'])]
-
-    def _concat_dataframe_by_activity(self):
-        self.dataframe=pd.concat([self.dataframe_swim,self.dataframe_cycle,self.dataframe_run,self.dataframe_others])
-        del self.dataframe_swim,self.dataframe_cycle,self.dataframe_run,self.dataframe_others
-        self.dataframe=self.dataframe.sort_index(inplace=True)
 
     def _drop_columns(self) :
         # TODO: Choose columns instead of dropping them
@@ -303,10 +283,9 @@ class OriginalDataCleaner() :
     #         eddy_arr = np.array(eddy_categoric_imp[col]).reshape(-1, 1)
     #         eddy_categoric_imp[col] = oe.inverse_transform(eddy_arr)
     #     return eddy_categoric_imp
-
-    def out_iqr(self, column):
+    def out_iqr(self):
         global lower, upper
-        q25, q75 = np.quantile(self.dataframe[column], 0.25), np.quantile(self.dataframe[column], 0.75)
+        q25, q75 = np.quantile(self.dataframe, 0.25), np.quantile(self.dataframe, 0.75)
         # calculate the IQR
         iqr = q75 - q25
         # calculate the outlier cutoff
@@ -317,18 +296,9 @@ class OriginalDataCleaner() :
         print('The lower bound value is', lower)
         print('The upper bound value is', upper)
         # Calculate the number of records below and above lower and above bound value respectively
-        df1 = self.dataframe[self.dataframe[column] > upper]
-        df2 = self.dataframe[self.dataframe[column] < lower]
+        df1 = self.dataframe[self.dataframe > upper]
+        df2 = self.dataframe[self.dataframe < lower]
         return print('Total number of outliers are', df1.shape[0] + df2.shape[0])
-
-    def out_plot(self, column):
-        plt.figure(figsize=(10, 6))
-        sns.distplot(self.dataframe[column], kde=False)
-        plt.axvspan(xmin=lower, xmax=self.dataframe[column].min(), alpha=0.2, color='red')
-        plt.axvspan(xmin=upper, xmax=self.dataframe[column].max(), alpha=0.2, color='red')
-        plt.show()
-        sns.distplot(self.dataframe[column])
-        plt.show()
 
     def out_std(self, column) :
         global lower, upper
@@ -345,20 +315,8 @@ class OriginalDataCleaner() :
         df2 = self.dataframe[self.dataframe[column] < lower]
         return print('Total number of outliers are', df1.shape[0] + df2.shape[0])
 
-    # def out_zscore(self,column):
-    #     global outliers, zscore
-    #     outliers = []
-    #     zscore = []
-    #     threshold = 3
-    #     data_mean, data_std = self.dataframe[column].mean(), self.dataframe[column].std()
-    #     #mean = np.mean(self.dataframe)
-    #     #std = np.std(self.dataframe)
-    #     for i in self.dataframe :
-    #         z_score = (i - data_mean) / data_std
-    #         zscore.append(z_score)
-    #         if np.abs(z_score) > threshold :
-    #             outliers.append(i)
-    #     return print("Total number of outliers are", len(outliers))
+
+
 
     def process_data_cleaning(self) :
         """
@@ -400,11 +358,8 @@ class OriginalDataCleaner() :
         # self.mice_imputation_categoric(categorical_columns)
         print(self.dataframe.isna().any())
         print(self.dataframe.isna().sum())
-        self.out_iqr("Distance")
-        self.out_plot("Distance")
-        self.out_std('Max Power')
-        self.out_plot('Max Power')
-        # print(self.out_zscore(['Elev Gain']))
+        self.out_iqr()
+        #self.out_std('Max Power')
 
 
 
@@ -888,7 +843,6 @@ if __name__ == '__main__':
     main('original', athletes_names[0])  # clean original data for one athlete
 
     # # Clean additional data
-    #activity_type = ['cycling', 'running', 'swimming']
-    #print("Hello")
-    #split_type = 'real-time'
-    #main('additional', athletes_name=athletes_names[0], activity_type=activity_type[0], split_type=split_type)
+    # activity_type = ['cycling', 'running', 'swimming']
+    # split_type = 'real-time'
+    # main('additional', athletes_name=athletes_names[0], activity_type=activity_type[0], split_type=split_type)
