@@ -32,7 +32,7 @@ from sklearn.ensemble import (GradientBoostingRegressor, GradientBoostingClassif
 from sklearn.preprocessing import MinMaxScaler
 
 import matplotlib.mlab as mlab
-import matplotlib.pyplot as pyplot
+import matplotlib.pyplot as plt
 import matplotlib
 
 plt.style.use('ggplot')
@@ -90,6 +90,30 @@ class OriginalDataCleaner() :
         # self.numerical_columns = utility.get_original_numerical()
         # self.categorical_columns = utility.get_original_categorical()
         self.dataframe = dataframe
+
+        # self.main_dataframe = dataframe
+        # self.dataframe_swim=pd.DataFrame()
+        # self.dataframe_cycle = pd.DataFrame()
+        # self.dataframe_run = pd.DataFrame()
+        # self.dataframe_others=pd.DataFrame()
+        # self._split_dataframe_by_activity()
+        # del self.main_dataframe
+
+    def _split_dataframe_by_activity(self):
+        self.dataframe_swim = self.dataframe.loc[
+            self.dataframe['Activity Type'].isin(['Pool Swimming', 'Open Water Swimming', 'Swimming'])]
+        self.dataframe_cycle = self.dataframe.loc[
+            self.dataframe['Activity Type'].isin(['Virtual_Cycling', 'Indoor_Cycling', 'Road_Cycling', 'Cycling'])]
+        self.dataframe_run = self.dataframe.loc[
+            self.dataframe['Activity Type'].isin(['Running', 'Treadmill Running'])]
+        self.dataframe_others = self.dataframe.loc[
+            self.dataframe['Activity Type'].isin(['Strength Training', 'Hiking', 'Multisport', 'Indoor Rowing'])]
+
+    def _concat_dataframe_by_activity(self):
+        self.dataframe = pd.concat(
+            [self.dataframe_swim, self.dataframe_cycle, self.dataframe_run, self.dataframe_others])
+        del self.dataframe_swim, self.dataframe_cycle, self.dataframe_run, self.dataframe_others
+        self.dataframe = self.dataframe.sort_index(inplace=True)
 
     def _drop_columns(self) :
         # TODO: Choose columns instead of dropping them
@@ -300,6 +324,16 @@ class OriginalDataCleaner() :
         df2 = self.dataframe[self.dataframe < lower]
         return print('Total number of outliers are', df1.shape[0] + df2.shape[0])
 
+    def out_plot(self, column):
+        plt.figure(figsize=(10, 6))
+        sns.distplot(self.dataframe[column], kde=False)
+        plt.axvspan(xmin=lower, xmax=self.dataframe[column].min(), alpha=0.2, color='red')
+        plt.axvspan(xmin=upper, xmax=self.dataframe[column].max(), alpha=0.2, color='red')
+        plt.show()
+        sns.distplot(self.dataframe[column])
+        plt.show()
+
+
     def out_std(self) :
         global lower, upper
         # calculate the mean and standard deviation of the data frame
@@ -359,6 +393,7 @@ class OriginalDataCleaner() :
         print(self.dataframe.isna().any())
         print(self.dataframe.isna().sum())
         self.out_iqr()
+        self.out_plot("Distance")
         self.out_std()
 
 
