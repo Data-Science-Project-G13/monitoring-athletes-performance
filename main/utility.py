@@ -40,7 +40,7 @@ def get_all_spreadsheet_data_file_names():
         List of strings
     """
     config_parser.read(data_names_config)
-    return [config_parser.get('ORIGINAL-DATA-SETS', key) for key in list(config_parser['ORIGINAL-DATA-SETS'].keys())]
+    return [config_parser.get('SPREADSHEET-DATA-SETS', key) for key in list(config_parser['SPREADSHEET-DATA-SETS'].keys())]
 
 
 def get_all_additional_data_folder_names():
@@ -62,7 +62,7 @@ def get_spreadsheet_numerical():
         List of strings
     """
     config_parser.read(column_data_types_config)
-    return pattern.split(config_parser.get('ORIGINAL', 'numerical'))
+    return pattern.split(config_parser.get('SPREADSHEET', 'numerical'))
 
 
 def get_spreadsheet_categorical():
@@ -73,7 +73,7 @@ def get_spreadsheet_categorical():
         List of strings
     """
     config_parser.read(column_data_types_config)
-    return pattern.split(config_parser.get('ORIGINAL', 'categorical'))
+    return pattern.split(config_parser.get('SPREADSHEET', 'categorical'))
 
 
 def get_all_original_data_columns():
@@ -136,7 +136,7 @@ def get_all_additional_data_columns():
     return columns
 
 
-def get_original_activity_types():
+def get_spreadsheet_activity_types():
     """Get all the activity types in original data
 
     Returns
@@ -144,7 +144,7 @@ def get_original_activity_types():
         List of strings
     """
     config_parser.read(activity_types_config)
-    return pattern.split(config_parser.get('ORIGINAL', 'activity_types'))
+    return pattern.split(config_parser.get('SPREADSHEET', 'activity_types'))
 
 
 def get_additional_activity_types():
@@ -157,6 +157,9 @@ def get_additional_activity_types():
     config_parser.read(activity_types_config)
     return pattern.split(config_parser.get('ADDITIONAL', 'activity_types'))
 
+def create_all_folders():
+    pass
+
 
 if __name__ == '__main__':
     # The lines below are for test
@@ -166,5 +169,5 @@ if __name__ == '__main__':
     print(get_spreadsheet_categorical())
     print(get_additional_numerical_ordered())
     print(get_additional_categorical())
-    print(get_original_activity_types())
+    print(get_spreadsheet_activity_types())
     print(get_additional_activity_types())
