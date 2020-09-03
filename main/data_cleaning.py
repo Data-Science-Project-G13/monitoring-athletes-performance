@@ -61,7 +61,7 @@ pd.set_option('display.max_row', 20)
 pd.set_option('display.max_columns', 10)
 
 
-class OriginalDataCleaner() :
+class SpreadsheetDataCleaner() :
     """
     A class used to process data cleaning on CoachingMate data
 
@@ -799,7 +799,7 @@ def _save_cleaned_df(data_type, athletes_name, file_name, cleaned_df) :
 
     elif data_type == 'additional' :
         athlete_cleaned_additional_data_folder = '{}/data/cleaned_additional/{}'.format(os.path.pardir,
-                                                                                        athletes_name.lower())
+                                                                                        '_'.join(athletes_name.lower().split()))
         if not os.path.exists(athlete_cleaned_additional_data_folder) :
             os.mkdir(athlete_cleaned_additional_data_folder)
         cleaned_df.to_csv('{}/{}'.format(athlete_cleaned_additional_data_folder, file_name[-41 :]))
@@ -825,8 +825,8 @@ def _main_helper_spreadsheet(athletes_name=None, file_name: str = None) :
         athlete_df = data_loader_spreadsheet.load_spreadsheet_data(file_name=file_name)
     else :
         athlete_df = data_loader_spreadsheet.load_spreadsheet_data(athletes_name=athletes_name)
-        file_name = data_loader_spreadsheet.config.get('ORIGINAL-DATA-SETS', athletes_name.lower())
-    spreadsheet_data_cleaner = OriginalDataCleaner(athlete_df)
+        file_name = data_loader_spreadsheet.config.get('SPREADSHEET-DATA-SETS', athletes_name.lower())
+    spreadsheet_data_cleaner = SpreadsheetDataCleaner(athlete_df)
     spreadsheet_data_cleaner.process_data_cleaning()
     cleaned_df = spreadsheet_data_cleaner.dataframe
     _save_cleaned_df('spreadsheet', athletes_name, file_name, cleaned_df)
