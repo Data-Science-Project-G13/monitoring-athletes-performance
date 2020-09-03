@@ -50,7 +50,7 @@ class DataLoader():
         self.config.read(data_names)
 
 
-    def load_original_data(self, file_name):
+    def load_original_data(self, file_name=None, athletes_name=None):
         """Load the original data for an athlete
 
         Returns
@@ -62,8 +62,8 @@ class DataLoader():
             if os.path.isfile(file_path):
                 return pd.read_csv(file_path, sep=',')
             try:
-                file_name = self.config.get('ORIGINAL-DATA-SETS', file_name.lower())
-                file_path = '{}/{}'.format(self.data_path, file_name)
+                file_name = self.config.get('ORIGINAL-DATA-SETS', athletes_name.lower())
+                file_path = '{}/{}'.format(self.data_path, athletes_name)
                 return pd.read_csv(file_path, sep=',')
             except:
                 return None
@@ -101,18 +101,46 @@ class DataLoader():
             else:
                 return None
 
+    def load_cleaned_original_data(self, dir_name=None, athletes_name=None):
+        """Load the cleaned original data for an athlete
+
+        Returns
+        -------
+            Pandas data frame
+        """
+        if self.data_type == 'original':
+            file_path = '{}/{}'.format(self.data_path, dir_name)
+            if os.path.isfile(file_path):
+                return pd.read_csv(file_path, sep=',')
+            try:
+                file_name = self.config.get('CLEANED-ORIGINAL-DATA-SETS', athletes_name.lower())
+                file_path = '{}/{}'.format(self.data_path, file_name)
+                return pd.read_csv(file_path, sep=',')
+            except:
+                return None
+        if self.data_type == 'additional':
+            print('Invalid function call. Given type \'additional\'.')
+            return None
+
 
 
 if __name__ == '__main__':
+
     # Get all file names of the original data
     data_loader_original = DataLoader('original')
     orig_data_names = utility.get_all_original_data_file_names()
     print('Original data file names: ', orig_data_names)
     # Load original data in two ways
-    orig_df_example1 = data_loader_original.load_original_data(orig_data_names[0])   # Load with file name
-    orig_df_example2 = data_loader_original.load_original_data('eduardo oliveira')   # Load with athlete's name
+    orig_df_example1 = data_loader_original.load_original_data(file_name=orig_data_names[0])   # Load with file name
+    orig_df_example2 = data_loader_original.load_original_data(athletes_name='eduardo oliveira')   # Load with athlete's name
     print(orig_df_example1.head())
     print(orig_df_example1.head())
+    # Load cleaned original data in two ways
+    cleaned_orig_df_example1 = data_loader_original.load_cleaned_original_data(dir_name='cleaned_original/Eduardo Oliveira (Intermediate).csv')
+    cleaned_orig_df_example2 = data_loader_original.load_cleaned_original_data(athletes_name='eduardo oliveira')
+    print(cleaned_orig_df_example1.head())
+    print(cleaned_orig_df_example2.head())
+
 
     # Get all folder names of the additional data
     data_loader_additional = DataLoader('additional')
@@ -125,3 +153,5 @@ if __name__ == '__main__':
                                                                    split_type='real-time')  # Load with athlete's name
     print(add_df_example1)
     print(add_df_example2)
+
+
