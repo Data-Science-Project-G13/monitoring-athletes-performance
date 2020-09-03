@@ -30,12 +30,25 @@ def get_nonzero_TSS_rows(athlete_df):
     return valid_df
 
 
+def create_directory_structures():
+    """
+    Create directories and folders that are needed for the project
+    :return:
+    """
+    pass
+
+
 def main(athlete_df):
+    """
+    Example process. Data cleaning, Feature Engineering, Modeling.
+    :param athlete_df:
+    :return:
+    """
     valid_df = get_nonzero_TSS_rows(athlete_df)
     y = valid_df[columns_for_analysis[0]]
     X = valid_df[columns_for_analysis[1:]]
-    data_cleaner = data_cleaning.OriginalDataCleaner()
-    data_cleaner.clean_numerical_columns(X, columns_for_analysis[1:])
+    data_cleaner = data_cleaning.SpreadsheetDataCleaner(valid_df)
+    data_cleaner.process_data_cleaning()
     model_builder = ModelBuilder(X, y)
     X_train, X_test, y_train, y_test = model_builder.split_train_validation()
     model_builder.process_linear_regression(X_train, y_train)
@@ -44,7 +57,7 @@ def main(athlete_df):
 if __name__ == '__main__':
     file_name = 'Simon R Gronow (Novice).csv'
     columns_for_analysis = ['Training Stress Score®', 'Avg HR', 'Avg Power']
-    data_loader = DataLoader('original')
+    data_loader = DataLoader('spreadsheet')
     athlete_df = data_loader.load_spreadsheet_data(file_name)
     main(athlete_df)
 
