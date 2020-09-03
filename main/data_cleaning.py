@@ -8,57 +8,53 @@ environment you are running this script in.
 This file can also be imported as a module
 """
 
+# Packages
 import numpy as np
 import pandas as pd
 import os
 import datetime as dt
-import matplotlib as plt
-import utility
-from scipy import stats
-from sklearn.experimental import enable_iterative_imputer
-from sklearn.impute import SimpleImputer, IterativeImputer, KNNImputer
-from data_loader import DataLoader
-
 import pandas_profiling
-
 import warnings
-
-warnings.filterwarnings('ignore')
 import xgboost
-from sklearn.experimental import enable_iterative_imputer
-from sklearn.impute import IterativeImputer
-from sklearn.preprocessing import OrdinalEncoder
-from sklearn.ensemble import (GradientBoostingRegressor, GradientBoostingClassifier)
-from sklearn.preprocessing import MinMaxScaler
-
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 import matplotlib
-
-plt.style.use('ggplot')
-from matplotlib.pyplot import figure
-
-matplotlib.rcParams['figure.figsize'] = (12, 8)
-
-pd.options.mode.chained_assignment = None
-
 import seaborn as sns
+import missingno as msno
 
+from scipy import stats
+from datetime import datetime
+from matplotlib.pyplot import figure
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import SimpleImputer, IterativeImputer, KNNImputer
+from sklearn.ensemble import (GradientBoostingRegressor, GradientBoostingClassifier)
+from sklearn.preprocessing import MinMaxScaler
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
 from sklearn.linear_model import LogisticRegression
 from IPython.display import Image
 from sklearn.preprocessing import StandardScaler
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.preprocessing import OrdinalEncoder
 from sklearn.cluster import DBSCAN
 from sklearn.neighbors import LocalOutlierFactor
 from sklearn.ensemble import IsolationForest
 
+# Self-defined modules
+import utility
+from data_loader import DataLoader
+
+# Settings
+warnings.filterwarnings('ignore')
+
+plt.style.use('ggplot')
+matplotlib.rcParams['figure.figsize'] = (12, 8)
+
+pd.options.mode.chained_assignment = None
+
 sns.set(style="darkgrid", palette="pastel", color_codes=True)
 sns.set_context('talk')
 from sklearn.impute import KNNImputer
-
-import missingno as msno
-from datetime import datetime
 
 # Set the data frame display option
 pd.set_option('display.max_row', 20)
