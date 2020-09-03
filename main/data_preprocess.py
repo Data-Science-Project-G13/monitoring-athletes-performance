@@ -185,7 +185,7 @@ class DataPreprocessor():
 
 if __name__ == '__main__':
     file_name = 'Ollie Allan (Advance).csv'
-    athlete_dataframe = DataLoader().load_original_data(file_name)
+    athlete_dataframe = DataLoader().load_spreadsheet_data(file_name)
     preprocessor = DataPreprocessor(athlete_dataframe)
     preprocessor.view_data()
     preprocessed_df = preprocessor.preprocess_for_pmc()

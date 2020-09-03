@@ -37,8 +37,8 @@ class DataLoader():
         Load the data frame
     """
 
-    def __init__(self, data_type='original'):
-        """The constructor include the parameter data_type which indicates original/additional data
+    def __init__(self, data_type='spreadsheet'):
+        """The constructor include the parameter data_type which indicates spreadsheet/additional data
         so that it can avoid data structure problems given that the two functions in the class
         have return in different data types.
 
@@ -50,20 +50,20 @@ class DataLoader():
         self.config.read(data_names)
 
 
-    def load_original_data(self, file_name=None, athletes_name=None):
-        """Load the original data for an athlete
+    def load_spreadsheet_data(self, file_name=None, athletes_name=None):
+        """Load the spreadsheet data for an athlete
 
         Returns
         -------
             Pandas data frame
         """
-        if self.data_type == 'original':
+        if self.data_type == 'spreadsheet':
             file_path = '{}/{}'.format(self.data_path, file_name)
             if os.path.isfile(file_path):
                 return pd.read_csv(file_path, sep=',')
             try:
-                file_name = self.config.get('ORIGINAL-DATA-SETS', athletes_name.lower())
-                file_path = '{}/{}'.format(self.data_path, athletes_name)
+                athletes_file_name = self.config.get('ORIGINAL-DATA-SETS', athletes_name.lower())
+                file_path = '{}/{}'.format(self.data_path, athletes_file_name)
                 return pd.read_csv(file_path, sep=',')
             except:
                 return None
@@ -87,8 +87,8 @@ class DataLoader():
         -------
             List of file names in strings converted from fit files
         """
-        if self.data_type == 'original':
-            print('Invalid function call. Given type \'original\'.')
+        if self.data_type == 'spreadsheet':
+            print('Invalid function call. Given type \'spreadsheet\'.')
             return None
         if self.data_type == 'additional':
             if athletes_name.startswith('csv_'):
@@ -101,14 +101,14 @@ class DataLoader():
             else:
                 return None
 
-    def load_cleaned_original_data(self, dir_name=None, athletes_name=None):
-        """Load the cleaned original data for an athlete
+    def load_cleaned_spreadsheet_data(self, dir_name=None, athletes_name=None):
+        """Load the cleaned spreadsheet data for an athlete
 
         Returns
         -------
             Pandas data frame
         """
-        if self.data_type == 'original':
+        if self.data_type == 'spreadsheet':
             file_path = '{}/{}'.format(self.data_path, dir_name)
             if os.path.isfile(file_path):
                 return pd.read_csv(file_path, sep=',')
@@ -126,23 +126,23 @@ class DataLoader():
 
 if __name__ == '__main__':
 
-    # Get all file names of the original data
-    data_loader_original = DataLoader('original')
-    orig_data_names = utility.get_all_original_data_file_names()
-    print('Original data file names: ', orig_data_names)
-    # Load original data in two ways
-    orig_df_example1 = data_loader_original.load_original_data(file_name=orig_data_names[0])   # Load with file name
-    orig_df_example2 = data_loader_original.load_original_data(athletes_name='eduardo oliveira')   # Load with athlete's name
-    print(orig_df_example1.head())
-    print(orig_df_example1.head())
-    # Load cleaned original data in two ways
-    cleaned_orig_df_example1 = data_loader_original.load_cleaned_original_data(dir_name='cleaned_original/Eduardo Oliveira (Intermediate).csv')
-    cleaned_orig_df_example2 = data_loader_original.load_cleaned_original_data(athletes_name='eduardo oliveira')
-    print(cleaned_orig_df_example1.head())
-    print(cleaned_orig_df_example2.head())
+    # ====== Get all file names of the spreadsheet data ======
+    data_loader_spreadsheet = DataLoader('spreadsheet')
+    spreadsheet_data_names = utility.get_all_spreadsheet_data_file_names()
+    print('Spreadsheet data file names: ', spreadsheet_data_names)
+    # Load spreadsheet data in two ways
+    spreadsheet_df_example1 = data_loader_spreadsheet.load_spreadsheet_data(file_name=spreadsheet_data_names[1])   # Load with file name
+    spreadsheet_df_example2 = data_loader_spreadsheet.load_spreadsheet_data(athletes_name='eduardo oliveira')   # Load with athlete's name
+    print(spreadsheet_df_example1.head())
+    print(spreadsheet_df_example2.head())
+    # Load cleaned spreadsheet data in two ways
+    cleaned_spreadsheet_df_example1 = data_loader_spreadsheet.load_cleaned_spreadsheet_data(dir_name='cleaned_spreadsheet/Eduardo Oliveira (Intermediate).csv')
+    cleaned_spreadsheet_df_example2 = data_loader_spreadsheet.load_cleaned_spreadsheet_data(athletes_name='eduardo oliveira')
+    print(cleaned_spreadsheet_df_example1.head())
+    print(cleaned_spreadsheet_df_example2.head())
 
 
-    # Get all folder names of the additional data
+    # ====== Get all folder names of the additional data ======
     data_loader_additional = DataLoader('additional')
     add_data_folder_names = utility.get_all_additional_data_folder_names()
     print('Additional data folder names: ',add_data_folder_names)

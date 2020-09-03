@@ -15,7 +15,7 @@ import os
 import datetime as dt
 import pandas_profiling
 import warnings
-import xgboost
+# import xgboost
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 import matplotlib
@@ -83,8 +83,8 @@ class OriginalDataCleaner() :
     """
 
     def __init__(self, dataframe: pd.DataFrame) :
-        # self.numerical_columns = utility.get_original_numerical()
-        # self.categorical_columns = utility.get_original_categorical()
+        self.numerical_columns = utility.get_spreadsheet_numerical()
+        self.categorical_columns = utility.get_spreadsheet_categorical()
         self.dataframe = dataframe
 
         # self.main_dataframe = dataframe
@@ -235,21 +235,21 @@ class OriginalDataCleaner() :
             miss_index_dict[tcol] = index
         return miss_index_dict
 
-    def _apply_regression_imputation(self, data_numeric_regr, target_cols, miss_index_dict) :
-        '''Predictors for regression imputation'''
-        predictors = data_numeric_regr.drop(target_cols, axis=1)
-        for tcol in target_cols :
-            y = data_numeric_regr[tcol]
-            '''Initially impute the column with mean'''
-            y = y.fillna(y.mean())
-            xgb = xgboost.XGBRegressor(objective="reg:squarederror", random_state=42)
-            '''Fit the model where y is the target column which is to be imputed'''
-            xgb.fit(predictors, y)
-            predictions = pd.Series(xgb.predict(predictors), index=y.index)
-            index = miss_index_dict[tcol]
-            '''Replace the missing values with the predictions'''
-            data_numeric_regr[tcol].loc[index] = predictions.loc[index]
-        return data_numeric_regr
+    # def _apply_regression_imputation(self, data_numeric_regr, target_cols, miss_index_dict) :
+    #     '''Predictors for regression imputation'''
+    #     predictors = data_numeric_regr.drop(target_cols, axis=1)
+    #     for tcol in target_cols :
+    #         y = data_numeric_regr[tcol]
+    #         '''Initially impute the column with mean'''
+    #         y = y.fillna(y.mean())
+    #         xgb = xgboost.XGBRegressor(objective="reg:squarederror", random_state=42)
+    #         '''Fit the model where y is the target column which is to be imputed'''
+    #         xgb.fit(predictors, y)
+    #         predictions = pd.Series(xgb.predict(predictors), index=y.index)
+    #         index = miss_index_dict[tcol]
+    #         '''Replace the missing values with the predictions'''
+    #         data_numeric_regr[tcol].loc[index] = predictions.loc[index]
+    #     return data_numeric_regr
 
     def _apply_linear_interpolation(self, numeric_column_df):
         for col in numeric_column_df.columns:
@@ -408,7 +408,7 @@ class OriginalDataCleaner() :
         target_cols = ['Avg. Swolf','Total Strokes','Avg Speed','Avg HR', 'Max HR', 'Avg Bike Cadence', 'Max Bike Cadence',"Distance","Calories","Avg Stroke Rate","Number of Laps"]
         predictors = data_numeric_regr.drop(target_cols, axis=1)
         miss_index_dict = self._find_missing_index(data_numeric_regr, target_cols)
-        self._apply_regression_imputation(data_numeric_regr, target_cols, miss_index_dict)
+        # self._apply_regression_imputation(data_numeric_regr, target_cols, miss_index_dict)
         #print(self._apply_regression_imputation(data_numeric_regr, target_cols, miss_index_dict))
         self._apply_linear_interpolation(numeric_column_df)
         eddy_numeric_imp = self._apply_mice_imputation_numeric(numeric_column_df)
@@ -707,7 +707,7 @@ class AdditionalDataCleaner() :
     def handle_outliers(self) :
         """
 
-        :return: (outlier_mask, df_outlier_free)
+        return: (outlier_mask, df_outlier_free)
             outlier_mask: 0 <==> not outlier; 1 <==> outlier
             df_outlier_free: dataframe without possible outliers
         """
@@ -759,10 +759,10 @@ class AdditionalDataCleaner() :
 
 
 def _create_cleaned_data_folder(data_type) :
-    if data_type == 'original' :
-        cleaned_original_folder = '{}/data/cleaned_original'.format(os.path.pardir)
-        if not os.path.exists(cleaned_original_folder) :
-            os.mkdir(cleaned_original_folder)
+    if data_type == 'spreadsheet' :
+        cleaned_spreadsheet_folder = '{}/data/cleaned_spreadsheet'.format(os.path.pardir)
+        if not os.path.exists(cleaned_spreadsheet_folder) :
+            os.mkdir(cleaned_spreadsheet_folder)
     elif data_type == 'additional' :
         cleaned_additional_folder = '{}/data/cleaned_additional'.format(os.path.pardir)
         if not os.path.exists(cleaned_additional_folder) :
@@ -775,9 +775,9 @@ def _create_log_folders(data_type, athletes_name=None) :
     if not os.path.exists('{}/log/'.format(os.path.pardir)) :
         os.mkdir('{}/log/'.format(os.path.pardir))
 
-    if data_type == 'original' :
-        log_folder_names = ['original_missing_value_log',
-                            'original_outlier_log']
+    if data_type == 'spreadsheet' :
+        log_folder_names = ['spreadsheet_missing_value_log',
+                            'spreadsheet_outlier_log']
     elif data_type == 'additional' :
         log_folder_names = ['additional_missing_value_log',
                             'additional_outlier_log']
@@ -793,8 +793,8 @@ def _create_log_folders(data_type, athletes_name=None) :
 
 
 def _save_cleaned_df(data_type, athletes_name, file_name, cleaned_df) :
-    if data_type == 'original' :
-        cleaned_df.to_csv('{}/data/cleaned_original/{}'.format(os.path.pardir, file_name))
+    if data_type == 'spreadsheet' :
+        cleaned_df.to_csv('{}/data/cleaned_spreadsheet/{}'.format(os.path.pardir, file_name))
         print('Cleaned {} data saved!'.format(file_name))
 
     elif data_type == 'additional' :
@@ -807,7 +807,7 @@ def _save_cleaned_df(data_type, athletes_name, file_name, cleaned_df) :
 
 
 def _save_log(data_type, log_type, file_name, log_df, athletes_name=None) :
-    if data_type == 'original' :
+    if data_type == 'spreadsheet' :
         log_file_path = '{}/log/{}_{}_log/{}'.format(os.path.pardir, data_type, log_type, file_name[-41 :])
     elif data_type == 'additional' :
         log_file_path = '{}/log/{}_{}_log/{}/{}'.format(os.path.pardir, data_type, log_type, athletes_name,
@@ -818,18 +818,18 @@ def _save_log(data_type, log_type, file_name, log_df, athletes_name=None) :
         log_df.to_csv(log_file_path)
 
 
-def _main_helper_original(athletes_name=None, file_name: str = None) :
-    # TODO: Create missing value and outlier log for original data
-    data_loader_original = DataLoader('original')
+def _main_helper_spreadsheet(athletes_name=None, file_name: str = None) :
+    # TODO: Create missing value and outlier log for spreadsheet data
+    data_loader_spreadsheet = DataLoader('spreadsheet')
     if file_name :
-        athlete_df = data_loader_original.load_original_data(file_name)
+        athlete_df = data_loader_spreadsheet.load_spreadsheet_data(file_name=file_name)
     else :
-        athlete_df = data_loader_original.load_original_data(athletes_name)
-        file_name = data_loader_original.config.get('ORIGINAL-DATA-SETS', athletes_name.lower())
-    original_data_cleaner = OriginalDataCleaner(athlete_df)
-    original_data_cleaner.process_data_cleaning()
-    cleaned_df = original_data_cleaner.dataframe
-    _save_cleaned_df('original', athletes_name, file_name, cleaned_df)
+        athlete_df = data_loader_spreadsheet.load_spreadsheet_data(athletes_name=athletes_name)
+        file_name = data_loader_spreadsheet.config.get('ORIGINAL-DATA-SETS', athletes_name.lower())
+    spreadsheet_data_cleaner = OriginalDataCleaner(athlete_df)
+    spreadsheet_data_cleaner.process_data_cleaning()
+    cleaned_df = spreadsheet_data_cleaner.dataframe
+    _save_cleaned_df('spreadsheet', athletes_name, file_name, cleaned_df)
 
 
 def _main_helper_additional(athletes_name, activity_type, split_type) :
@@ -862,13 +862,13 @@ def _main_helper_additional(athletes_name, activity_type, split_type) :
                                                                                  activity_type))
 
 
-def main(data_type='original', athletes_name: str = None, activity_type: str = None, split_type: str = None) :
+def main(data_type='spreadsheet', athletes_name: str = None, activity_type: str = None, split_type: str = None) :
     """The main function of processing data cleaning
 
     Parameters
     -------
     data_type: str
-       The type of the data, original or additional.
+       The type of the data, spreadsheet or additional.
     athletes_name: str
         The name of the athlete whose data is about to clean.
     activity_type: str
@@ -881,15 +881,15 @@ def main(data_type='original', athletes_name: str = None, activity_type: str = N
     _create_cleaned_data_folder(data_type)
     _create_log_folders(data_type, athletes_name)
 
-    if data_type == 'original' :
+    if data_type == 'spreadsheet' :
         if athletes_name is None :
-            # Clean all original data
-            orig_file_names = utility.get_all_original_data_file_names()
-            for file_name in orig_file_names :
-                _main_helper_original(file_name=file_name)
+            # Clean all spreadsheet data
+            spreadsheet_file_names = utility.get_all_spreadsheet_data_file_names()
+            for file_name in spreadsheet_file_names :
+                _main_helper_spreadsheet(file_name=file_name)
         else :
             # Clean data for the given athlete
-            _main_helper_original(athletes_name=athletes_name)
+            _main_helper_spreadsheet(athletes_name=athletes_name)
 
     elif data_type == 'additional' :
         # Clean all additional data for the given athlete
@@ -899,11 +899,12 @@ def main(data_type='original', athletes_name: str = None, activity_type: str = N
 if __name__ == '__main__':
     athletes_names = ['eduardo oliveira']
 
-    # Clean original data
-    # main('original')  # clean all original data
-    main('original', athletes_names[0])  # clean original data for one athlete
+    # Clean spreadsheet data
+    # main('spreadsheet')  # clean all spreadsheet data
+    # TODO: Too slow, won't work in industry.
+    main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
 
-    # # Clean additional data
-    # activity_type = ['cycling', 'running', 'swimming']
-    # split_type = 'real-time'
-    # main('additional', athletes_name=athletes_names[0], activity_type=activity_type[0], split_type=split_type)
+    # Clean additional data
+    activity_type = ['cycling', 'running', 'swimming']
+    split_type = 'real-time'
+    main('additional', athletes_name=athletes_names[0], activity_type=activity_type[0], split_type=split_type)

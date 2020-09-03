@@ -32,7 +32,7 @@ activity_types_config = '{}/main/config/activity_types.cfg'.format(os.path.pardi
 pattern = re.compile("^\s+|\s*,\s*|\s+$")
 
 
-def get_all_original_data_file_names():
+def get_all_spreadsheet_data_file_names():
     """Get all the original data file names
 
     Returns
@@ -54,7 +54,7 @@ def get_all_additional_data_folder_names():
     return [config_parser.get('ADDITIONAL-DATA-FOLDERS', key) for key in list(config_parser['ADDITIONAL-DATA-FOLDERS'].keys())]
 
 
-def get_original_numerical():
+def get_spreadsheet_numerical():
     """Get all the numerical column names in original data
 
     Returns
@@ -65,7 +65,7 @@ def get_original_numerical():
     return pattern.split(config_parser.get('ORIGINAL', 'numerical'))
 
 
-def get_original_categorical():
+def get_spreadsheet_categorical():
     """Get all the categorical column names in original data
 
     Returns
@@ -84,8 +84,8 @@ def get_all_original_data_columns():
         columns: List of strings
             All the column names in original data
     """
-    columns = get_original_numerical() + \
-              get_original_categorical()
+    columns = get_spreadsheet_numerical() + \
+              get_spreadsheet_categorical()
     return columns
 
 
@@ -160,10 +160,10 @@ def get_additional_activity_types():
 
 if __name__ == '__main__':
     # The lines below are for test
-    print(get_all_original_data_file_names())
+    print(get_all_spreadsheet_data_file_names())
     print(get_all_additional_data_folder_names())
-    print(get_original_numerical())
-    print(get_original_categorical())
+    print(get_spreadsheet_numerical())
+    print(get_spreadsheet_categorical())
     print(get_additional_numerical_ordered())
     print(get_additional_categorical())
     print(get_original_activity_types())
