@@ -62,7 +62,7 @@ class DataLoader():
             if os.path.isfile(file_path):
                 return pd.read_csv(file_path, sep=',')
             try:
-                athletes_file_name = self.config.get('ORIGINAL-DATA-SETS', athletes_name.lower())
+                athletes_file_name = self.config.get('SPREADSHEET-DATA-SETS', athletes_name.lower())
                 file_path = '{}/{}'.format(self.data_path, athletes_file_name)
                 return pd.read_csv(file_path, sep=',')
             except:
@@ -109,18 +109,32 @@ class DataLoader():
             Pandas data frame
         """
         if self.data_type == 'spreadsheet':
-            file_path = '{}/{}'.format(self.data_path, dir_name)
-            if os.path.isfile(file_path):
-                return pd.read_csv(file_path, sep=',')
             try:
-                file_name = self.config.get('CLEANED-ORIGINAL-DATA-SETS', athletes_name.lower())
+                file_path = '{}/{}'.format(self.data_path, dir_name)
+                if os.path.isfile(file_path):
+                    return pd.read_csv(file_path, sep=',')
+
+                file_name = self.config.get('CLEANED-SPREADSHEET-DATA-SETS', athletes_name.lower())
                 file_path = '{}/{}'.format(self.data_path, file_name)
                 return pd.read_csv(file_path, sep=',')
-            except:
-                return None
+            except Exception as e:
+                print('Exception: Cannot load the data.', e)
+
         if self.data_type == 'additional':
             print('Invalid function call. Given type \'additional\'.')
             return None
+
+    def load_cleaned_additional_data(self, athletes_name, activity_type='', split_type=''):
+        if self.data_type == 'spreadsheet':
+            print('Invalid function call. Given type \'spreadsheet\'.')
+            return None
+        if self.data_type == 'additional':
+            dir_path = '{}/cleaned_additional/{}'.format(self.data_path, '_'.join(athletes_name.lower().split()))
+            if os.path.isdir(dir_path):
+                return ['{}/{}'.format(dir_path, file_name) for file_name in os.listdir(dir_path)
+                        if file_name.startswith(activity_type) and file_name.endswith('{}.csv'.format(split_type))]
+            else:
+                return None
 
 
 
@@ -145,13 +159,16 @@ if __name__ == '__main__':
     # ====== Get all folder names of the additional data ======
     data_loader_additional = DataLoader('additional')
     add_data_folder_names = utility.get_all_additional_data_folder_names()
-    print('Additional data folder names: ',add_data_folder_names)
+    print('Additional data folder names: ', add_data_folder_names)
     # Load additional data in two ways
-    add_df_example1 = data_loader_additional.load_additional_data(add_data_folder_names[0])    # Load with folder name
-    add_df_example2 = data_loader_additional.load_additional_data(athletes_name='eduardo oliveira',
-                                                                   activity_type='swimming',
-                                                                   split_type='real-time')  # Load with athlete's name
-    print(add_df_example1)
-    print(add_df_example2)
+    additional_df_example1 = data_loader_additional.load_additional_data(add_data_folder_names[0])    # Load with folder name
+    additional_df_example2 = data_loader_additional.load_additional_data(athletes_name='eduardo oliveira',
+                                                                         activity_type='swimming',
+                                                                         split_type='real-time')  # Load with athlete's name
+    print(additional_df_example1)
+    print(additional_df_example2)
+    # Load cleaned additional data
+    cleaned_additional_df_example = data_loader_additional.load_cleaned_additional_data(athletes_name='eduardo oliveira')
+    print(cleaned_additional_df_example)
 
 
