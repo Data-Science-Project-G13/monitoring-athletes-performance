@@ -24,6 +24,30 @@ class OriginalDataFeatureExtractor():
     def __init__(self):
         pass
 
+    def process_pca(self, low_dimension, path):
+        """
+        PCA (Principal Component Analysis)
+        A method used to dimension reduction, selecting the most effective variables
+        Parameters
+        -------
+        low_dimension : int
+            How many variables left after PCA processing
+        file_name : str
+            Path of raw dataset needs to be reduced
+        """
+        data = np.loadtxt(path, dtype=str, delimiter=',')
+        # read athlete dataset
+        col_name = data[0,]
+        # variables name of the dataset
+        pca = PCA(n_components=low_dimension)
+        # set how many variables will be kept
+        data_processed = pca.fit_transform(data[1:, ])
+        # use PCA function to calculate the effect (from 0 to 1) of each variables
+        variance_ratio = dict(zip(col_name, pca.explained_variance_ratio_))
+        rank = sorted(variance_ratio.items(), key=lambda x: x[1], reverse=True)
+        # variables' effect are ranked in descend order
+        return rank
+
 
 class AdditionalDataFeatureExtractor():
 
@@ -32,6 +56,7 @@ class AdditionalDataFeatureExtractor():
 
     def get_tss_for_session(self):
         pass
+
 
     def process_feature_engineering(self):
         print('\nProcessing feature engineering from {} ...'.format(self.file_name[3:]))
@@ -43,32 +68,6 @@ class AdditionalDataFeatureExtractor():
             athlete_df = pd.DataFrame(pd.read_csv(self.file_name))
         else:
             print('Not able to process feature engineering for this activity type.')
-
-
-def PCA_Process(low_dimension,path):
-    """
-    PCA(Principal Component Analysis)
-    A method used to dimension reduction, selecting the most effective variables
-    Parameters
-    -------
-    low_dimension : int
-        How many variables left after PCA processing
-    path : str
-        Path of raw dataset needs to be reduced
-    """
-    data = np.loadtxt(path,dtype=str,delimiter=',')
-    # read athlete dataset
-    col_name = data[0,]
-    # variables name of the dataset
-    pca = PCA(n_components=low_dimension)
-    # set how many variables will be kept
-    data_processed = pca.fit_transform(data[1:,])
-    # use PCA function to calculate the effect (from 0 to 1) of each variables
-    variance_ratio = dict(zip(col_name,pca.explained_variance_ratio_))
-    rank = sorted(variance_ratio.items(), key=lambda x: x[1], reverse=True)
-    # variables' effect are ranked in descend order
-    return rank
-
 
 
 def main(data_type: str, athletes_name: str) :
