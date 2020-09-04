@@ -19,9 +19,13 @@ from data_loader import DataLoader
 
 
 
-class OriginalDataFeatureExtractor():
+class SpreadsheetDataFeatureExtractor():
 
-    def __init__(self):
+    def __init__(self, dataframe: pd.DataFrame):
+        self.dataframe = dataframe
+
+    def fill_out_tss(self, tss_list: []):
+        # TODO: Tingli will implement this
         pass
 
     def process_pca(self, low_dimension, path):
@@ -48,10 +52,18 @@ class OriginalDataFeatureExtractor():
         # variables' effect are ranked in descend order
         return rank
 
+    def process_feature_engineering(self):
+        """
+        Process Feature Engineering on a spreadsheet data
+        """
+        """ *** Main function of the extractor @Spoorthi @Sindhu, the self.dataframe 
+        should be done feature engineering after call this function*** """
+        pass
+
 
 class AdditionalDataFeatureExtractor():
 
-    def __init__(self, file_name):
+    def __init__(self, file_name: str):
         self.file_name = file_name
 
     def get_tss_for_session(self):
@@ -82,7 +94,9 @@ def main(data_type: str, athletes_name: str) :
     """
 
     if data_type == 'spreadsheet' :
-        pass
+        data_loader_spreadsheet = DataLoader('spreadsheet')
+        cleaned_spreadsheet_data_frames = data_loader_spreadsheet.load_cleaned_spreadsheet_data(athletes_name=athletes_name)
+        spreadsheet_feature_extractor = SpreadsheetDataFeatureExtractor(cleaned_spreadsheet_data_frames)
 
     elif data_type == 'additional' :
         data_loader_additional = DataLoader('additional')
@@ -94,4 +108,6 @@ def main(data_type: str, athletes_name: str) :
 
 if __name__ == '__main__':
     athletes_names = ['eduardo oliveira']
+
+    main('spreadsheet', athletes_names[0])
     main('additional', athletes_names[0])
