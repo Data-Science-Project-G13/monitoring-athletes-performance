@@ -358,14 +358,16 @@ class SpreadsheetDataCleaner() :
         for index in numeric_column_values:
             outliers = []
             zscore = []
+            indices=[]
             mean = np.mean(self.dataframe[index])
             std = np.std(self.dataframe[index])
-            for i in self.dataframe[index] :
+            for i,j in zip(self.dataframe[index], self.dataframe[index].index):
                 z_score = (i - mean) / std
                 zscore.append(z_score)
                 if np.abs(z_score) > threshold :
                     outliers.append(i)
-            print("Total number of outliers for the ",index, "are", len(outliers))
+                    indices.append(j)
+            print("Total number of outliers for the ",index, "are", len(outliers),"and its indexes are",indices)
 
     def localOutlierFactor(self,numeric_column_values):
         clf = LocalOutlierFactor(n_neighbors=50, contamination='auto')
@@ -415,8 +417,8 @@ class SpreadsheetDataCleaner() :
         print(self.dataframe.isna().any())
         print(self.dataframe.isna().sum())
         #self.out_iqr(numeric_column_values)
-        self.out_std(numeric_column_values)
-        #self.out_zscore(numeric_column_values)
+        #self.out_std(numeric_column_values)
+        self.out_zscore(numeric_column_values)
         #self.localOutlierFactor(numeric_column_values)
 
 
