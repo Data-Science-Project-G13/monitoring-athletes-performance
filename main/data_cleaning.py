@@ -303,6 +303,7 @@ class SpreadsheetDataCleaner() :
     #         eddy_arr = np.array(eddy_categoric_imp[col]).reshape(-1, 1)
     #         eddy_categoric_imp[col] = oe.inverse_transform(eddy_arr)
     #     return eddy_categoric_imp
+
     def out_iqr(self,numeric_column_values):
         for index in numeric_column_values:
             q25, q75 = np.quantile(self.dataframe[index], 0.25), np.quantile(self.dataframe[index], 0.75)
@@ -319,16 +320,17 @@ class SpreadsheetDataCleaner() :
             df1 = self.dataframe[self.dataframe[index] > upper]
             df2 = self.dataframe[self.dataframe[index] < lower]
             print("Total number of outliers for the column ",index," are", df1.shape[0]+ df2.shape[0])
+            print("Outlier indexes are",df1.index,df2.index)
 
 
-    # def out_plot(self, column):
-    #     plt.figure(figsize=(10, 6))
-    #     sns.distplot(self.dataframe[column], kde=False)
-    #     plt.axvspan(xmin=lower, xmax=self.dataframe[column].min(), alpha=0.2, color='red')
-    #     plt.axvspan(xmin=upper, xmax=self.dataframe[column].max(), alpha=0.2, color='red')
-    #     plt.show()
-    #     sns.distplot(self.dataframe[column])
-    #     plt.show()
+    def out_plot(self, column):
+        plt.figure(figsize=(10, 6))
+        sns.distplot(self.dataframe[column], kde=False)
+        plt.axvspan(xmin=lower, xmax=self.dataframe[column].min(), alpha=0.2, color='red')
+        plt.axvspan(xmin=upper, xmax=self.dataframe[column].max(), alpha=0.2, color='red')
+        plt.show()
+        sns.distplot(self.dataframe[column])
+        plt.show()
 
 
     def out_std(self,numeric_column_values) :
@@ -345,7 +347,7 @@ class SpreadsheetDataCleaner() :
             df1 = self.dataframe[index][self.dataframe[index] > upper]
             df2 = self.dataframe[index][self.dataframe[index] < lower]
             print("Total number of outliers for the column ",index," are", df1.shape[0]+ df2.shape[0])
-
+            print("Outlier indexes are",df1.index, df2.index)
 
     def out_zscore(self,numeric_column_values) :
         threshold = 3
