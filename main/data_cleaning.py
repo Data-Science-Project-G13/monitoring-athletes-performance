@@ -83,8 +83,8 @@ class SpreadsheetDataCleaner() :
     """
 
     def __init__(self, dataframe: pd.DataFrame) :
-        self.numerical_columns = utility.get_spreadsheet_numerical()
-        self.categorical_columns = utility.get_spreadsheet_categorical()
+        # self.numerical_columns = utility.get_spreadsheet_numerical()
+        # self.categorical_columns = utility.get_spreadsheet_categorical()
         self.dataframe = dataframe
 
         # self.main_dataframe = dataframe
@@ -304,8 +304,7 @@ class SpreadsheetDataCleaner() :
     #         eddy_categoric_imp[col] = oe.inverse_transform(eddy_arr)
     #     return eddy_categoric_imp
     def out_iqr(self):
-        global lower, upper
-        q25, q75 = np.quantile(self.dataframe, 0.25), np.quantile(self.dataframe, 0.75)
+        q25, q75 = np.quantile(self.dataframe['Elev Gain'], 0.25), np.quantile(self.dataframe["Elev Gain"], 0.75)
         # calculate the IQR
         iqr = q75 - q25
         # calculate the outlier cutoff
@@ -316,24 +315,23 @@ class SpreadsheetDataCleaner() :
         print('The lower bound value is', lower)
         print('The upper bound value is', upper)
         # Calculate the number of records below and above lower and above bound value respectively
-        df1 = self.dataframe[self.dataframe > upper]
-        df2 = self.dataframe[self.dataframe < lower]
-        return print('Total number of outliers are', df1.shape[0] + df2.shape[0])
+        df1 = self.dataframe[self.dataframe["Elev Gain"] > upper]
+        df2 = self.dataframe[self.dataframe["Elev Gain"] < lower]
+        return print('Total number of outliers are', df1.shape[0] ,df2.shape[0])
 
-    def out_plot(self, column):
-        plt.figure(figsize=(10, 6))
-        sns.distplot(self.dataframe[column], kde=False)
-        plt.axvspan(xmin=lower, xmax=self.dataframe[column].min(), alpha=0.2, color='red')
-        plt.axvspan(xmin=upper, xmax=self.dataframe[column].max(), alpha=0.2, color='red')
-        plt.show()
-        sns.distplot(self.dataframe[column])
-        plt.show()
+    # def out_plot(self, column):
+    #     plt.figure(figsize=(10, 6))
+    #     sns.distplot(self.dataframe[column], kde=False)
+    #     plt.axvspan(xmin=lower, xmax=self.dataframe[column].min(), alpha=0.2, color='red')
+    #     plt.axvspan(xmin=upper, xmax=self.dataframe[column].max(), alpha=0.2, color='red')
+    #     plt.show()
+    #     sns.distplot(self.dataframe[column])
+    #     plt.show()
 
 
     def out_std(self) :
-        global lower, upper
         # calculate the mean and standard deviation of the data frame
-        data_mean, data_std = self.dataframe.mean(), self.dataframe.std()
+        data_mean, data_std = self.dataframe['Calories'].mean(), self.dataframe['Calories'].std()
         # calculate the cutoff value
         cut_off = data_std * 3
         # calculate the lower and upper bound value
@@ -341,42 +339,31 @@ class SpreadsheetDataCleaner() :
         print('The lower bound value is', lower)
         print('The upper bound value is', upper)
         # Calculate the number of records below and above lower and above bound value respectively
-        df1 = self.dataframe[self.dataframe > upper]
-        df2 = self.dataframe[self.dataframe < lower]
-        return print('Total number of outliers are', df1.shape[0] + df2.shape[0])
+        df1 = self.dataframe['Calories'][self.dataframe['Calories'] > upper]
+        df2 = self.dataframe['Calories'][self.dataframe['Calories'] < lower]
+        return print('Total number of outliers are', df1.shape[0]+ df2.shape[0])
 
-    #def _IsolationForest(self) :
 
-    # cols = ['Distance', 'Avg HR', 'Max HR']
-    #     fig, axs = plt.subplots(1, 3, figsize=(20, 6), facecolor='w', edgecolor='k')
-    #     axs = axs.ravel()
-    #
-    #     for i, column in enumerate(cols) :
-    #         isolation_forest = IsolationForest(contamination='auto')
-    #         isolation_forest.fit(self.dataframe[column].values.reshape(-1, 1))
-    #         xx = np.linspace(self.dataframe[column].min(), self.dataframe[column].max(), len(self.dataframe)).reshape(-1, 1)
-    #         anomaly_score = isolation_forest.decision_function(xx)
-    #         outlier = isolation_forest.predict(xx)
-    #         axs[i].plot(xx, anomaly_score, label='anomaly score')
-    #         axs[i].fill_between(xx.T[0], np.min(anomaly_score), np.max(anomaly_score), where=outlier == -1, color='g',
-    #                             alpha=.4, label='outlier region')
-    #         axs[i].legend()
-    #         axs[i].set_title(column)
-    #         fig.tight_layout()
-    # def out_zscore(self):
-    #     global outliers, zscore
-    #     outliers = []
-    #     zscore = []
-    #     threshold = 3
-    #     # mean,std = eddy.mean(), eddy.std()
-    #     mean = np.mean(self.dataframe)
-    #     std = np.std(self.dataframe)
-    #     for i in self.dataframe:
-    #         z_score = (i - mean) / std
-    #         zscore.append(z_score)
-    #         if np.abs(z_score) > threshold :
-    #             outliers.append(i)
-    #     return print("Total number of outliers are", len(outliers))
+    def out_zscore(self) :
+        outliers = []
+        zscore = []
+        threshold = 3
+        # mean,std = eddy.mean(), eddy.std()
+        mean = np.mean(self.dataframe['Elev Gain'])
+        std = np.std(self.dataframe['Elev Gain'])
+        for i in self.dataframe['Elev Gain'] :
+            z_score = (i - mean) / std
+            zscore.append(z_score)
+            if np.abs(z_score) > threshold :
+                outliers.append(i)
+        return print("Total number of outliers are", len(outliers))
+
+    def localOutlierFactor(self,numeric_column_values):
+        clf = LocalOutlierFactor(n_neighbors=50, contamination='auto')
+        X = self.dataframe[numeric_column_values].values
+        y_pred = clf.fit_predict(X)
+        y_pred = np.unique(y_pred, return_counts=True)
+        return print("Total number of outliers are",y_pred)
 
     def process_data_cleaning(self) :
         """
@@ -419,9 +406,9 @@ class SpreadsheetDataCleaner() :
         print(self.dataframe.isna().any())
         print(self.dataframe.isna().sum())
         self.out_iqr()
-        self.out_plot("Distance")
         self.out_std()
-
+        self.out_zscore()
+        self.localOutlierFactor(numeric_column_values)
 
 
 class AdditionalDataCleaner() :
@@ -905,7 +892,7 @@ if __name__ == '__main__':
     # TODO: Too slow, won't work in industry.
     main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
 
-    # Clean additional data
-    activity_type = ['cycling', 'running', 'swimming']
-    split_type = 'real-time'
-    main('additional', athletes_name=athletes_names[0], activity_type=activity_type[0], split_type=split_type)
+    # # Clean additional data
+    # activity_type = ['cycling', 'running', 'swimming']
+    # split_type = 'real-time'
+    # main('additional', athletes_name=athletes_names[0], activity_type=activity_type[0], split_type=split_type)
