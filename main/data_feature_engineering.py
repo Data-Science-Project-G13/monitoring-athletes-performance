@@ -7,24 +7,15 @@ This tool accepts comma separated value files (.csv).
 This script requires that `pandas` be installed within the Python
 environment you are running this script in.
 
-This file can also be imported as a module and contains the following
-functions:
-
-    * load_athlete_dataframe - returns a pandas data_frame
-    * main - the main function of the script
 """
-
-import featuretools
-import pandas
-import numpy
-import sklearn
-import csv
+# Packages
+import pandas as pd
 import numpy as np
 from sklearn.decomposition import PCA
 import sklearn.decomposition as dp
-from sklearn.datasets.base import load_iris
 
-
+# Self-defined modules
+from data_loader import DataLoader
 
 
 
@@ -36,24 +27,34 @@ class OriginalDataFeatureExtractor():
 
 class AdditionalDataFeatureExtractor():
 
-    def __init__(self):
-        pass
+    def __init__(self, file_name):
+        self.file_name = file_name
 
     def get_tss_for_session(self):
         pass
+
+    def process_feature_engineering(self):
+        print('\nProcessing feature engineering from {} ...'.format(self.file_name[3:]))
+        if 'running' in self.file_name:
+            athlete_df = pd.DataFrame(pd.read_csv(self.file_name))
+        elif 'cycling' in self.file_name:
+            athlete_df = pd.DataFrame(pd.read_csv(self.file_name))
+        elif 'swimming' in self.file_name:
+            athlete_df = pd.DataFrame(pd.read_csv(self.file_name))
+        else:
+            print('Not able to process feature engineering for this activity type.')
+
 
 def PCA_Process(low_dimension,path):
     """
     PCA(Principal Component Analysis)
     A method used to dimension reduction, selecting the most effective variables
-
     Parameters
     -------
-    path : str
-    Path of raw dataset needs to be reduced
     low_dimension : int
-    How many variables left after PCA processing
-
+        How many variables left after PCA processing
+    path : str
+        Path of raw dataset needs to be reduced
     """
     data = np.loadtxt(path,dtype=str,delimiter=',')
     # read athlete dataset
@@ -70,12 +71,28 @@ def PCA_Process(low_dimension,path):
 
 
 
+def main(data_type: str, athletes_name: str) :
+    """The main function of processing feature engineering
+
+    Parameters
+    -------
+    data_type: str
+       The type of the data, spreadsheet or additional.
+    athletes_name: str
+        The name of the athlete whose data is about to clean.
+    """
+
+    if data_type == 'spreadsheet' :
+        pass
+
+    elif data_type == 'additional' :
+        data_loader_additional = DataLoader('additional')
+        cleaned_additional_data_filenames = data_loader_additional.load_cleaned_additional_data(athletes_name)
+        for file_name in cleaned_additional_data_filenames:
+            additional_feature_extractor = AdditionalDataFeatureExtractor(file_name)
+            additional_feature_extractor.process_feature_engineering()
 
 
 if __name__ == '__main__':
-
-
-
-
-    pass
-
+    athletes_names = ['eduardo oliveira']
+    main('additional', athletes_names[0])
