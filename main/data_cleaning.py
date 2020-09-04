@@ -303,21 +303,23 @@ class SpreadsheetDataCleaner() :
     #         eddy_arr = np.array(eddy_categoric_imp[col]).reshape(-1, 1)
     #         eddy_categoric_imp[col] = oe.inverse_transform(eddy_arr)
     #     return eddy_categoric_imp
-    def out_iqr(self):
-        q25, q75 = np.quantile(self.dataframe['Elev Gain'], 0.25), np.quantile(self.dataframe["Elev Gain"], 0.75)
-        # calculate the IQR
-        iqr = q75 - q25
-        # calculate the outlier cutoff
-        cut_off = iqr * 1.5
-        # calculate the lower and upper bound value
-        lower, upper = q25 - cut_off, q75 + cut_off
-        print('The IQR is', iqr)
-        print('The lower bound value is', lower)
-        print('The upper bound value is', upper)
-        # Calculate the number of records below and above lower and above bound value respectively
-        df1 = self.dataframe[self.dataframe["Elev Gain"] > upper]
-        df2 = self.dataframe[self.dataframe["Elev Gain"] < lower]
-        return print('Total number of outliers are', df1.shape[0] ,df2.shape[0])
+    def out_iqr(self,numeric_column_values):
+        for index in numeric_column_values:
+            q25, q75 = np.quantile(self.dataframe[index], 0.25), np.quantile(self.dataframe[index], 0.75)
+            # calculate the IQR
+            iqr = q75 - q25
+            # calculate the outlier cutoff
+            cut_off = iqr * 1.5
+            # calculate the lower and upper bound value
+            lower, upper = q25 - cut_off, q75 + cut_off
+            print('The IQR is', iqr)
+            print('The lower bound value is', lower)
+            print('The upper bound value is', upper)
+            # Calculate the number of records below and above lower and above bound value respectively
+            df1 = self.dataframe[self.dataframe[index] > upper]
+            df2 = self.dataframe[self.dataframe[index] < lower]
+            print("Total number of outliers for the column ",index," are", df1.shape[0]+ df2.shape[0])
+
 
     # def out_plot(self, column):
     #     plt.figure(figsize=(10, 6))
@@ -329,34 +331,35 @@ class SpreadsheetDataCleaner() :
     #     plt.show()
 
 
-    def out_std(self) :
-        # calculate the mean and standard deviation of the data frame
-        data_mean, data_std = self.dataframe['Calories'].mean(), self.dataframe['Calories'].std()
-        # calculate the cutoff value
-        cut_off = data_std * 3
-        # calculate the lower and upper bound value
-        lower, upper = data_mean - cut_off, data_mean + cut_off
-        print('The lower bound value is', lower)
-        print('The upper bound value is', upper)
-        # Calculate the number of records below and above lower and above bound value respectively
-        df1 = self.dataframe['Calories'][self.dataframe['Calories'] > upper]
-        df2 = self.dataframe['Calories'][self.dataframe['Calories'] < lower]
-        return print('Total number of outliers are', df1.shape[0]+ df2.shape[0])
+    def out_std(self,numeric_column_values) :
+        for index in numeric_column_values:
+            # calculate the mean and standard deviation of the data frame
+            data_mean, data_std = self.dataframe[index].mean(), self.dataframe[index].std()
+            # calculate the cutoff value
+            cut_off = data_std * 3
+            # calculate the lower and upper bound value
+            lower, upper = data_mean - cut_off, data_mean + cut_off
+            print('The lower bound value is', lower)
+            print('The upper bound value is', upper)
+            # Calculate the number of records below and above lower and above bound value respectively
+            df1 = self.dataframe[index][self.dataframe[index] > upper]
+            df2 = self.dataframe[index][self.dataframe[index] < lower]
+            print("Total number of outliers for the column ",index," are", df1.shape[0]+ df2.shape[0])
 
 
-    def out_zscore(self) :
-        outliers = []
-        zscore = []
+    def out_zscore(self,numeric_column_values) :
         threshold = 3
-        # mean,std = eddy.mean(), eddy.std()
-        mean = np.mean(self.dataframe['Elev Gain'])
-        std = np.std(self.dataframe['Elev Gain'])
-        for i in self.dataframe['Elev Gain'] :
-            z_score = (i - mean) / std
-            zscore.append(z_score)
-            if np.abs(z_score) > threshold :
-                outliers.append(i)
-        return print("Total number of outliers are", len(outliers))
+        for index in numeric_column_values:
+            outliers = []
+            zscore = []
+            mean = np.mean(self.dataframe[index])
+            std = np.std(self.dataframe[index])
+            for i in self.dataframe[index] :
+                z_score = (i - mean) / std
+                zscore.append(z_score)
+                if np.abs(z_score) > threshold :
+                    outliers.append(i)
+            print("Total number of outliers for the ",index, "are", len(outliers))
 
     def localOutlierFactor(self,numeric_column_values):
         clf = LocalOutlierFactor(n_neighbors=50, contamination='auto')
@@ -405,10 +408,10 @@ class SpreadsheetDataCleaner() :
         # self.mice_imputation_categoric(categorical_columns)
         print(self.dataframe.isna().any())
         print(self.dataframe.isna().sum())
-        self.out_iqr()
-        self.out_std()
-        self.out_zscore()
-        self.localOutlierFactor(numeric_column_values)
+        #self.out_iqr(numeric_column_values)
+        self.out_std(numeric_column_values)
+        #self.out_zscore(numeric_column_values)
+        #self.localOutlierFactor(numeric_column_values)
 
 
 class AdditionalDataCleaner() :
