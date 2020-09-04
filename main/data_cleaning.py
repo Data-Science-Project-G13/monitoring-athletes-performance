@@ -320,7 +320,9 @@ class SpreadsheetDataCleaner() :
             df1 = self.dataframe[self.dataframe[index] > upper]
             df2 = self.dataframe[self.dataframe[index] < lower]
             print("Total number of outliers for the column ",index," are", df1.shape[0]+ df2.shape[0])
-            print("Outlier indexes are",df1.index,df2.index)
+            df = pd.concat([df1, df2])
+            print("Outlier indexes are", df.index)
+            del df, df1, df2
 
 
     def out_plot(self, column):
@@ -347,7 +349,9 @@ class SpreadsheetDataCleaner() :
             df1 = self.dataframe[index][self.dataframe[index] > upper]
             df2 = self.dataframe[index][self.dataframe[index] < lower]
             print("Total number of outliers for the column ",index," are", df1.shape[0]+ df2.shape[0])
-            print("Outlier indexes are",df1.index, df2.index)
+            df=pd.concat([df1,df2])
+            print("Outlier indexes are",df.index)
+            del df,df1,df2
 
     def out_zscore(self,numeric_column_values) :
         threshold = 3
