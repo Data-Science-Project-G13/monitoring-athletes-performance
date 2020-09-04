@@ -635,6 +635,7 @@ class AdditionalDataCleaner() :
         # Configuraing different tolerace for different columns
         columns = ['position_lat', 'position_long', 'enhanced_altitude', 'altitude', 'heart_rate', 'cadence']
         tolerances = [2, 2, 3, 3, 3, 3]  # Configurable
+        # TODO: Avoid adding column 'color' to the dataframe
         dataframe['color'] = rec_color
         for k in range(self.time_sgmt_num) :
             df = dataframe.loc[dataframe['color'] == k]
@@ -839,7 +840,7 @@ def _main_helper_additional(athletes_name, activity_type, split_type) :
                                                                         split_type=split_type)
     empty_files = []
     for file_name in additional_file_names :
-        print('\nCleaning {} ...'.format(file_name[3 :]))
+        print('\nCleaning {} ...'.format(file_name[3:]))
         athlete_df = pd.DataFrame(pd.read_csv(file_name))
         addtional_data_cleaner = AdditionalDataCleaner(athlete_df, file_name)
         if addtional_data_cleaner.check_empty() :
