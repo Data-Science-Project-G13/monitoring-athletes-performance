@@ -367,14 +367,15 @@ class SpreadsheetDataCleaner() :
                 if np.abs(z_score) > threshold :
                     outliers.append(i)
                     indices.append(j)
-            print("Total number of outliers for the ",index, "are", len(outliers),"and its indexes are",indices)
+            print("Total number of outliers for the column ",index, "are", len(outliers),"and its rowindexes are",indices)
 
     def localOutlierFactor(self,numeric_column_values):
         clf = LocalOutlierFactor(n_neighbors=50, contamination='auto')
         X = self.dataframe[numeric_column_values].values
         y_pred = clf.fit_predict(X)
+        indices=np.where(y_pred == -1)
         y_pred = np.unique(y_pred, return_counts=True)
-        return print("Total number of outliers are",y_pred)
+        return print("Total number of outliers are denoted by -1",y_pred,"The outliers are at indices",indices)
 
     def process_data_cleaning(self) :
         """
@@ -418,8 +419,8 @@ class SpreadsheetDataCleaner() :
         print(self.dataframe.isna().sum())
         #self.out_iqr(numeric_column_values)
         #self.out_std(numeric_column_values)
-        self.out_zscore(numeric_column_values)
-        #self.localOutlierFactor(numeric_column_values)
+        #self.out_zscore(numeric_column_values)
+        self.localOutlierFactor(numeric_column_values)
 
 
 class AdditionalDataCleaner() :
