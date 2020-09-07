@@ -36,7 +36,7 @@ from IPython.display import Image
 from sklearn.preprocessing import StandardScaler
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.preprocessing import OrdinalEncoder
-from sklearn.cluster import DBSCAN
+
 from sklearn.neighbors import LocalOutlierFactor
 from sklearn.ensemble import IsolationForest
 
@@ -82,9 +82,7 @@ class SpreadsheetDataCleaner() :
         Process the data cleaning
     """
 
-    def __init__(self, dataframe: pd.DataFrame) :
-        # self.numerical_columns = utility.get_spreadsheet_numerical()
-        # self.categorical_columns = utility.get_spreadsheet_categorical()
+    def __init__(self, dataframe: pd.DataFrame):
         self.dataframe = dataframe
 
         # self.main_dataframe = dataframe
@@ -112,7 +110,7 @@ class SpreadsheetDataCleaner() :
         self.dataframe = self.dataframe.sort_index(inplace=True)
 
     def _drop_columns(self) :
-        # TODO: Choose columns instead of dropping them
+
         columns_to_drop = ['Favorite', 'Aerobic TE', 'Avg Run Cadence', 'Max Run Cadence', 'Avg Stride Length',
                            'Avg Vertical Ratio', 'Avg Vertical Oscillation', 'Avg Ground Contact Time',
                            'Avg GCT Balance', 'L/R Balance', 'Grit', 'Flow', 'Total Reps', 'Total Sets',
@@ -124,16 +122,10 @@ class SpreadsheetDataCleaner() :
         self.dataframe['Title'] = self.dataframe['Title'].str.lower()
 
     def _handle_commas(self) :
-        # TODO: Figure out for different columns, how do we treat comma. Is 1,000 1000 or 1.000?
         columns_remove_comma = self.dataframe.columns
-        # columns_remove_comma = ['Max Avg Power (20 min)', 'Avg Power', 'Avg Stroke Rate', 'Avg HR', 'Max HR', 'Total Strokes',
-        #            'Avg. Swolf', 'Avg Bike Cadence', 'Max Bike Cadence', 'Normalized Power® (NP®)',
-        #            'Number of Laps']
+
         for column in columns_remove_comma :
             self.dataframe[column] = self.dataframe[column].astype(str).str.replace(',', '')
-            # TODO: Handling semicolon
-            # self.dataframe[column] = self.dataframe[column].astype(str).str.replace(':', '')
-        # self.dataframe.apply(lambda x: x.str.replace(',', '.'))
 
     def _format_missing_val_with_nan(self) :
         # TODO: Missing value situations in config and in functions to handle
@@ -142,21 +134,14 @@ class SpreadsheetDataCleaner() :
         self.dataframe.loc[self.dataframe['Avg Speed'].str.contains(":", na=False), 'Avg Speed'] = np.nan
 
     def _convert_columns_to_numeric(self) :
-        # TODO: columns in config
+
         columns_to_numeric = ['Max Avg Power (20 min)', 'Avg Power', 'Avg Stroke Rate', 'Avg HR', 'Max HR',"Distance",'Training Stress Score®',
                               'Total Strokes','Elev Gain', 'Elev Loss','Calories', 'Max Power','Max Speed', 'Avg Speed'
                               ,'Avg. Swolf', 'Avg Bike Cadence', 'Max Bike Cadence', 'Normalized Power® (NP®)',
                               'Number of Laps']
         self.dataframe[columns_to_numeric] = self.dataframe[columns_to_numeric].apply(pd.to_numeric)
 
-    # def _convert_column_types_to_float(self):
-    # TODO:fred for some reason this fucntion is not working,is htere any diff to above
-    #     columns_to_float = [ 'Max Speed', 'Avg Speed']
-    #     for column in columns_to_float:
-    #         #self.dataframe[column].astype(float)
-    #          self.dataframe[column].apply(pd.to_numeric)
-    #
-    #     #print(self.dataframe["Max Power"].dtypes())
+
 
     def _format_datetime(self):
         self.dataframe['Date_extracted'] = pd.to_datetime(self.dataframe["Date"]).dt.normalize()
@@ -201,8 +186,7 @@ class SpreadsheetDataCleaner() :
     def get_profile_report(self) :
         return pandas_profiling.ProfileReport(self.dataframe)
 
-    # handling irregular data
-    # select numeric columns
+
     def get_numerical_columns(self) :
         numeric_column_df = self.dataframe.select_dtypes(include=[np.number])
         numeric_column_values = numeric_column_df.columns.values
@@ -214,15 +198,6 @@ class SpreadsheetDataCleaner() :
         return categorical_columns, categoric_values
 
     def _apply_mean_imputation(self, data_numeric) :
-        """Apply mean imputation for the given columns
-        # TODO: A reminder to Sindhu: For this function, input is a list of column names which are strings,
-        # TODO: no output, just modify self.dataframe.
-        # TODO: So after calling this function, self.dataframe has the specified columns imputated.
-        #Parameters
-        #-------
-        #columns: [str]
-           #List of column names
-        #"""
         for col in data_numeric.columns :
             mean = data_numeric[col].mean()
             data_numeric[col] = data_numeric[col].fillna(mean)
@@ -284,25 +259,6 @@ class SpreadsheetDataCleaner() :
 
 
 
-    # def mice_imputation_categoric(self,categorical_columns):
-    #     ordinal_dict = {}
-    #     for col in categorical_columns.columns:
-    #         ordinal_dict[col] = OrdinalEncoder()
-    #         nn_vals = np.array(categorical_columns[col][categorical_columns[col].notnull()]).reshape(-1, 1)
-    #         nn_vals_arr = np.array(ordinal_dict[col].fit_transform(nn_vals)).reshape(-1, )
-    #         categorical_columns[col].loc[categorical_columns[col].notnull()] = nn_vals_arr
-    #     '''Impute the data using MICE with Gradient Boosting Classifier'''
-    #     iter_imp_categoric = IterativeImputer(GradientBoostingClassifier(), max_iter=5,
-    #                                           initial_strategy='most_frequent')
-    #     imputed_eddy = iter_imp_categoric.fit_transform(categorical_columns)
-    #     eddy_categoric_imp = pd.DataFrame(imputed_eddy, columns=categorical_columns.columns,
-    #                                       index=categorical_columns.index).astype(int)
-    #     '''Inverse Transform'''
-    #     for col in eddy_categoric_imp.columns:
-    #         oe = ordinal_dict[col]
-    #         eddy_arr = np.array(eddy_categoric_imp[col]).reshape(-1, 1)
-    #         eddy_categoric_imp[col] = oe.inverse_transform(eddy_arr)
-    #     return eddy_categoric_imp
 
     def out_iqr(self,numeric_column_values):
         for index in numeric_column_values:
@@ -415,18 +371,16 @@ class SpreadsheetDataCleaner() :
         predictors = data_numeric_regr.drop(target_cols, axis=1)
         miss_index_dict = self._find_missing_index(data_numeric_regr, target_cols)
         # self._apply_regression_imputation(data_numeric_regr, target_cols, miss_index_dict)
-        #print(self._apply_regression_imputation(data_numeric_regr, target_cols, miss_index_dict))
         self._apply_linear_interpolation(numeric_column_df)
         eddy_numeric_imp = self._apply_mice_imputation_numeric(numeric_column_df)
         self.get_minmax(numeric_column_df, numeric_column_values)
         self.dataframe=self._apply_knn_imputation(numeric_column_df, numeric_column_values)#assigning imputaion can change later
         self._apply_mode_imputation(categorical_columns)
-        # self.mice_imputation_categoric(categorical_columns)
         print(self.dataframe.isna().any())
         print(self.dataframe.isna().sum())
-        #self.out_iqr(numeric_column_values)
-        #self.out_std(numeric_column_values)
-        #self.out_zscore(numeric_column_values)
+        self.out_iqr(numeric_column_values)
+        self.out_std(numeric_column_values)
+        self.out_zscore(numeric_column_values)
         self.out_plot("Distance")
         self.localOutlierFactor(numeric_column_values)
 
