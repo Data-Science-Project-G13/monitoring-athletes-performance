@@ -162,10 +162,12 @@ class SpreadsheetDataCleaner() :
             missing_val_df = missing_val_df.append(
                 dict(zip(missing_val_df.columns, [col, sum_miss_val, percent_miss_val])),
                 ignore_index=True)
-        '''Columns with missing values'''
-        print(
-            f"Number of columns with missing values: {str(missing_val_df[missing_val_df['PercentMissing'] > 0.0].shape[0])}")
-        return missing_val_df
+            missing_above_80 = missing_val_df[missing_val_df['PercentMissing'] > 80.0]
+            colNames = missing_above_80['ColumnName']
+            colNames = colNames.tolist()
+            self.dataframe.drop(colNames, axis=1)
+        print("Columns with at least 80% missing values",colNames)
+        #return colNames
 
     def plot_missing_val_bar(self) :
         graph = msno.bar(self.dataframe)
@@ -354,7 +356,7 @@ class SpreadsheetDataCleaner() :
         self._handle_commas()
         self._format_missing_val_with_nan()
         self._convert_columns_to_numeric()
-
+        #self.find_missing_percent()
         #self._convert_column_types_to_float()
         #print(self._convert_column_types_to_float())
         self._format_datetime()
