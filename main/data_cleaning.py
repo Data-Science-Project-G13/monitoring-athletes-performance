@@ -328,6 +328,13 @@ class SpreadsheetDataCleaner() :
     def out_plot(self, column):
         plt.figure(figsize=(10, 6))
         sns.distplot(self.dataframe[column], kde=False)
+        q25, q75 = np.quantile(self.dataframe[column], 0.25), np.quantile(self.dataframe[column], 0.75)
+        # calculate the IQR
+        iqr = q75 - q25
+        # calculate the outlier cutoff
+        cut_off = iqr * 1.5
+        # calculate the lower and upper bound value
+        lower, upper = q25 - cut_off, q75 + cut_off
         plt.axvspan(xmin=lower, xmax=self.dataframe[column].min(), alpha=0.2, color='red')
         plt.axvspan(xmin=upper, xmax=self.dataframe[column].max(), alpha=0.2, color='red')
         plt.show()
@@ -420,6 +427,7 @@ class SpreadsheetDataCleaner() :
         #self.out_iqr(numeric_column_values)
         #self.out_std(numeric_column_values)
         #self.out_zscore(numeric_column_values)
+        self.out_plot("Distance")
         self.localOutlierFactor(numeric_column_values)
 
 
