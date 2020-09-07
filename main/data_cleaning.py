@@ -97,7 +97,7 @@ class SpreadsheetDataCleaner() :
         self.dataframe_swim = self.dataframe.loc[
             self.dataframe['Activity Type'].isin(['Pool Swimming', 'Open Water Swimming', 'Swimming'])]
         self.dataframe_cycle = self.dataframe.loc[
-            self.dataframe['Activity Type'].isin(['Virtual_Cycling', 'Indoor_Cycling', 'Road_Cycling', 'Cycling'])]
+            self.dataframe['Activity Type'].isin(['Virtual Cycling', 'Indoor Cycling', 'Road Cycling', 'Cycling'])]
         self.dataframe_run = self.dataframe.loc[
             self.dataframe['Activity Type'].isin(['Running', 'Treadmill Running'])]
         self.dataframe_others = self.dataframe.loc[
