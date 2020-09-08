@@ -457,10 +457,10 @@ class AdditionalDataCleaner() :
     def __init__(self, dataframe: pd.DataFrame, file_name: str = None) :
         self.dataframe = dataframe
         self.file_name = file_name
-        self.column_groups_imputation = utility.get_column_groups_for_imputation('addtitional')
-        self.numerical_ordered_columns = utility.get_numerical_columns('addtitional', 'numerical_ordered')
-        self.numerical_fluctuating_columns = utility.get_numerical_columns('addtitional', 'numerical_fluctuating')
-        self.categorical_columns = utility.get_categorical_columns('addtitional')
+        self.column_groups_imputation = utility.get_column_groups_for_imputation('additional')
+        self.numerical_ordered_columns = utility.get_numerical_columns('additional', 'ordered')
+        self.numerical_fluctuating_columns = utility.get_numerical_columns('additional', 'fluctuating')
+        self.categorical_columns = utility.get_categorical_columns('additional')
         self.missing_val_logger = []
         self.outlier_dict_logger = {'Outlier Index' : [], 'Column' : [], 'Reason' : []}
 
@@ -499,7 +499,7 @@ class AdditionalDataCleaner() :
         return cols_with_missing
 
     def convert_str_to_num_in_numerical_cols(self) :
-        for column in self.numerical_ordered_columns + self.numerical_fluctuating_columns :
+        for column in self.numerical_ordered_columns + self.numerical_fluctuating_columns:
             # dataframe[column] = dataframe[column].astype(float)
             self.dataframe[column] = pd.to_numeric(self.dataframe[column], errors='coerce')
 
@@ -911,7 +911,8 @@ if __name__ == '__main__':
     # TODO: Too slow, won't work in industry.
     main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
 
-    # # Clean additional data
-    # activity_type = ['cycling', 'running', 'swimming']
-    # split_type = 'real-time'
-    # main('additional', athletes_name=athletes_names[0], activity_type=activity_type[0], split_type=split_type)
+    # Clean additional data
+    activity_types = ['cycling', 'running', 'swimming']
+    split_type = 'real-time'
+    for activity_type in activity_types:
+        main('additional', athletes_name=athletes_names[0], activity_type=activity_type, split_type=split_type)
