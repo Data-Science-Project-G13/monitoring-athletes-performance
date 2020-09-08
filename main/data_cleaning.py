@@ -110,7 +110,6 @@ class SpreadsheetDataCleaner() :
         self.dataframe = self.dataframe.sort_index(inplace=True)
 
     def _drop_columns(self) :
-
         columns_to_drop = ['Favorite', 'Aerobic TE', 'Avg Run Cadence', 'Max Run Cadence', 'Avg Stride Length',
                            'Avg Vertical Ratio', 'Avg Vertical Oscillation', 'Avg Ground Contact Time',
                            'Avg GCT Balance', 'L/R Balance', 'Grit', 'Flow', 'Total Reps', 'Total Sets',
@@ -133,14 +132,13 @@ class SpreadsheetDataCleaner() :
         self.dataframe.loc[self.dataframe['Max Speed'].str.contains(":", na=False), 'Max Speed'] = np.nan
         self.dataframe.loc[self.dataframe['Avg Speed'].str.contains(":", na=False), 'Avg Speed'] = np.nan
 
-    def _convert_columns_to_numeric(self) :
 
+    def _convert_columns_to_numeric(self) :
         columns_to_numeric = ['Max Avg Power (20 min)', 'Avg Power', 'Avg Stroke Rate', 'Avg HR', 'Max HR',"Distance",'Training Stress Score®',
                               'Total Strokes','Elev Gain', 'Elev Loss','Calories', 'Max Power','Max Speed', 'Avg Speed'
                               ,'Avg. Swolf', 'Avg Bike Cadence', 'Max Bike Cadence', 'Normalized Power® (NP®)',
                               'Number of Laps']
         self.dataframe[columns_to_numeric] = self.dataframe[columns_to_numeric].apply(pd.to_numeric)
-
 
 
     def _format_datetime(self):
@@ -260,8 +258,6 @@ class SpreadsheetDataCleaner() :
         return categorical_columns
 
 
-
-
     def out_iqr(self,numeric_column_values):
         for index in numeric_column_values:
             q25, q75 = np.quantile(self.dataframe[index], 0.25), np.quantile(self.dataframe[index], 0.75)
@@ -347,7 +343,7 @@ class SpreadsheetDataCleaner() :
         Returns
         -------
         cleaned_df : pandas DataFrame
-            Cleaned athlete CoachingMate data
+            Cleaned athlete spreadsheet data
         """
         # TODO: A reminder to Sindhu: MAIN FUNCTION FOR THE CLASS
         # TODO: Everytime you finish a function, call it below, and test below.
