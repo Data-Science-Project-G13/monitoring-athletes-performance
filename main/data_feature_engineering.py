@@ -83,7 +83,7 @@ class AdditionalDataFeatureExtractor():
         #  self.activity_type is the activity type.
         #  The function returns TSS (as a float)
         #  @Spoorthi @Sindhu
-        tss = float(1)
+        tss = float(0)
         return tss
 
     def _get_tss_for_session_cycling(self):
@@ -92,7 +92,7 @@ class AdditionalDataFeatureExtractor():
         #  self.activity_type is the activity type.
         #  The function returns TSS (as a float)
         #  @Spoorthi @Sindhu
-        tss = float(2)
+        tss = float(0)
         return tss
 
     def _get_tss_for_session_swimming(self):
@@ -102,7 +102,7 @@ class AdditionalDataFeatureExtractor():
         #  self.critical_swimming_speed is the critical swimming speed for the athlete.
         #  The function returns TSS (as a float)
         #  @Lin @Yuhan
-        tss = float(3)
+        tss = float(0)
         return tss
 
     def _extract_tss(self):
@@ -143,6 +143,12 @@ def _match_dates_activities_spreadsheet_additional(cleaned_spreadsheet_data_fram
     index = 0
     return index
 
+def _function_for_testing(file_name, test_type):
+    """
+    """
+    """*** This is the function that is used for testing only annd will be removed***"""
+    if test_type in file_name: return True
+    else: return False
 
 def main(data_type: str, athletes_name: str) :
     """The main function of processing feature engineering
@@ -164,12 +170,21 @@ def main(data_type: str, athletes_name: str) :
         data_loader_additional = DataLoader('additional')
         cleaned_additional_data_filenames = data_loader_additional.load_cleaned_additional_data(athletes_name)
         for file_name in cleaned_additional_data_filenames:
+            # TODO: A reminder, you can use the function below to test your functions for ONE .csv file instead all
+            #  For example if you are testing cycling TSS, just use the function below.
+            #  If you want to test running, change the test_type to 'running'. Similarly for swimming.
+            #  If you want to test all comment two _function_for_testing below.
+            #  @Spoorthi @Sindhu @Lin @Yuhan
+            test_type = 'cycling'
+            if not _function_for_testing(file_name, test_type):
+                continue
             additional_feature_extractor = AdditionalDataFeatureExtractor(file_name)
             features_extracted = additional_feature_extractor.process_feature_engineering()
-            print(features_extracted)
-            # TODO: A reminder, you can use break below to test ONE .csv file instead all
-            #  @Spoorthi @Sindhu @Lin @Yuhan
-            # break
+            print('Preview of the features extracted: \n', features_extracted)
+            if _function_for_testing(file_name, test_type):
+                break
+
+
 
 
 if __name__ == '__main__':
