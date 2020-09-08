@@ -84,6 +84,10 @@ class SpreadsheetDataCleaner() :
 
     def __init__(self, dataframe: pd.DataFrame):
         self.dataframe = dataframe
+        self.columns_to_numeric = utility.get_numerical_columns('spreadsheet')
+        self.column_groups_imputation = utility.get_column_groups_for_imputation('spreadsheet')
+        self.missing_val_logger = []
+        self.outlier_dict_logger = {'Outlier Index': [], 'Column': [], 'Reason': []}
 
         # self.main_dataframe = dataframe
         # self.dataframe_swim=pd.DataFrame()
@@ -122,7 +126,7 @@ class SpreadsheetDataCleaner() :
 
     def _handle_commas(self) :
         columns_remove_comma = self.dataframe.columns
-
+        # TODO: Might not simply replace the comma with an empty string
         for column in columns_remove_comma :
             self.dataframe[column] = self.dataframe[column].astype(str).str.replace(',', '')
 
@@ -134,11 +138,8 @@ class SpreadsheetDataCleaner() :
 
 
     def _convert_columns_to_numeric(self) :
-        columns_to_numeric = ['Max Avg Power (20 min)', 'Avg Power', 'Avg Stroke Rate', 'Avg HR', 'Max HR',"Distance",'Training Stress Score®',
-                              'Total Strokes','Elev Gain', 'Elev Loss','Calories', 'Max Power','Max Speed', 'Avg Speed'
-                              ,'Avg. Swolf', 'Avg Bike Cadence', 'Max Bike Cadence', 'Normalized Power® (NP®)',
-                              'Number of Laps']
-        self.dataframe[columns_to_numeric] = self.dataframe[columns_to_numeric].apply(pd.to_numeric)
+
+        self.dataframe[self.columns_to_numeric] = self.dataframe[self.columns_to_numeric].apply(pd.to_numeric)
 
 
     def _format_datetime(self):
@@ -148,7 +149,7 @@ class SpreadsheetDataCleaner() :
         self.dataframe['Time_sec'] = pd.to_timedelta(
             pd.to_datetime(self.dataframe["Time"]).dt.strftime('%H:%M:%S')).dt.total_seconds()
 
-    def find_missing_percent(self):
+    def _find_missing_percent(self):
         """
         Returns dataframe containing the total missing values and percentage of total
         missing values of a column.
@@ -164,8 +165,8 @@ class SpreadsheetDataCleaner() :
             colNames = missing_above_80['ColumnName']
             colNames = colNames.tolist()
             self.dataframe.drop(colNames, axis=1)
-        print("Columns with at least 80% missing values",colNames)
-        #return colNames
+        print("Columns with at least 80% missing values", colNames)
+        return missing_val_df
 
     def plot_missing_val_bar(self) :
         graph = msno.bar(self.dataframe)
@@ -197,11 +198,88 @@ class SpreadsheetDataCleaner() :
         categoric_values = categorical_columns.columns.values
         return categorical_columns, categoric_values
 
+
+    # ==================================================
+    """ Fred is now working on this part. Please don't change"""
+    def _apply_univariate_imputation(self, columns):
+        new_data = self.dataframe.copy()
+        imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
+        new_data = pd.DataFrame(imputer.fit_transform(new_data[[columns]]))
+        new_data.columns = [columns]
+        self.dataframe[columns] = new_data[columns]
+
+    def _apply_multivariate_imputation(self, columns):
+        null_cols = [col for col in columns if self.dataframe[col].isnull().all()]
+        if null_cols:
+            # If there are columns with all values missing, apply regression or ignore the column first.
+            self.missing_val_logger.append("All the values in column(s) {} are missing. "
+                                           "Not able to apply imputation.".format(null_cols))
+        else:
+            new_data = self.dataframe.copy()
+            iter_imputer = IterativeImputer(max_iter=10, random_state=0)
+            new_data = pd.DataFrame(iter_imputer.fit_transform(new_data[columns]))
+            if not new_data.empty:
+                new_data.columns = columns
+                self.dataframe[columns] = new_data[columns]
+            else:
+                self.missing_val_logger.append("All the values in column(s) {} are missing. "
+                                               "Not able to apply imputation.".format(columns))
+
+    def _apply_interpolation_imputation(self, columns):
+        for column in columns:
+            interpolated_column = self.dataframe[column].interpolate(method='spline', order=2, limit=2)
+            self.dataframe[column] = interpolated_column
+
+    def _apply_regression_prediction_imputation(self, column_names):
+        # TODO: for whole column missing
+        pass
+
+    def _apply_imputations(self, columns_need_imputation):
+        for impute_tech, column_names in self.column_groups_imputation.items():
+            column_intersection = column_names.intersection(columns_need_imputation)
+            if column_intersection:
+                if impute_tech == "univariate":
+                    self._apply_univariate_imputation(list(column_intersection))
+                elif impute_tech == "multivariate1" or "multivariate2":
+                    self._apply_multivariate_imputation(list(column_intersection))
+                elif impute_tech == "interpolation":
+                    self._apply_regression_prediction_imputation(list(column_intersection))
+
+    # ==================================================
+
     def _apply_mean_imputation(self, data_numeric) :
         for col in data_numeric.columns :
             mean = data_numeric[col].mean()
             data_numeric[col] = data_numeric[col].fillna(mean)
         return data_numeric
+
+    def _apply_linear_interpolation(self, numeric_column_df):
+        for col in numeric_column_df.columns:
+            numeric = numeric_column_df.interpolate(method='linear', limit_direction='forward', axis=0).ffill().bfill()
+
+    def _apply_mice_imputation_numeric(self, numeric_column_df):
+        iter_imp_numeric = IterativeImputer(GradientBoostingRegressor())
+        imputed_eddy = iter_imp_numeric.fit_transform(numeric_column_df)
+        eddy_numeric_imp = pd.DataFrame(imputed_eddy, columns=numeric_column_df.columns, index=numeric_column_df.index)
+
+    def get_minmax(self, numeric_column_df, numeric_column_values):
+        # when imputing a knn data must be normalised to reduce the bias in the imputation
+        scaler = MinMaxScaler()
+        scaling = pd.DataFrame(scaler.fit_transform(numeric_column_df), columns=numeric_column_values)
+        return scaling
+
+    def _apply_knn_imputation(self, numeric_column_df, numeric_column_values):
+        imputer = KNNImputer(n_neighbors=23)
+        imputed_KNN = pd.DataFrame(imputer.fit_transform(numeric_column_df), columns=numeric_column_values)
+
+    def _apply_mode_imputation(self, categorical_columns):
+        """
+        Mode Imputation
+        """
+        for col in categorical_columns.columns:
+            mode = categorical_columns[col].mode().iloc[0]
+            categorical_columns[col] = categorical_columns[col].fillna(mode)
+        return categorical_columns
 
     def _find_missing_index(self, data_numeric_regr, target_cols) :
         miss_index_dict = {}
@@ -225,38 +303,6 @@ class SpreadsheetDataCleaner() :
     #         '''Replace the missing values with the predictions'''
     #         data_numeric_regr[tcol].loc[index] = predictions.loc[index]
     #     return data_numeric_regr
-
-    def _apply_linear_interpolation(self, numeric_column_df):
-        for col in numeric_column_df.columns:
-            numeric = numeric_column_df.interpolate(method='linear', limit_direction='forward', axis=0).ffill().bfill()
-        return (numeric)
-
-    def _apply_mice_imputation_numeric(self, numeric_column_df):
-        iter_imp_numeric = IterativeImputer(GradientBoostingRegressor())
-        imputed_eddy = iter_imp_numeric.fit_transform(numeric_column_df)
-        eddy_numeric_imp = pd.DataFrame(imputed_eddy, columns=numeric_column_df.columns, index=numeric_column_df.index)
-        return eddy_numeric_imp
-
-    def get_minmax(self, numeric_column_df, numeric_column_values):
-        'when imputing a knn data must be normalised to reduce the bias in the imoutation'
-        scaler = MinMaxScaler()
-        scaling = pd.DataFrame(scaler.fit_transform(numeric_column_df), columns=numeric_column_values)
-        return scaling
-
-    def _apply_knn_imputation(self, numeric_column_df, numeric_column_values):
-        imputer = KNNImputer(n_neighbors=23)
-        imputed_KNN = pd.DataFrame(imputer.fit_transform(numeric_column_df), columns=numeric_column_values)
-        return imputed_KNN
-
-    def _apply_mode_imputation(self,categorical_columns):
-        """
-        Mode Imputation
-        """
-        for col in categorical_columns.columns :
-            mode = categorical_columns[col].mode().iloc[0]
-            categorical_columns[col] = categorical_columns[col].fillna(mode)
-        return categorical_columns
-
 
     def out_iqr(self,numeric_column_values):
         for index in numeric_column_values:
@@ -294,7 +340,6 @@ class SpreadsheetDataCleaner() :
         plt.show()
         sns.distplot(self.dataframe[column])
         plt.show()
-
 
     def out_std(self,numeric_column_values) :
         for index in numeric_column_values:
@@ -340,47 +385,56 @@ class SpreadsheetDataCleaner() :
 
     def process_data_cleaning(self) :
         """
+        Process data cleaning for spreadsheet data
         Returns
         -------
         cleaned_df : pandas DataFrame
             Cleaned athlete spreadsheet data
         """
-        # TODO: A reminder to Sindhu: MAIN FUNCTION FOR THE CLASS
-        # TODO: Everytime you finish a function, call it below, and test below.
+        # ================ Base Clean ====================
         self._drop_columns()
         self._convert_strings_to_lower_case()
         self._handle_commas()
         self._format_missing_val_with_nan()
         self._convert_columns_to_numeric()
-        #self.find_missing_percent()
-        #self._convert_column_types_to_float()
-        #print(self._convert_column_types_to_float())
+        self._find_missing_percent()
+        # self._convert_column_types_to_float()
         self._format_datetime()
         self._convert_columns_to_numeric()
-        numeric_column_df, numeric_column_values = self.get_numerical_columns()
-        #print(self.get_numerical_columns())
-        categorical_columns, categoric_values = self.get_categorical_columns()
-        #print(self.get_categorical_columns())
-        data_numeric = self.dataframe[numeric_column_values]
-        self._apply_mean_imputation(data_numeric)
-        data_numeric_regr = self.dataframe[numeric_column_values]
-        # # # # # '''Numeric columns with missing values which acts as target in training'''
-        target_cols = ['Avg. Swolf','Total Strokes','Avg Speed','Avg HR', 'Max HR', 'Avg Bike Cadence', 'Max Bike Cadence',"Distance","Calories","Avg Stroke Rate","Number of Laps"]
-        predictors = data_numeric_regr.drop(target_cols, axis=1)
-        miss_index_dict = self._find_missing_index(data_numeric_regr, target_cols)
-        # self._apply_regression_imputation(data_numeric_regr, target_cols, miss_index_dict)
-        self._apply_linear_interpolation(numeric_column_df)
-        eddy_numeric_imp = self._apply_mice_imputation_numeric(numeric_column_df)
-        self.get_minmax(numeric_column_df, numeric_column_values)
-        self.dataframe=self._apply_knn_imputation(numeric_column_df, numeric_column_values)#assigning imputaion can change later
-        self._apply_mode_imputation(categorical_columns)
-        print(self.dataframe.isna().any())
-        print(self.dataframe.isna().sum())
-        self.out_iqr(numeric_column_values)
-        self.out_std(numeric_column_values)
-        self.out_zscore(numeric_column_values)
-        self.out_plot("Distance")
-        self.localOutlierFactor(numeric_column_values)
+
+        # # ================ Imputations ====================
+        # self._apply_linear_interpolation()
+        # self._apply_knn_imputation()
+        # self._apply_mean_imputation()
+        # self._apply_mode_imputation()
+        #
+        # numeric_column_df, numeric_column_values = self.get_numerical_columns()
+        # categorical_columns, categoric_values = self.get_categorical_columns()
+        #
+        # data_numeric = self.dataframe[numeric_column_values]
+        # self._apply_mean_imputation(data_numeric)
+        # data_numeric_regr = self.dataframe[numeric_column_values]
+        # # # # # # '''Numeric columns with missing values which acts as target in training'''
+        # target_cols = ['Avg. Swolf', 'Total Strokes', 'Avg Speed', 'Avg HR', 'Max HR', 'Avg Bike Cadence',
+        #                'Max Bike Cadence', "Distance", "Calories", "Avg Stroke Rate", "Number of Laps"]
+        # data_numeric_regr.drop(target_cols, axis=1)
+        # miss_index_dict = self._find_missing_index(data_numeric_regr, target_cols)
+        # # self._apply_regression_imputation(data_numeric_regr, target_cols, miss_index_dict)
+        # self._apply_linear_interpolation(numeric_column_df)
+        # eddy_numeric_imp = self._apply_mice_imputation_numeric(numeric_column_df)
+        # self.get_minmax(numeric_column_df, numeric_column_values)
+        # self._apply_knn_imputation(numeric_column_df, numeric_column_values)  # assigning imputaion can change later
+        # self._apply_mode_imputation(categorical_columns)
+        #
+        # print(self.dataframe.isna().any())
+        # print(self.dataframe.isna().sum())
+
+        # # ================ Outliers ====================
+        # self.out_iqr(numeric_column_values)
+        # self.out_std(numeric_column_values)
+        # self.out_zscore(numeric_column_values)
+        # self.out_plot("Distance")
+        # self.localOutlierFactor(numeric_column_values)
 
 
 class AdditionalDataCleaner() :
@@ -403,24 +457,17 @@ class AdditionalDataCleaner() :
     def __init__(self, dataframe: pd.DataFrame, file_name: str = None) :
         self.dataframe = dataframe
         self.file_name = file_name
-        self.column_groups_imputation = {'univariate' : {'timezone'},
-                                         'multivariate1' : {"distance", "timestamp"},
-                                         'multivariate2' : {"speed", "heart_rate", "cadence"},
-                                         'interpolation' : {"timestamp", "position_lat", "position_long", "altitude"}}
-        self.numerical_ordered_columns = utility.get_additional_numerical_ordered()
-        self.numerical_fluctuating_columns = utility.get_additional_numerical_fluctuating()
-        self.categorical_columns = utility.get_additional_categorical()
+        self.column_groups_imputation = utility.get_column_groups_for_imputation('addtitional')
+        self.numerical_ordered_columns = utility.get_numerical_columns('addtitional', 'numerical_ordered')
+        self.numerical_fluctuating_columns = utility.get_numerical_columns('addtitional', 'numerical_fluctuating')
+        self.categorical_columns = utility.get_categorical_columns('addtitional')
         self.missing_val_logger = []
         self.outlier_dict_logger = {'Outlier Index' : [], 'Column' : [], 'Reason' : []}
 
-        self.color_labels = ['blue', 'orange', 'green', 'purple', 'brown', 'pink', 'grey', 'olive', 'cyan', 'black',
-                             'maroon', 'chocolate', 'gold', 'yellow', 'lawngreen', 'aqua', 'steelblue', 'navy',
-                             'indigo', 'magenta', 'crimson', 'red']
-        self.OUTLIER_COLOR_LABEL = len(self.color_labels) - 1
-        self.TIME_DIFF_THRESHOLD = 3 * 60  # Configurable
-        self.ROW_COUNT_THRESHOLD = 150  # Configurable
-        self.num_records = -1
-        self.time_sgmt_num = 0
+        self.color_labels = utility.get_outlier_color_labels_additional()
+        self.OUTLIER_COLOR_LABEL, self.TIME_DIFF_THRESHOLD, self.ROW_COUNT_THRESHOLD = len(self.color_labels)-1, 3 * 60, 150  # Configurable
+        self.num_records, self.time_sgmt_num = -1, 0
+
 
     def check_empty(self) :
         """Check whether the data frame is empty
