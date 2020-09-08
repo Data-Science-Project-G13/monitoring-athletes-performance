@@ -173,7 +173,7 @@ def main(data_type: str, athletes_name: str) :
             # TODO: A reminder, you can use the function below to test your functions for ONE .csv file instead all
             #  For example if you are testing cycling TSS, just use the function below.
             #  If you want to test running, change the test_type to 'running'. Similarly for swimming.
-            #  If you want to test all comment two _function_for_testing below.
+            #  If you want to test all comment out two '_function_for_testing's below.
             #  @Spoorthi @Sindhu @Lin @Yuhan
             test_type = 'cycling'
             if not _function_for_testing(file_name, test_type):
