@@ -77,7 +77,7 @@ class DataLoader():
         Parameters
         -------
         activity_type : str
-            The activity type. Options are '', 'cycling', 'running', 'swimming' and 'training'/
+            The activity type. Options are '', 'cycling', 'running', 'swimming' and 'training'
         split_type : str
             The split and laps types. Options are '', 'real-time', 'laps', 'starts'
         athletes_name : str
