@@ -95,7 +95,7 @@ class AdditionalDataFeatureExtractor():
         #  self.dataframe is the dataframe for the csv file.
         #  self.activity_type is the activity type.
         #  self.critical_swimming_speed is the critical swimming speed for the athlete.
-        #  @Spoorthi @Sindhu
+        #  @Lin @Yuhan
         pass
 
     def process_feature_engineering(self):
