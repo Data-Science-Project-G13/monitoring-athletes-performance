@@ -809,16 +809,16 @@ def _save_cleaned_df(data_type, athletes_name, file_name, cleaned_df) :
                                                                                         '_'.join(athletes_name.lower().split()))
         if not os.path.exists(athlete_cleaned_additional_data_folder) :
             os.mkdir(athlete_cleaned_additional_data_folder)
-        cleaned_df.to_csv('{}/{}'.format(athlete_cleaned_additional_data_folder, file_name[-41 :]))
-        print('{}\'s cleaned {} data saved'.format(athletes_name.capitalize(), file_name[-41 :]))
+        cleaned_df.to_csv('{}/{}'.format(athlete_cleaned_additional_data_folder, file_name.split('/')[-1]))
+        print('{}\'s cleaned {} data saved'.format(athletes_name.capitalize(), file_name.split('/')[-1]))
 
 
 def _save_log(data_type, log_type, file_name, log_df, athletes_name=None) :
     if data_type == 'spreadsheet' :
-        log_file_path = '{}/log/{}_{}_log/{}'.format(os.path.pardir, data_type, log_type, file_name[-41 :])
+        log_file_path = '{}/log/{}_{}_log/{}'.format(os.path.pardir, data_type, log_type, file_name.split('/')[-1])
     elif data_type == 'additional' :
         log_file_path = '{}/log/{}_{}_log/{}/{}'.format(os.path.pardir, data_type, log_type, athletes_name,
-                                                        file_name[-41 :])
+                                                        file_name.split('/')[-1])
     else :
         raise Exception('No {} type of datasets'.format(data_type))
     if not log_df.empty :
