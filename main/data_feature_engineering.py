@@ -12,7 +12,6 @@ environment you are running this script in.
 import pandas as pd
 import numpy as np
 from sklearn.decomposition import PCA
-import sklearn.decomposition as dp
 
 # Self-defined modules
 from data_loader import DataLoader
@@ -65,21 +64,56 @@ class AdditionalDataFeatureExtractor():
 
     def __init__(self, file_name: str):
         self.file_name = file_name
+        self.activity_type = self._get_activity_type()
+        self.session_df = pd.read_csv(file_name)
+        # TODO: get swimming speed for the athlete from the lower layer
+        self.critical_swimming_speed = None
 
-    def get_tss_for_session(self):
+    def _get_activity_type(self):
+        activity_types = ['running', 'cycling', 'swimming']
+        for activity_type in activity_types:
+            if activity_type in self.file_name:
+                return activity_type
+        return None
+
+    def get_tss_for_session_running(self):
+        # TODO: Please complete the function. This is related to hrTSS.
+        #  self.dataframe is the dataframe for the csv file.
+        #  self.activity_type is the activity type.
+        #  @Spoorthi @Sindhu
         pass
 
+    def get_tss_for_session_cycling(self):
+        # TODO: Please complete the function. This is related to cycling TSS.
+        #  self.dataframe is the dataframe for the csv file.
+        #  self.activity_type is the activity type.
+        #  @Spoorthi @Sindhu
+        pass
+
+    def get_tss_for_session_swimming(self):
+        # TODO: Please complete the function. This is related to swimming TSS.
+        #  self.dataframe is the dataframe for the csv file.
+        #  self.activity_type is the activity type.
+        #  self.critical_swimming_speed is the critical swimming speed for the athlete.
+        #  @Spoorthi @Sindhu
+        pass
 
     def process_feature_engineering(self):
         print('\nProcessing feature engineering from {} ...'.format(self.file_name[3:]))
-        if 'running' in self.file_name:
-            athlete_df = pd.DataFrame(pd.read_csv(self.file_name))
-        elif 'cycling' in self.file_name:
-            athlete_df = pd.DataFrame(pd.read_csv(self.file_name))
-        elif 'swimming' in self.file_name:
-            athlete_df = pd.DataFrame(pd.read_csv(self.file_name))
+        if self.activity_type == 'running':
+            pass
+        elif self.activity_type == 'cycling':
+            pass
+        elif self.activity_type == 'swimming':
+            pass
         else:
             print('Not able to process feature engineering for this activity type.')
+
+
+def _match_dates_activities_spreadsheet_additional(cleaned_spreadsheet_data_frame):
+    spread_sheet_dates = cleaned_spreadsheet_data_frame['Date']
+    index = 0
+    return index
 
 
 def main(data_type: str, athletes_name: str) :
@@ -92,11 +126,11 @@ def main(data_type: str, athletes_name: str) :
     athletes_name: str
         The name of the athlete whose data is about to clean.
     """
+    data_loader_spreadsheet = DataLoader('spreadsheet')
+    cleaned_spreadsheet_data_frame = data_loader_spreadsheet.load_cleaned_spreadsheet_data(athletes_name=athletes_name)
 
     if data_type == 'spreadsheet' :
-        data_loader_spreadsheet = DataLoader('spreadsheet')
-        cleaned_spreadsheet_data_frames = data_loader_spreadsheet.load_cleaned_spreadsheet_data(athletes_name=athletes_name)
-        spreadsheet_feature_extractor = SpreadsheetDataFeatureExtractor(cleaned_spreadsheet_data_frames)
+        spreadsheet_feature_extractor = SpreadsheetDataFeatureExtractor(cleaned_spreadsheet_data_frame)
 
     elif data_type == 'additional' :
         data_loader_additional = DataLoader('additional')
@@ -108,6 +142,5 @@ def main(data_type: str, athletes_name: str) :
 
 if __name__ == '__main__':
     athletes_names = ['eduardo oliveira']
-
     main('spreadsheet', athletes_names[0])
     main('additional', athletes_names[0])
