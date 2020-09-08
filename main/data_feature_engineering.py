@@ -68,6 +68,7 @@ class AdditionalDataFeatureExtractor():
         self.session_df = pd.read_csv(file_name)
         # TODO: get swimming speed for the athlete from the lower layer
         self.critical_swimming_speed = None
+        self.features_extracted = {'Date': self.file_name[-33:-20], 'TSS': 0, 'Other Feature 1': 0, 'Other Feature 2': 0}
 
     def _get_activity_type(self):
         activity_types = ['running', 'cycling', 'swimming']
@@ -76,38 +77,65 @@ class AdditionalDataFeatureExtractor():
                 return activity_type
         return None
 
-    def get_tss_for_session_running(self):
+    def _get_tss_for_session_running(self):
         # TODO: Please complete the function. This is related to hrTSS.
         #  self.dataframe is the dataframe for the csv file.
         #  self.activity_type is the activity type.
+        #  The function returns TSS (as a float)
         #  @Spoorthi @Sindhu
-        pass
+        tss = float(1)
+        return tss
 
-    def get_tss_for_session_cycling(self):
+    def _get_tss_for_session_cycling(self):
         # TODO: Please complete the function. This is related to cycling TSS.
         #  self.dataframe is the dataframe for the csv file.
         #  self.activity_type is the activity type.
+        #  The function returns TSS (as a float)
         #  @Spoorthi @Sindhu
-        pass
+        tss = float(2)
+        return tss
 
-    def get_tss_for_session_swimming(self):
+    def _get_tss_for_session_swimming(self):
         # TODO: Please complete the function. This is related to swimming TSS.
         #  self.dataframe is the dataframe for the csv file.
         #  self.activity_type is the activity type.
         #  self.critical_swimming_speed is the critical swimming speed for the athlete.
+        #  The function returns TSS (as a float)
         #  @Lin @Yuhan
-        pass
+        tss = float(3)
+        return tss
+
+    def _extract_tss(self):
+        tss = None
+        if self.activity_type == 'running':
+            tss = self._get_tss_for_session_running()
+        elif self.activity_type == 'cycling':
+            tss = self._get_tss_for_session_cycling()
+        elif self.activity_type == 'swimming':
+            tss = self._get_tss_for_session_running()
+        return tss
+
+    def _extract_other_feature_1(self):
+        return None
+
+    def _extract_other_feature_2(self):
+        return None
+
+    def _show_processing_info(self, state: str):
+        if state == 'start':
+            print('\nProcessing feature engineering from {} ...'.format(self.file_name[3:]))
+            if self.activity_type not in ['running', 'cycling', 'swimming']:
+                print('Not able to process feature engineering for this activity type.')
+        elif state == 'end':
+            print('Feature engineering finished.')
 
     def process_feature_engineering(self):
-        print('\nProcessing feature engineering from {} ...'.format(self.file_name[3:]))
-        if self.activity_type == 'running':
-            pass
-        elif self.activity_type == 'cycling':
-            pass
-        elif self.activity_type == 'swimming':
-            pass
-        else:
-            print('Not able to process feature engineering for this activity type.')
+        self._show_processing_info('start')
+        self.features_extracted['TSS'] = [self._extract_tss()]
+        self.features_extracted['Other Feature 1'] = [self._extract_other_feature_1()]
+        self.features_extracted['Other Feature 2'] = [self._extract_other_feature_2()]
+        self._show_processing_info('end')
+        return pd.DataFrame(self.features_extracted)
 
 
 def _match_dates_activities_spreadsheet_additional(cleaned_spreadsheet_data_frame):
@@ -137,7 +165,11 @@ def main(data_type: str, athletes_name: str) :
         cleaned_additional_data_filenames = data_loader_additional.load_cleaned_additional_data(athletes_name)
         for file_name in cleaned_additional_data_filenames:
             additional_feature_extractor = AdditionalDataFeatureExtractor(file_name)
-            additional_feature_extractor.process_feature_engineering()
+            features_extracted = additional_feature_extractor.process_feature_engineering()
+            print(features_extracted)
+            # TODO: A reminder, you can use break below to test ONE .csv file instead all
+            #  @Spoorthi @Sindhu @Lin @Yuhan
+            # break
 
 
 if __name__ == '__main__':
