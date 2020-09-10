@@ -139,6 +139,10 @@ class SingleAthleteDataPlotter():
         self.plt.text(x=datetime.date(2019, 8, 1), y=32, s='Transition Zone', horizontalalignment='right', color='darkgoldenrod')
         self.ax2.set_ylabel('CTL / ATL / TSB')
 
+    def _get_nonzero_TSS_rows(self, athlete_df):
+        valid_df = athlete_df.loc[athlete_df['Training Stress Score®'] != 0]
+        return valid_df
+
     def plot_PMC(self, save=False):
         """Plot the PMC
         Show the plot or save the plot to the plots folder
