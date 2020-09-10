@@ -68,7 +68,8 @@ class AdditionalDataFeatureExtractor():
         self.session_df = pd.read_csv(file_name)
         # TODO: get swimming speed for the athlete from the lower layer
         self.critical_swimming_speed = None
-        self.features_extracted = {'Date': self.file_name[-33:-20], 'TSS': 0, 'Other Feature 1': 0, 'Other Feature 2': 0}
+        self.features_extracted = {'Date': self.file_name[-33:-20], 'Activity': self.activity_type, 'TSS': 0,
+                                   'Other Feature 1': 0, 'Other Feature 2': 0}
 
     def _get_activity_type(self):
         activity_types = ['running', 'cycling', 'swimming']
@@ -138,17 +139,13 @@ class AdditionalDataFeatureExtractor():
         return pd.DataFrame(self.features_extracted)
 
 
-def _match_dates_activities_spreadsheet_additional(cleaned_spreadsheet_data_frame):
-    spread_sheet_dates = cleaned_spreadsheet_data_frame['Date']
-    index = 0
-    return index
-
 def _function_for_testing(file_name, test_type):
     """
     """
     """*** This is the function that is used for testing only annd will be removed***"""
     if test_type in file_name: return True
     else: return False
+
 
 def main(data_type: str, athletes_name: str) :
     """The main function of processing feature engineering
@@ -165,25 +162,29 @@ def main(data_type: str, athletes_name: str) :
 
     if data_type == 'spreadsheet' :
         spreadsheet_feature_extractor = SpreadsheetDataFeatureExtractor(cleaned_spreadsheet_data_frame)
+        spreadsheet_feature_extractor.process_feature_engineering()
+        return spreadsheet_feature_extractor.dataframe
 
     elif data_type == 'additional' :
         data_loader_additional = DataLoader('additional')
         cleaned_additional_data_filenames = data_loader_additional.load_cleaned_additional_data(athletes_name)
+        additional_features = []
         for file_name in cleaned_additional_data_filenames:
             # TODO: A reminder, you can use the function below to test your functions for ONE .csv file instead all
             #  For example if you are testing cycling TSS, just use the function below.
             #  If you want to test running, change the test_type to 'running'. Similarly for swimming.
             #  If you want to test all comment out two '_function_for_testing's below.
             #  @Spoorthi @Sindhu @Lin @Yuhan
-            test_type = 'cycling'
+            test_type = 'swimming'
             if not _function_for_testing(file_name, test_type):
                 continue
             additional_feature_extractor = AdditionalDataFeatureExtractor(file_name)
             features_extracted = additional_feature_extractor.process_feature_engineering()
+            additional_features.append(features_extracted)
             print('Preview of the features extracted: \n', features_extracted)
             if _function_for_testing(file_name, test_type):
                 break
-
+        return additional_features
 
 
 
@@ -191,3 +192,4 @@ if __name__ == '__main__':
     athletes_names = ['eduardo oliveira']
     main('spreadsheet', athletes_names[0])
     main('additional', athletes_names[0])
+
