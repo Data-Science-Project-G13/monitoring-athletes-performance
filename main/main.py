@@ -1,64 +1,42 @@
 """Main Script of the Project
 
-This script allows the user to run the project.
+This script allows the user to run the system.
 
 This file can also be imported as a module and contains the following
 functions:
 
-    * get_nonzero_TSS_rows - returns a pandas data_frame which contains rows with valid TSS
-    * main - the main function of the script
+    * main - the main function of the system
 """
 
+import system_initialize
 import data_cleaning
-from data_loader import DataLoader
-from data_preprocess import DataPreprocessor
-from models import ModelBuilder
+import data_feature_engineering
+import data_merge
+import data_modeling
 
 
-def get_nonzero_TSS_rows(athlete_df):
-    '''
-
-    Parameters
-    ----------
-    athlete_df
-
-    Returns
-    -------
-
-    '''
-    valid_df = athlete_df.loc[athlete_df['Training Stress Score®'] != 0]
-    return valid_df
-
-
-def create_directory_structures():
+def main(athletes_name):
+    """ Run the system
+    Process: Data cleaning, Feature Engineering, Modeling.
     """
-    Create directories and folders that are needed for the project
-    :return:
-    """
-    pass
 
+    # Data Cleaning
+    data_cleaning.main('spreadsheet', athletes_name)
+    activity_types, split_type = ['cycling', 'running', 'swimming'], 'real-time'
+    for activity_type in activity_types:
+        data_cleaning.main('additional', athletes_name, activity_type=activity_type, split_type=split_type)
 
-def main(athlete_df):
-    """
-    Example process. Data cleaning, Feature Engineering, Modeling.
-    :param athlete_df:
-    :return:
-    """
-    valid_df = get_nonzero_TSS_rows(athlete_df)
-    y = valid_df[columns_for_analysis[0]]
-    X = valid_df[columns_for_analysis[1:]]
-    data_cleaner = data_cleaning.SpreadsheetDataCleaner(valid_df)
-    data_cleaner.process_data_cleaning()
-    model_builder = ModelBuilder(X, y)
-    X_train, X_test, y_train, y_test = model_builder.split_train_validation()
-    model_builder.process_linear_regression(X_train, y_train)
+    # Feature Engineering
+    data_merge.merge_spreadsheet_additional(athletes_name)
+
+    # Modeling
+    data_modeling.process_train_load_modeling(athletes_name)
 
 
 if __name__ == '__main__':
-    file_name = 'Simon R Gronow (Novice).csv'
-    columns_for_analysis = ['Training Stress Score®', 'Avg HR', 'Avg Power']
-    data_loader = DataLoader('spreadsheet')
-    athlete_df = data_loader.load_spreadsheet_data(file_name)
-    main(athlete_df)
+    system_initialize.initialize_system()
+    athletes_names = ['Eduardo Oliveira']   # 'Simon R Gronow'
+    for athletes_name in athletes_names:
+        main(athletes_name)
 
 
