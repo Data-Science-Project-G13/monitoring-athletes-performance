@@ -36,7 +36,7 @@ from IPython.display import Image
 from sklearn.preprocessing import StandardScaler
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.preprocessing import OrdinalEncoder
-
+from sklearn.impute import KNNImputer
 from sklearn.neighbors import LocalOutlierFactor
 from sklearn.ensemble import IsolationForest
 
@@ -54,14 +54,13 @@ pd.options.mode.chained_assignment = None
 
 sns.set(style="darkgrid", palette="pastel", color_codes=True)
 sns.set_context('talk')
-from sklearn.impute import KNNImputer
 
 # Set the data frame display option
 pd.set_option('display.max_row', 20)
 pd.set_option('display.max_columns', 10)
 
 
-class SpreadsheetDataCleaner() :
+class SpreadsheetDataCleaner():
     """
     A class used to process data cleaning on CoachingMate data
 
@@ -200,7 +199,6 @@ class SpreadsheetDataCleaner() :
         categoric_values = categorical_columns.columns.values
         return categorical_columns, categoric_values
 
-
     # ==================================================
     """ Fred is now working on this part. Please don't change"""
     def _apply_univariate_imputation(self, columns):
@@ -249,7 +247,7 @@ class SpreadsheetDataCleaner() :
 
     # ==================================================
 
-    def _apply_mean_imputation(self, data_numeric) :
+    def _apply_mean_imputation(self, data_numeric):
         for col in data_numeric.columns :
             mean = data_numeric[col].mean()
             data_numeric[col] = data_numeric[col].fillna(mean)
@@ -528,6 +526,7 @@ class AdditionalDataCleaner():
         elif len(null_cols) > 0:
             cols_not_null = [col for col in columns_need_imputation if col not in null_cols]
             self._apply_univariate_imputation(cols_not_null)
+            self._apply_regression_prediction_imputation(null_cols)
         else:
             new_data = self.dataframe.copy()
             try:
@@ -788,11 +787,9 @@ def _create_log_folders(data_type, athletes_name=None):
         os.mkdir('{}/log/'.format(os.path.pardir))
 
     if data_type == 'spreadsheet':
-        log_folder_names = ['spreadsheet_missing_value_log',
-                            'spreadsheet_outlier_log']
+        log_folder_names = ['spreadsheet_missing_value_log', 'spreadsheet_outlier_log']
     elif data_type == 'additional':
-        log_folder_names = ['additional_missing_value_log',
-                            'additional_outlier_log']
+        log_folder_names = ['additional_missing_value_log', 'additional_outlier_log']
         if athletes_name:
             log_folder_names.extend(['{}/{}'.format(name, athletes_name) for name in log_folder_names])
     else:
