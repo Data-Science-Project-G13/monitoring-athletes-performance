@@ -68,7 +68,8 @@ class AdditionalDataFeatureExtractor():
         self.session_df = pd.read_csv(file_name)
         # TODO: get swimming speed for the athlete from the lower layer
         self.critical_swimming_speed = None
-        self.features_extracted = {'Date': self.file_name.split('_')[-3], 'Activity': self.activity_type,
+        session_datetime = self.file_name.split('_')[-3]  # + '_' + self.file_name.split('_')[-2][:2]
+        self.features_extracted = {'Date': session_datetime, 'Activity Type': self.activity_type,
                                    'TSS': float(0), 'Other Feature 1': float(0), 'Other Feature 2': float(0)}
 
     def _get_activity_type(self):
@@ -84,7 +85,7 @@ class AdditionalDataFeatureExtractor():
         #  self.activity_type is the activity type.
         #  The function returns TSS (as a float)
         #  @Spoorthi @Sindhu
-        tss = float(0)
+        tss = float(999)
         return tss
 
     def _get_tss_for_session_cycling(self):
@@ -153,7 +154,7 @@ class AdditionalDataFeatureExtractor():
 def _function_for_testing(file_name, test_type):
     """
     """
-    """*** This is the function that is used for testing only annd will be removed***"""
+    """*** This is the function that is used for testing only and will be removed ***"""
     if test_type in file_name: return True
     else: return False
 
@@ -179,7 +180,7 @@ def main(data_type: str, athletes_name: str) :
     elif data_type == 'additional' :
         data_loader_additional = DataLoader('additional')
         cleaned_additional_data_filenames = data_loader_additional.load_cleaned_additional_data(athletes_name)
-        # TODO: Handle keys where multiple additional data on same day  @Tingli
+        # For keys where multiple additional data on same day, time doesn't match
         additional_features = {}
         for file_name in cleaned_additional_data_filenames:
             # TODO: A reminder, you can use the function below to test your functions for ONE .csv file instead all
@@ -194,8 +195,8 @@ def main(data_type: str, athletes_name: str) :
             features_extracted = additional_feature_extractor.process_feature_engineering()
             additional_features[features_extracted['Date']] = features_extracted
             print('Preview of the features extracted: \n', features_extracted)
-            if _function_for_testing(file_name, test_type):
-                break
+            # if _function_for_testing(file_name, test_type):
+            #     break
         return additional_features
 
 
