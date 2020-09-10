@@ -2,7 +2,7 @@
 
 ## Data Cleaninng
 
-### Original
+### Spreadsheet
 #### Problems and possible solutions
 
 
@@ -20,6 +20,15 @@
     - Outlier which doesn't follow the trend but not able to detect by boxplot
         - Solution1: Check trend
     
+    
 ## Feature Engineering
+### Spreadsheet
+### Additional 
+
+### Merging
+Use dictionary to lower the merging complexity from O(N^2) to O(1)*O(N)
+The activity time on a certain date in additional data and in spreadsheet data
+are not always match, hence match them by date and the activity types.
+
 
 ## Building Models
