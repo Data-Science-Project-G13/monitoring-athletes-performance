@@ -16,17 +16,18 @@ def merge_spreadsheet_additional(athletes_name):
     """
     spreadsheet = data_feature_engineering.main('spreadsheet', athletes_name)
     additionals = data_feature_engineering.main('additional', athletes_name)
-    additional_features = additionals['features']
-    for feature in additional_features:
-        spreadsheet[feature] = pd.Series(0, index=spreadsheet.index)
+    if additionals:
+        additional_features = additionals['features']
+        for feature in additional_features:
+            spreadsheet[feature] = pd.Series(0, index=spreadsheet.index)
 
-    for index, record in spreadsheet.iterrows():
-        date = record['Date'].split(' ')[0]  # + record['Date'].split(' ')[1][:2]
-        activity_type = record['Activity Type'].split(' ')[-1]
-        if date in additionals.keys() and activity_type == additionals[date]['Activity Type']:
-            spreadsheet.at[index, 'Training Stress Score®'] = additionals[date]['TSS']
-            for feature in additional_features:
-                spreadsheet.at[index, feature] = additionals[date][feature]
+        for index, record in spreadsheet.iterrows():
+            date = record['Date'].split(' ')[0]  # + record['Date'].split(' ')[1][:2]
+            activity_type = record['Activity Type'].split(' ')[-1]
+            if date in additionals.keys() and activity_type == additionals[date]['Activity Type']:
+                spreadsheet.at[index, 'Training Stress Score®'] = additionals[date]['TSS']
+                for feature in additional_features:
+                    spreadsheet.at[index, feature] = additionals[date][feature]
     return spreadsheet
 
 

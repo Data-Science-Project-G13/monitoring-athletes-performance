@@ -180,23 +180,26 @@ def main(data_type: str, athletes_name: str) :
     elif data_type == 'additional' :
         data_loader_additional = DataLoader('additional')
         cleaned_additional_data_filenames = data_loader_additional.load_cleaned_additional_data(athletes_name)
-        additional_features = {'features': ['Other Feature 1', 'Other Feature 2']}
-        for file_name in cleaned_additional_data_filenames:
-            # TODO: A reminder, you can use the function below to test your functions for ONE .csv file instead all
-            #  For example if you are testing cycling TSS, just use the function below.
-            #  If you want to test running, change the test_type to 'running'. Similarly for swimming.
-            #  @Spoorthi @Sindhu @Lin @Yuhan
-            test_type = 'running'
-            if not _function_for_testing(file_name, test_type):
-                continue
-            additional_feature_extractor = AdditionalDataFeatureExtractor(file_name)
-            features_extracted = additional_feature_extractor.process_feature_engineering()
-            additional_features[features_extracted['Date']] = features_extracted
-            print('Preview of the features extracted: \n', features_extracted)
-            # TODO: If you want to test all the files, comment out the '_function_for_testing's below.
-            if _function_for_testing(file_name, test_type):
-                break
-        return additional_features
+        if cleaned_additional_data_filenames:
+            additional_features = {'features': ['Other Feature 1', 'Other Feature 2']}
+            for file_name in cleaned_additional_data_filenames:
+                # TODO: A reminder, you can use the function below to test your functions for ONE .csv file instead all
+                #  For example if you are testing cycling TSS, just use the function below.
+                #  If you want to test running, change the test_type to 'running'. Similarly for swimming.
+                #  @Spoorthi @Sindhu @Lin @Yuhan
+                test_type = 'running'
+                if not _function_for_testing(file_name, test_type):
+                    continue
+                additional_feature_extractor = AdditionalDataFeatureExtractor(file_name)
+                features_extracted = additional_feature_extractor.process_feature_engineering()
+                additional_features[features_extracted['Date']] = features_extracted
+                print('Preview of the features extracted: \n', features_extracted)
+                # TODO: If you want to test all the files, comment out the '_function_for_testing's below.
+                if _function_for_testing(file_name, test_type):
+                    break
+            return additional_features
+        else:
+            return None
 
 
 if __name__ == '__main__':
