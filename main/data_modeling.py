@@ -1,8 +1,11 @@
+# Packages
 import numpy as np
 from sklearn import svm
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_curve, average_precision_score
+# Self-defined modules
+import utility
 
 
 class TrainLoadModelBuilder():

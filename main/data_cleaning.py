@@ -7,7 +7,7 @@ environment you are running this script in.
 
 This file can also be imported as a module
 """
-
+# TODO: Clean up packages
 # Packages
 import numpy as np
 import pandas as pd

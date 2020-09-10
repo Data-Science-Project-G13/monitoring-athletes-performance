@@ -1,7 +1,8 @@
+# Packages
 import json
 import pandas as pd
 from data_loader import DataLoader
-
+# Self-defined modules
 import utility
 athlete_info_json_path = utility.get_athlete_info_path()
 

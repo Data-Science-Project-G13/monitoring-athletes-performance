@@ -12,7 +12,6 @@ environment you are running this script in.
 import pandas as pd
 import numpy as np
 from sklearn.decomposition import PCA
-
 # Self-defined modules
 import utility
 from data_loader import DataLoader

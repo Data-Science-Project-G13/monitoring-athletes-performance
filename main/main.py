@@ -7,10 +7,9 @@ functions:
 
     * main - the main function of the system
 """
-
+# Self-defined modules
 import system_initialize
 import data_cleaning
-import data_feature_engineering
 import data_merge
 import data_modeling
 
