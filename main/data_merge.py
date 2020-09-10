@@ -2,8 +2,6 @@ import os
 import pandas as pd
 import data_feature_engineering
 
-pd.set_option('display.max_row', 200)
-pd.set_option('display.max_columns', 10)
 
 def _save_merged_df(file_name, merged_dataframe: pd.DataFrame):
     merged_data_folder = '{}/data/merged_dataframes'.format(os.path.pardir)
@@ -35,7 +33,6 @@ def merge_spreadsheet_additional(athletes_name):
 def main():
     athletes_names = ['eduardo oliveira']
     merged_df = merge_spreadsheet_additional(athletes_names[0])
-    print(merged_df)
     file_name = 'merged_{}'.format('_'.join(athletes_names[0].split(' ')))
     _save_merged_df(file_name, merged_df)
 
