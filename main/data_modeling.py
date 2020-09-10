@@ -48,3 +48,10 @@ class PerformanceModelBuilder():
     def __init__(self):
         pass
 
+
+def process_train_load_modeling(athletes_name):
+    pass
+
+
+def process_performance_modeling(athletes_name):
+    pass
