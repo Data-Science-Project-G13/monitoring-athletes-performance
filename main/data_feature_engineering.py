@@ -143,11 +143,11 @@ class AdditionalDataFeatureExtractor():
             print('Feature engineering finished.')
 
     def process_feature_engineering(self):
-        self._show_processing_info('start', verbose=True)
+        self._show_processing_info('start', verbose=False)
         self.features_extracted['TSS'] = self._extract_tss()
         self.features_extracted['Other Feature 1'] = self._extract_other_feature_1()
         self.features_extracted['Other Feature 2'] = self._extract_other_feature_2()
-        self._show_processing_info('end', verbose=True)
+        self._show_processing_info('end', verbose=False)
         return self.features_extracted
 
 
@@ -181,7 +181,7 @@ def main(data_type: str, athletes_name: str) :
         data_loader_additional = DataLoader('additional')
         cleaned_additional_data_filenames = data_loader_additional.load_cleaned_additional_data(athletes_name)
         # For keys where multiple additional data on same day, time doesn't match
-        additional_features = {}
+        additional_features = {'features': ['Other Feature 1', 'Other Feature 2']}
         for file_name in cleaned_additional_data_filenames:
             # TODO: A reminder, you can use the function below to test your functions for ONE .csv file instead all
             #  For example if you are testing cycling TSS, just use the function below.
@@ -195,8 +195,8 @@ def main(data_type: str, athletes_name: str) :
             features_extracted = additional_feature_extractor.process_feature_engineering()
             additional_features[features_extracted['Date']] = features_extracted
             print('Preview of the features extracted: \n', features_extracted)
-            # if _function_for_testing(file_name, test_type):
-            #     break
+            if _function_for_testing(file_name, test_type):
+                break
         return additional_features
 
 
