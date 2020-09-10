@@ -84,7 +84,7 @@ class AdditionalDataFeatureExtractor():
         #  self.dataframe is the dataframe for the csv file.
         #  self.activity_type is the activity type.
         #  The function returns TSS (as a float).
-        #  Return None if can't compute. Please handle this situation.
+        #  Return float(0) if can't compute. Please handle this situation.
         #  @Spoorthi @Sindhu
         tss = float(0)
         return tss
@@ -94,7 +94,7 @@ class AdditionalDataFeatureExtractor():
         #  self.dataframe is the dataframe for the csv file.
         #  self.activity_type is the activity type.
         #  The function returns TSS (as a float).
-        #  Return None if can't compute. Please handle this situation.
+        #  Return float(0) if can't compute. Please handle this situation.
         #  @Spoorthi @Sindhu
         tss = float(0)
         return tss
@@ -105,7 +105,7 @@ class AdditionalDataFeatureExtractor():
         #  self.activity_type is the activity type.
         #  self.critical_swimming_speed is the critical swimming speed for the athlete.
         #  The function returns TSS (as a float).
-        #  Return None if can't compute. Please handle this situation.
+        #  Return float(0) if can't compute. Please handle this situation.
         #  @Lin @Yuhan
         tss = float(0)
         return tss
