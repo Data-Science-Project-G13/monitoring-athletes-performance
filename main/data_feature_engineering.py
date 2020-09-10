@@ -14,6 +14,7 @@ import numpy as np
 from sklearn.decomposition import PCA
 
 # Self-defined modules
+import utility
 from data_loader import DataLoader
 
 
@@ -22,10 +23,6 @@ class SpreadsheetDataFeatureExtractor():
 
     def __init__(self, dataframe: pd.DataFrame):
         self.dataframe = dataframe
-
-    def fill_out_tss(self, tss_list: []):
-        # TODO: Tingli will implement this
-        pass
 
     def process_pca(self, low_dimension, path):
         """
@@ -62,13 +59,13 @@ class SpreadsheetDataFeatureExtractor():
 
 class AdditionalDataFeatureExtractor():
 
-    def __init__(self, file_name: str):
+    def __init__(self, file_name: str, athletes_css: float=None, athletes_lact_thr: float=None):
         self.file_name = file_name
         self.activity_type = self._get_activity_type()
         self.session_df = pd.read_csv(file_name)
-        # TODO: get swimming speed for the athlete from the lower layer
-        self.critical_swimming_speed = None
-        session_datetime = self.file_name.split('_')[-3]  # + '_' + self.file_name.split('_')[-2][:2]
+        self.critical_swimming_speed = athletes_css
+        self.athletes_lact_thr = athletes_lact_thr
+        session_datetime = self.file_name.split('_')[-3]
         self.features_extracted = {'Date': session_datetime, 'Activity Type': self.activity_type,
                                    'TSS': float(0), 'Other Feature 1': float(0), 'Other Feature 2': float(0)}
 
@@ -107,8 +104,11 @@ class AdditionalDataFeatureExtractor():
         #  The function returns TSS (as a float).
         #  Return float(0) if can't compute. Please handle this situation.
         #  @Lin @Yuhan
-        tss = float(0)
-        return tss
+        if self.critical_swimming_speed:
+            """ Implement function here @Lin """
+            pass
+        else:
+            return float(0)
 
     def _extract_tss(self):
         tss = None
@@ -181,6 +181,7 @@ def main(data_type: str, athletes_name: str) :
         return spreadsheet_feature_extractor.dataframe
 
     elif data_type == 'additional' :
+        athletes_css = utility.get_athlete_css(athletes_name)
         data_loader_additional = DataLoader('additional')
         cleaned_additional_data_filenames = data_loader_additional.load_cleaned_additional_data(athletes_name)
         if cleaned_additional_data_filenames:
@@ -193,7 +194,7 @@ def main(data_type: str, athletes_name: str) :
                 test_type = 'running'
                 if not _function_for_testing(file_name, test_type):
                     continue
-                additional_feature_extractor = AdditionalDataFeatureExtractor(file_name)
+                additional_feature_extractor = AdditionalDataFeatureExtractor(file_name, athletes_css=athletes_css)
                 features_extracted = additional_feature_extractor.process_feature_engineering()
                 additional_features[features_extracted['Date']] = features_extracted
                 print('Preview of the features extracted: \n', features_extracted)
