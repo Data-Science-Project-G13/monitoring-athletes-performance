@@ -909,7 +909,7 @@ if __name__ == '__main__':
     athletes_names = ['eduardo oliveira']
 
     # Clean spreadsheet data
-    # main('spreadsheet')  # clean all spreadsheet data
+    ## main('spreadsheet')  # clean all spreadsheet data
     # TODO: Too slow, won't work in industry.
     main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
 
