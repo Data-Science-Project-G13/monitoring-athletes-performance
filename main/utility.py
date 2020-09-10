@@ -163,7 +163,6 @@ def get_outlier_color_labels_additional():
              'indigo', 'magenta', 'crimson', 'red']
 
 
-
 if __name__ == '__main__':
     # The lines below are for test
     print(get_all_spreadsheet_data_file_names())
