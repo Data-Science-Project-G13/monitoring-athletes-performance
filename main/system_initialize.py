@@ -1,22 +1,22 @@
-import os
 import json
 import pandas as pd
 from data_loader import DataLoader
 
+import utility
+athlete_info_json_path = utility.get_athlete_info_path()
+
 
 def create_directory_structures():
-    """
-    Create all the directories and folders that are needed for the project
-    :return:
+    """ Create all the directories and folders that are needed for the project
     """
     pass
 
 
-def initialize_critical_swimming_speed(athletes_name: str):
-    '''
+def initialize_critical_swim_speed(athletes_name: str):
+    ''' Initialize the critical swim speed of an athlete
     Parameters
     ----------
-    athletes_name
+    athletes_name: str
     '''
     data_loader_additional = DataLoader('additional')
     cleaned_additional_data_filenames = data_loader_additional.load_cleaned_additional_data(athletes_name)
@@ -38,25 +38,37 @@ def initialize_critical_swimming_speed(athletes_name: str):
         mean_time_diff = sum(first_400m_times)/len(first_400m_times) - sum(first_50m_times)/len(first_50m_times)
         return mean_dis_diff/mean_time_diff
 
-    athletes_css = _calculate_css()
-    with open('config/athlete_personal_info.json', 'r') as file:
-        athletes_info_json = json.load(file)
-    athletes_info_json[athletes_name.title()]["critical swim speed"] = athletes_css
-    with open('config/athlete_personal_info.json', 'w') as file:
-        json.dump(athletes_info_json, file, indent = 4)
+    return _calculate_css()
 
 
 def initialize_lactate_threshold(athletes_name: str):
+    ''' Initialize the lactate threshold of an athlete
+    Parameters
+    ----------
+    athletes_name: str
+    '''
     pass
 
 
-
 def initialize_system():
+    """ Initialize the whole system
+    """
     create_directory_structures()
     athletes = ['eduardo oliveira']
-    for athlete in athletes:
-        initialize_critical_swimming_speed(athlete)
-        initialize_lactate_threshold(athlete)
+    for athletes_name in athletes:
+        with open(athlete_info_json_path, 'r') as file:
+            athletes_info_json = json.load(file)
+        json_changes_made = False
+        if not athletes_info_json[athletes_name.title()]["critical swim speed"]:
+            athletes_css = initialize_critical_swim_speed(athletes_name)
+            athletes_info_json[athletes_name.title()]["critical swim speed"] = athletes_css
+            json_changes_made = True
+        if not athletes_info_json[athletes_name.title()]["lactate threshold"]:
+            json_changes_made = True
+        if json_changes_made:
+            with open(athlete_info_json_path, 'w') as file:
+                json.dump(athletes_info_json, file, indent=4)
+
 
 if __name__ == '__main__':
     initialize_system()
