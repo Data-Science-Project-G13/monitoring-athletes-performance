@@ -68,7 +68,7 @@ class AdditionalDataFeatureExtractor():
         self.session_df = pd.read_csv(file_name)
         # TODO: get swimming speed for the athlete from the lower layer
         self.critical_swimming_speed = None
-        self.features_extracted = {'Date': self.file_name[-33:-20], 'Activity': self.activity_type, 'TSS': 0,
+        self.features_extracted = {'Date': self.file_name.split('_')[-3], 'Activity': self.activity_type, 'TSS': 0,
                                    'Other Feature 1': 0, 'Other Feature 2': 0}
 
     def _get_activity_type(self):
@@ -132,11 +132,11 @@ class AdditionalDataFeatureExtractor():
 
     def process_feature_engineering(self):
         self._show_processing_info('start')
-        self.features_extracted['TSS'] = [self._extract_tss()]
-        self.features_extracted['Other Feature 1'] = [self._extract_other_feature_1()]
-        self.features_extracted['Other Feature 2'] = [self._extract_other_feature_2()]
+        self.features_extracted['TSS'] = self._extract_tss()
+        self.features_extracted['Other Feature 1'] = self._extract_other_feature_1()
+        self.features_extracted['Other Feature 2'] = self._extract_other_feature_2()
         self._show_processing_info('end')
-        return pd.DataFrame(self.features_extracted)
+        return self.features_extracted
 
 
 def _function_for_testing(file_name, test_type):
@@ -168,22 +168,23 @@ def main(data_type: str, athletes_name: str) :
     elif data_type == 'additional' :
         data_loader_additional = DataLoader('additional')
         cleaned_additional_data_filenames = data_loader_additional.load_cleaned_additional_data(athletes_name)
-        additional_features = []
+        # TODO: Handle keys where multiple additional data on same day  @Tingli
+        additional_features = {}
         for file_name in cleaned_additional_data_filenames:
             # TODO: A reminder, you can use the function below to test your functions for ONE .csv file instead all
             #  For example if you are testing cycling TSS, just use the function below.
             #  If you want to test running, change the test_type to 'running'. Similarly for swimming.
             #  If you want to test all comment out two '_function_for_testing's below.
             #  @Spoorthi @Sindhu @Lin @Yuhan
-            test_type = 'swimming'
+            test_type = 'running'
             if not _function_for_testing(file_name, test_type):
                 continue
             additional_feature_extractor = AdditionalDataFeatureExtractor(file_name)
             features_extracted = additional_feature_extractor.process_feature_engineering()
-            additional_features.append(features_extracted)
+            additional_features[features_extracted['Date']] = features_extracted
             print('Preview of the features extracted: \n', features_extracted)
-            if _function_for_testing(file_name, test_type):
-                break
+            # if _function_for_testing(file_name, test_type):
+            #     break
         return additional_features
 
 
