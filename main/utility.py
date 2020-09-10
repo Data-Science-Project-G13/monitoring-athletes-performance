@@ -152,10 +152,11 @@ def get_column_groups_for_imputation(data_type):
     if data_type == 'spreadsheet':
         return {}
     elif data_type == 'additional':
-        return {'univariate' : {'timezone'},
-                'multivariate1' : {"distance", "timestamp"},
-                'multivariate2' : {"speed", "heart_rate", "cadence"},
-                'interpolation' : {"timestamp", "position_lat", "position_long", "altitude"}}
+        return {'univariate': {'timezone'},
+                'multivariate1': {"distance", "timestamp"},
+                'multivariate2': {"speed", "heart_rate", "cadence"},
+                'interpolation': {"position_lat", "position_long", "altitude"},
+                'regression': {"speed", "heart_rate", "cadence"}}
 
 
 def get_outlier_color_labels_additional():
