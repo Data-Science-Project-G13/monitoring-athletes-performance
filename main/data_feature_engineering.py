@@ -63,7 +63,7 @@ class AdditionalDataFeatureExtractor():
         self.file_name = file_name
         self.activity_type = self._get_activity_type()
         self.session_df = pd.read_csv(file_name)
-        self.critical_swimming_speed = athletes_css
+        self.critical_swim_speed = athletes_css
         self.athletes_lact_thr = athletes_lact_thr
         session_datetime = self.file_name.split('_')[-3]
         self.features_extracted = {'Date': session_datetime, 'Activity Type': self.activity_type,
@@ -104,7 +104,7 @@ class AdditionalDataFeatureExtractor():
         #  The function returns TSS (as a float).
         #  Return float(0) if can't compute. Please handle this situation.
         #  @Lin @Yuhan
-        if self.critical_swimming_speed:
+        if self.critical_swim_speed:
             """ Implement function here @Lin """
             pass
         else:
