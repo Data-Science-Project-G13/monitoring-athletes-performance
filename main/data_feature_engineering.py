@@ -68,8 +68,8 @@ class AdditionalDataFeatureExtractor():
         self.session_df = pd.read_csv(file_name)
         # TODO: get swimming speed for the athlete from the lower layer
         self.critical_swimming_speed = None
-        self.features_extracted = {'Date': self.file_name.split('_')[-3], 'Activity': self.activity_type, 'TSS': 0,
-                                   'Other Feature 1': 0, 'Other Feature 2': 0}
+        self.features_extracted = {'Date': self.file_name.split('_')[-3], 'Activity': self.activity_type,
+                                   'TSS': float(0), 'Other Feature 1': float(0), 'Other Feature 2': float(0)}
 
     def _get_activity_type(self):
         activity_types = ['running', 'cycling', 'swimming']
@@ -122,7 +122,18 @@ class AdditionalDataFeatureExtractor():
     def _extract_other_feature_2(self):
         return None
 
-    def _show_processing_info(self, state: str):
+    def _show_processing_info(self, state: str, verbose=False):
+        """ Display the feature engineering processing information
+
+        Parameters
+        -------
+        state: str
+            The state of the process.
+        verbose: bool
+            If true, display the messages, not display otherwise.
+        """
+        if not verbose:
+            return
         if state == 'start':
             print('\nProcessing feature engineering from {} ...'.format(self.file_name[3:]))
             if self.activity_type not in ['running', 'cycling', 'swimming']:
@@ -131,11 +142,11 @@ class AdditionalDataFeatureExtractor():
             print('Feature engineering finished.')
 
     def process_feature_engineering(self):
-        self._show_processing_info('start')
+        self._show_processing_info('start', verbose=True)
         self.features_extracted['TSS'] = self._extract_tss()
         self.features_extracted['Other Feature 1'] = self._extract_other_feature_1()
         self.features_extracted['Other Feature 2'] = self._extract_other_feature_2()
-        self._show_processing_info('end')
+        self._show_processing_info('end', verbose=True)
         return self.features_extracted
 
 
@@ -183,8 +194,8 @@ def main(data_type: str, athletes_name: str) :
             features_extracted = additional_feature_extractor.process_feature_engineering()
             additional_features[features_extracted['Date']] = features_extracted
             print('Preview of the features extracted: \n', features_extracted)
-            # if _function_for_testing(file_name, test_type):
-            #     break
+            if _function_for_testing(file_name, test_type):
+                break
         return additional_features
 
 
