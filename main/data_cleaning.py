@@ -104,13 +104,15 @@ class SpreadsheetDataCleaner() :
             self.dataframe['Activity Type'].isin(['Virtual Cycling', 'Indoor Cycling', 'Road Cycling', 'Cycling'])]
         self.dataframe_run = self.dataframe.loc[
             self.dataframe['Activity Type'].isin(['Running', 'Treadmill Running'])]
+        self.dataframe_st = self.dataframe.loc[
+            self.dataframe['Activity Type'].isin(['Strength Training'])]
         self.dataframe_others = self.dataframe.loc[
-            self.dataframe['Activity Type'].isin(['Strength Training', 'Hiking', 'Multisport', 'Indoor Rowing'])]
+            self.dataframe['Activity Type'].isin(['Hiking', 'Multisport', 'Indoor Rowing'])]
 
     def _concat_dataframe_by_activity(self):
         self.dataframe = pd.concat(
-            [self.dataframe_swim, self.dataframe_cycle, self.dataframe_run, self.dataframe_others])
-        del self.dataframe_swim, self.dataframe_cycle, self.dataframe_run, self.dataframe_others
+            [self.dataframe_swim, self.dataframe_cycle, self.dataframe_run,self.dataframe_st, self.dataframe_others])
+        del self.dataframe_swim, self.dataframe_cycle, self.dataframe_run,self.dataframe_st, self.dataframe_others
         self.dataframe = self.dataframe.sort_index(inplace=True)
 
     def _drop_columns(self) :
@@ -907,7 +909,7 @@ if __name__ == '__main__':
     athletes_names = ['eduardo oliveira']
 
     # Clean spreadsheet data
-    # main('spreadsheet')  # clean all spreadsheet data
+    ## main('spreadsheet')  # clean all spreadsheet data
     # TODO: Too slow, won't work in industry.
     main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
 
