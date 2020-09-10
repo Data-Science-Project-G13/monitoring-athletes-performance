@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_curve, average_precision_score
 
 
-class ModelBuilder():
+class TrainLoadModelBuilder():
 
     def __init__(self, dataframe):
         self.X = dataframe.loc[:, dataframe.columns != 'TSS']
@@ -43,4 +43,8 @@ class ModelBuilder():
         precision, recall, average_precision = self._validate_model(X_test, y_test, classifier)
 
 
+class PerformanceModelBuilder():
+
+    def __init__(self):
+        pass
 
