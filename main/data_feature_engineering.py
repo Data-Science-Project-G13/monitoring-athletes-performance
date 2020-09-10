@@ -161,7 +161,7 @@ def _function_for_testing(file_name, test_type):
     else: return False
 
 
-def main(data_type: str, athletes_name: str) :
+def main(data_type: str, athletes_name: str):
     """The main function of processing feature engineering
 
     Parameters
@@ -174,12 +174,12 @@ def main(data_type: str, athletes_name: str) :
     data_loader_spreadsheet = DataLoader('spreadsheet')
     cleaned_spreadsheet_data_frame = data_loader_spreadsheet.load_cleaned_spreadsheet_data(athletes_name=athletes_name)
 
-    if data_type == 'spreadsheet' :
+    if data_type == 'spreadsheet':
         spreadsheet_feature_extractor = SpreadsheetDataFeatureExtractor(cleaned_spreadsheet_data_frame)
         spreadsheet_feature_extractor.process_feature_engineering()
         return spreadsheet_feature_extractor.dataframe
 
-    elif data_type == 'additional' :
+    elif data_type == 'additional':
         athletes_css = utility.get_athlete_css(athletes_name)
         data_loader_additional = DataLoader('additional')
         cleaned_additional_data_filenames = data_loader_additional.load_cleaned_additional_data(athletes_name)
