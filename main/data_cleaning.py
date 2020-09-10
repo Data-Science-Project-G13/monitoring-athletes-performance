@@ -439,7 +439,7 @@ class SpreadsheetDataCleaner() :
         # self.localOutlierFactor(numeric_column_values)
 
 
-class AdditionalDataCleaner() :
+class AdditionalDataCleaner():
     """
     A class used to process data cleaning on a group of Garmin datasets for one athlete
 
@@ -456,7 +456,7 @@ class AdditionalDataCleaner() :
        Process the data cleaning
     """
 
-    def __init__(self, dataframe: pd.DataFrame, file_name: str = None) :
+    def __init__(self, dataframe: pd.DataFrame, file_name: str = None):
         self.dataframe = dataframe
         self.file_name = file_name
         self.column_groups_imputation = utility.get_column_groups_for_imputation('additional')
@@ -471,7 +471,7 @@ class AdditionalDataCleaner() :
         self.num_records, self.time_sgmt_num = -1, 0
 
 
-    def check_empty(self) :
+    def check_empty(self):
         """Check whether the data frame is empty
 
         Returns
@@ -481,106 +481,115 @@ class AdditionalDataCleaner() :
         """
         return self.dataframe.empty
 
-    def format_missing_val_with_nan(self) :
+    def format_missing_val_with_nan(self):
         self.dataframe.replace('None', np.nan)
 
-    def check_missing_val_perc(self) :
+    def check_missing_val_perc(self):
         no_missing = True
         missing_val_perc = self.dataframe.isnull().sum() / self.dataframe.shape[0]
-        for column_name in missing_val_perc.keys() :
-            if float(missing_val_perc[column_name]) != 0 :
+        for column_name in missing_val_perc.keys():
+            if float(missing_val_perc[column_name]) != 0:
                 no_missing = False
                 self.missing_val_logger.append(
                     '{} has {}% missing. \n'.format(column_name, round(missing_val_perc[column_name] * 100, 3)))
-        if no_missing :
+        if no_missing:
             self.missing_val_logger.append('Great! No missing values! \n')
         return missing_val_perc
 
-    def get_columns_with_missing_values(self) :
+    def get_columns_with_missing_values(self):
         cols_with_missing = {col for col in self.dataframe.columns if self.dataframe[col].isnull().any()}
         return cols_with_missing
 
-    def convert_str_to_num_in_numerical_cols(self) :
+    def convert_str_to_num_in_numerical_cols(self):
         for column in self.numerical_ordered_columns + self.numerical_fluctuating_columns:
             # dataframe[column] = dataframe[column].astype(float)
             self.dataframe[column] = pd.to_numeric(self.dataframe[column], errors='coerce')
 
-    def add_column_time_in_seconds(self) :
+    def add_column_time_in_seconds(self):
         time_in_seconds = []
-        for time in self.dataframe['timestamp'] :
+        for time in self.dataframe['timestamp']:
             t = dt.datetime.strptime(time[:-6], '%Y-%m-%d %H:%M:%S')
             seconds = int(dt.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second).total_seconds())
             time_in_seconds.append(seconds)
         self.dataframe.insert(1, 'time_in_seconds', time_in_seconds, True)
 
-    def _apply_univariate_imputation(self, columns) :
+    def _apply_univariate_imputation(self, columns):
         new_data = self.dataframe.copy()
         imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
         new_data = pd.DataFrame(imputer.fit_transform(new_data[[columns]]))
         new_data.columns = [columns]
         self.dataframe[columns] = new_data[columns]
 
-    def _apply_multivariate_imputation(self, columns) :
-        null_cols = [col for col in columns if self.dataframe[col].isnull().all()]
-        if null_cols :
-            # If there are columns with all values missing, apply regression or ignore the column first.
+    def _apply_multivariate_imputation(self, columns_need_imputation, column_group):
+        null_cols = [col for col in columns_need_imputation if self.dataframe[col].isnull().all()]
+        if len(null_cols) == len(column_group):
             self.missing_val_logger.append("All the values in column(s) {} are missing. "
                                            "Not able to apply imputation.".format(null_cols))
-        else :
+        elif len(null_cols) > 0:
+            cols_not_null = [col for col in columns_need_imputation if col not in null_cols]
+            self._apply_univariate_imputation(cols_not_null)
+        else:
             new_data = self.dataframe.copy()
-            iter_imputer = IterativeImputer(max_iter=10, random_state=0)
-            new_data = pd.DataFrame(iter_imputer.fit_transform(new_data[columns]))
-            if not new_data.empty :
-                new_data.columns = columns
-                self.dataframe[columns] = new_data[columns]
-            else :
-                self.missing_val_logger.append("All the values in column(s) {} are missing. "
-                                               "Not able to apply imputation.".format(columns))
+            try:
+                new_data.replace('None', None)
+                print(self.file_name)
+                iter_imputer = IterativeImputer(max_iter=10, random_state=0)
+                new_data = pd.DataFrame(iter_imputer.fit_transform(new_data[column_group]))
+                if not new_data.empty :
+                    new_data.columns = column_group
+                    self.dataframe[column_group] = new_data[column_group]
+                else:
+                    self.missing_val_logger.append("All the values in column(s) {} are missing. "
+                                                   "Not able to apply imputation.".format(column_group))
+            except:
+                pass
 
-    def _apply_interpolation_imputation(self, columns) :
+
+    def _apply_interpolation_imputation(self, columns):
         for column in columns :
             interpolated_column = self.dataframe[column].interpolate(method='spline', order=2, limit=2)
             self.dataframe[column] = interpolated_column
 
-    def _apply_regression_prediction_imputation(self, column_names) :
+    def _apply_regression_prediction_imputation(self, column_names):
         # TODO: for whole column missing
         pass
 
-    def _apply_imputations(self, columns_need_imputation) :
-        for impute_tech, column_names in self.column_groups_imputation.items() :
+    def _apply_imputations(self, columns_need_imputation):
+        for impute_tech, column_names in self.column_groups_imputation.items():
             column_intersection = column_names.intersection(columns_need_imputation)
-            if column_intersection :
-                if impute_tech == "univariate" :
+            if column_intersection:
+                if impute_tech == "univariate":
                     self._apply_univariate_imputation(list(column_intersection))
-                elif impute_tech == "multivariate1" or "multivariate2" :
-                    self._apply_multivariate_imputation(list(column_intersection))
-                elif impute_tech == "interpolation" :
-                    self._apply_regression_prediction_imputation(list(column_intersection))
+                elif impute_tech == "multivariate1" or "multivariate2":
+                    if len(column_intersection) > 0:
+                        self._apply_multivariate_imputation(list(column_intersection), list(column_names))
+                elif impute_tech == "interpolation":
+                    self._apply_interpolation_imputation(list(column_intersection))
 
-    def handle_missing_values(self) :
+    def handle_missing_values(self):
         self.format_missing_val_with_nan()
         self.missing_val_logger.append('Before imputation: \n')
         self.check_missing_val_perc()
         columns_need_imputation = self.get_columns_with_missing_values()
-        if columns_need_imputation :
+        if columns_need_imputation:
             self._apply_imputations(columns_need_imputation)
         self.missing_val_logger.append('After imputation: \n')
         self.check_missing_val_perc()
 
-    def _log_outlier(self, outlier_index, column, reason) :
+    def _log_outlier(self, outlier_index, column, reason):
         self.outlier_dict_logger['Outlier Index'].append(outlier_index)
         self.outlier_dict_logger['Column'].append(column)
         self.outlier_dict_logger['Reason'].append(reason)
 
-    def _filter_by_repetition(self, rec_color) :
+    def _filter_by_repetition(self, rec_color):
         df = self.dataframe.drop(columns=['timestamp', 'timestamp_utc', 'timezone'])
         dup_df = df[df.duplicated()]
         idx_list = dup_df.index.tolist()
-        for i in idx_list :
+        for i in idx_list:
             rec_color[i] = self.OUTLIER_COLOR_LABEL
             self._log_outlier(i, 'ALL', 'DUPLICATE ROW')
 
-    def _filter_by_timestamp(self, rec_color) :
+    def _filter_by_timestamp(self, rec_color):
         # Convert time strings to epoch seconds
         ts_secs = np.array(self.dataframe['time_in_seconds'])
         self.num_records = len(ts_secs)
@@ -620,44 +629,43 @@ class AdditionalDataCleaner() :
                 self._log_outlier(j, 'timestamp',
                                   'FEWER RECORDS FOR THIS TIME SEGMENT(<%d)!' % (self.ROW_COUNT_THRESHOLD))
 
-    def _filter_by_continuity_assumption(self, i, rec_color) :
+    def _filter_by_continuity_assumption(self, i, rec_color):
         ## The change of temperature should not exceed 1 degree
 
-        if (rec_color[i] == rec_color[i - 1] and rec_color[i] != self.OUTLIER_COLOR_LABEL) :
+        if (rec_color[i] == rec_color[i - 1] and rec_color[i] != self.OUTLIER_COLOR_LABEL):
             diff = abs(self.dataframe.loc[i, 'temperature'] - self.dataframe.loc[i - 1, 'temperature'])
-            if diff > 1 :
+            if diff > 1:
                 rec_color[i] = self.OUTLIER_COLOR_LABEL
                 self._log_outlier(i, 'temperature', 'TEMPERATURE CHANGES TOO FAST')
                 # print("[OUTLIER DETECTED!] Index == %d Reason: TEMPERATURE CHANGES TOO FAST!" % (i))
 
-    def _filter_by_logical_inconsistency(self, i, rec_color) :
+    def _filter_by_logical_inconsistency(self, i, rec_color):
         # distance, enhanced_speed, speed, heart_rate and cadence must be greater than or equal to 0
-        # for i in range(self.num_records):
-        for column in ['distance', 'enhanced_speed', 'speed', 'heart_rate', 'cadence'] :
-            if self.dataframe[column][i] < 0 :
+        for column in ['distance', 'enhanced_speed', 'speed', 'heart_rate', 'cadence']:
+            if self.dataframe[column][i] < 0:
                 # take the zero values as missing values
                 rec_color[i] = self.OUTLIER_COLOR_LABEL
                 self._log_outlier(i, column, 'LOGICAL ERROR, {} has to be non-negative!'.format(column))
 
-    def _filter_by_zscore(self, dataframe, rec_color) :
+    def _filter_by_zscore(self, dataframe, rec_color):
         # Configuraing different tolerace for different columns
         columns = ['position_lat', 'position_long', 'enhanced_altitude', 'altitude', 'heart_rate', 'cadence']
         tolerances = [2, 2, 3, 3, 3, 3]  # Configurable
         # TODO: Avoid adding column 'color' to the dataframe
         dataframe['color'] = rec_color
-        for k in range(self.time_sgmt_num) :
+        for k in range(self.time_sgmt_num):
             df = dataframe.loc[dataframe['color'] == k]
-            for j in range(len(columns)) :
+            for j in range(len(columns)):
                 # Actual Z-score test
                 z = np.abs(stats.zscore(df[columns[j]]))
                 outlier_rows = np.where(z > tolerances[j])
                 # print("\n====For Column:%s, There are %d outliers ===\n" % (columns[j], len(outlier_rows[0])))
-                for i in outlier_rows[0] :
+                for i in outlier_rows[0]:
                     rec_color[i] = self.OUTLIER_COLOR_LABEL
                     self._log_outlier(i, columns[j],
                                       'Z-SCORE({}) EXCEEDS THE TOLERANCE ({})'.format(z[i], tolerances[j]))
 
-    def _boxplot(self, df, rec_color) :
+    def _boxplot(self, df, rec_color):
         """ Boxplot for the outliers
         :param df:
         :param rec_color:
@@ -673,7 +681,7 @@ class AdditionalDataCleaner() :
         for idx in dropped :
             rec_color[idx] = self.OUTLIER_COLOR_LABEL
 
-    def _plot_time_sgmt(self, colors) :
+    def _plot_time_sgmt(self, colors):
         ts_secs = np.array(self.dataframe['time_in_seconds'])
         num_recs = len(ts_secs)
         zeros = np.zeros(num_recs).reshape(num_recs, 1)
@@ -682,17 +690,17 @@ class AdditionalDataCleaner() :
         plt.scatter(X[:, 0], X[:, 1], c=colors)
         plt.show()
 
-    def _cidx_to_clabels(self, rec_color) :
+    def _cidx_to_clabels(self, rec_color):
         colors = []
-        for i in range(len(rec_color)) :
+        for i in range(len(rec_color)):
             colors.append(self.color_labels[rec_color[i]])
         return colors
 
-    def _cidx_to_outlier_mask(self, rec_color) :
+    def _cidx_to_outlier_mask(self, rec_color):
         outlier_mask = [1 if rec_color[i] == self.OUTLIER_COLOR_LABEL else 0 for i in range(self.num_records)]
         return outlier_mask
 
-    def get_outliers_by_zscore(self) :
+    def get_outliers_by_zscore(self):
         z = np.abs(stats.zscore(self.dataframe[self.numerical_ordered_columns]))
         threshold = 3
         outlier_zscores = np.where(z > threshold)
@@ -704,28 +712,26 @@ class AdditionalDataCleaner() :
                     ourlier_value = self.dataframe.iloc[row, col]
         return outlier_rows_cols
 
-    def get_outliers_timestamp(self) :
+    def get_outliers_timestamp(self):
         pass
 
-    def handle_outliers_numerical_ordered(self) :
+    def handle_outliers_numerical_ordered(self):
         pass
 
-    def handle_outliers_numerical_fluctuating(self) :
+    def handle_outliers_numerical_fluctuating(self):
         pass
 
-    def handle_outliers(self) :
+    def handle_outliers(self):
         """
         return: (outlier_mask, df_outlier_free)
             outlier_mask: 0 <==> not outlier; 1 <==> outlier
             df_outlier_free: dataframe without possible outliers
         """
         self.convert_str_to_num_in_numerical_cols()
-        dataframe = self.dataframe
+        dataframe = self.dataframe.copy()
         self.num_records = len(dataframe)
-
         # Some Initializations
         rec_color = np.zeros(self.num_records, dtype=np.int32)
-
         # Filter outliers away by removing repetitive rows
         self._filter_by_repetition(rec_color)
 
@@ -736,7 +742,7 @@ class AdditionalDataCleaner() :
         # # Plot Time Segments
         # self._plot_time_sgmt(colors)
 
-        for i in range(1, self.num_records) :
+        for i in range(1, self.num_records):
             # filter outliers away by continuity assumption
             self._filter_by_continuity_assumption(i, rec_color)
             # filter outliers away by logical inconsistency
@@ -744,16 +750,14 @@ class AdditionalDataCleaner() :
 
         # filter outliers away by z-scores
         self._filter_by_zscore(dataframe, rec_color)
-
         # Convert color index to outlier mask
         outlier_mask = self._cidx_to_outlier_mask(rec_color)
-
         # Assembly return value
         df_outlier_free = dataframe.loc[dataframe['color'] != self.OUTLIER_COLOR_LABEL]
         df_outlier_free = df_outlier_free.drop('color', 1)
-        return (outlier_mask, df_outlier_free)
+        return outlier_mask, df_outlier_free
 
-    def process_data_cleaning(self) :
+    def process_data_cleaning(self):
         """Process the data cleaning
         Returns
         -------
@@ -766,67 +770,67 @@ class AdditionalDataCleaner() :
         return self.dataframe
 
 
-def _create_cleaned_data_folder(data_type) :
-    if data_type == 'spreadsheet' :
+def _create_cleaned_data_folder(data_type):
+    if data_type == 'spreadsheet':
         cleaned_spreadsheet_folder = '{}/data/cleaned_spreadsheet'.format(os.path.pardir)
-        if not os.path.exists(cleaned_spreadsheet_folder) :
+        if not os.path.exists(cleaned_spreadsheet_folder):
             os.mkdir(cleaned_spreadsheet_folder)
-    elif data_type == 'additional' :
+    elif data_type == 'additional':
         cleaned_additional_folder = '{}/data/cleaned_additional'.format(os.path.pardir)
-        if not os.path.exists(cleaned_additional_folder) :
+        if not os.path.exists(cleaned_additional_folder):
             os.mkdir(cleaned_additional_folder)
-    else :
+    else:
         raise Exception('No {} type of datasets'.format(data_type))
 
 
-def _create_log_folders(data_type, athletes_name=None) :
-    if not os.path.exists('{}/log/'.format(os.path.pardir)) :
+def _create_log_folders(data_type, athletes_name=None):
+    if not os.path.exists('{}/log/'.format(os.path.pardir)):
         os.mkdir('{}/log/'.format(os.path.pardir))
 
-    if data_type == 'spreadsheet' :
+    if data_type == 'spreadsheet':
         log_folder_names = ['spreadsheet_missing_value_log',
                             'spreadsheet_outlier_log']
-    elif data_type == 'additional' :
+    elif data_type == 'additional':
         log_folder_names = ['additional_missing_value_log',
                             'additional_outlier_log']
-        if athletes_name :
+        if athletes_name:
             log_folder_names.extend(['{}/{}'.format(name, athletes_name) for name in log_folder_names])
-    else :
+    else:
         raise Exception('No {} type of datasets'.format(data_type))
 
-    for log_folder_name in log_folder_names :
+    for log_folder_name in log_folder_names:
         folder = '{}/log/{}'.format(os.path.pardir, log_folder_name)
-        if not os.path.exists(folder) :
+        if not os.path.exists(folder):
             os.mkdir(folder)
 
 
-def _save_cleaned_df(data_type, athletes_name, file_name, cleaned_df) :
-    if data_type == 'spreadsheet' :
+def _save_cleaned_df(data_type, athletes_name, file_name, cleaned_df, verbose=False):
+    if data_type == 'spreadsheet':
         cleaned_df.to_csv('{}/data/cleaned_spreadsheet/{}'.format(os.path.pardir, file_name))
-        print('Cleaned {} data saved!'.format(file_name))
+        if verbose: print('Cleaned {} data saved.'.format(file_name))
 
-    elif data_type == 'additional' :
+    elif data_type == 'additional':
         athlete_cleaned_additional_data_folder = '{}/data/cleaned_additional/{}'.format(os.path.pardir,
                                                                                         '_'.join(athletes_name.lower().split()))
-        if not os.path.exists(athlete_cleaned_additional_data_folder) :
+        if not os.path.exists(athlete_cleaned_additional_data_folder):
             os.mkdir(athlete_cleaned_additional_data_folder)
         cleaned_df.to_csv('{}/{}'.format(athlete_cleaned_additional_data_folder, file_name.split('/')[-1]))
-        print('{}\'s cleaned {} data saved'.format(athletes_name.capitalize(), file_name.split('/')[-1]))
+        if verbose: print('{}\'s cleaned {} data saved.'.format(athletes_name.capitalize(), file_name.split('/')[-1]))
 
 
-def _save_log(data_type, log_type, file_name, log_df, athletes_name=None) :
-    if data_type == 'spreadsheet' :
+def _save_log(data_type, log_type, file_name, log_df, athletes_name=None):
+    if data_type == 'spreadsheet':
         log_file_path = '{}/log/{}_{}_log/{}'.format(os.path.pardir, data_type, log_type, file_name.split('/')[-1])
-    elif data_type == 'additional' :
+    elif data_type == 'additional':
         log_file_path = '{}/log/{}_{}_log/{}/{}'.format(os.path.pardir, data_type, log_type, athletes_name,
                                                         file_name.split('/')[-1])
-    else :
+    else:
         raise Exception('No {} type of datasets'.format(data_type))
-    if not log_df.empty :
+    if not log_df.empty:
         log_df.to_csv(log_file_path)
 
 
-def _main_helper_spreadsheet(athletes_name=None, file_name: str = None) :
+def _main_helper_spreadsheet(athletes_name=None, file_name: str = None, verbose=False):
     # TODO: Create missing value and outlier log for spreadsheet data
     data_loader_spreadsheet = DataLoader('spreadsheet')
     if file_name :
@@ -837,26 +841,26 @@ def _main_helper_spreadsheet(athletes_name=None, file_name: str = None) :
     spreadsheet_data_cleaner = SpreadsheetDataCleaner(athlete_df)
     spreadsheet_data_cleaner.process_data_cleaning()
     cleaned_df = spreadsheet_data_cleaner.dataframe
-    _save_cleaned_df('spreadsheet', athletes_name, file_name, cleaned_df)
+    _save_cleaned_df('spreadsheet', athletes_name, file_name, cleaned_df, verbose=verbose)
 
 
-def _main_helper_additional(athletes_name, activity_type, split_type) :
+def _main_helper_additional(athletes_name, activity_type, split_type, verbose=False):
     data_loader_additional = DataLoader('additional')
     additional_file_names = data_loader_additional.load_additional_data(athletes_name=athletes_name,
                                                                         activity_type=activity_type,
                                                                         split_type=split_type)
     empty_files = []
-    for file_name in additional_file_names :
-        print('\nCleaning {} ...'.format(file_name[3:]))
+    for file_name in additional_file_names:
+        if verbose: print('\nCleaning {} ...'.format(file_name[3:]))
         athlete_df = pd.DataFrame(pd.read_csv(file_name))
         addtional_data_cleaner = AdditionalDataCleaner(athlete_df, file_name)
-        if addtional_data_cleaner.check_empty() :
-            print('File is empty.')
+        if addtional_data_cleaner.check_empty():
+            if verbose: print('File is empty.')
             empty_files.append(file_name)
-        else :
+        else:
             addtional_data_cleaner.process_data_cleaning()
             cleaned_df = addtional_data_cleaner.dataframe
-            _save_cleaned_df('additional', athletes_name, file_name, cleaned_df)
+            _save_cleaned_df('additional', athletes_name, file_name, cleaned_df, verbose=verbose)
             missing_val_log = pd.DataFrame(addtional_data_cleaner.missing_val_logger,
                                            columns=['Before/After Imputation'])
             _save_log(data_type='additional', log_type='missing_value', file_name=file_name,
@@ -864,13 +868,13 @@ def _main_helper_additional(athletes_name, activity_type, split_type) :
             outlier_log_df = pd.DataFrame(addtional_data_cleaner.outlier_dict_logger)
             _save_log(data_type='additional', log_type='outlier', file_name=file_name,
                       athletes_name=athletes_name, log_df=outlier_log_df)
-    print('\nFor {}\'s additional data, {} out of {} {} files are empty.'.format(athletes_name,
+    if verbose: print('\nFor {}\'s additional data, {} out of {} {} files are empty.'.format(athletes_name,
                                                                                  len(empty_files),
                                                                                  len(additional_file_names),
                                                                                  activity_type))
 
 
-def main(data_type='spreadsheet', athletes_name: str = None, activity_type: str = None, split_type: str = None) :
+def main(data_type='spreadsheet', athletes_name: str = None, activity_type: str = None, split_type: str = None):
     """The main function of processing data cleaning
 
     Parameters
@@ -889,19 +893,19 @@ def main(data_type='spreadsheet', athletes_name: str = None, activity_type: str 
     _create_cleaned_data_folder(data_type)
     _create_log_folders(data_type, athletes_name)
 
-    if data_type == 'spreadsheet' :
-        if athletes_name is None :
+    if data_type == 'spreadsheet':
+        if athletes_name is None:
             # Clean all spreadsheet data
             spreadsheet_file_names = utility.get_all_spreadsheet_data_file_names()
-            for file_name in spreadsheet_file_names :
-                _main_helper_spreadsheet(file_name=file_name)
-        else :
+            for file_name in spreadsheet_file_names:
+                _main_helper_spreadsheet(file_name=file_name, verbose=True)
+        else:
             # Clean data for the given athlete
-            _main_helper_spreadsheet(athletes_name=athletes_name)
+            _main_helper_spreadsheet(athletes_name=athletes_name, verbose=True)
 
-    elif data_type == 'additional' :
+    elif data_type == 'additional':
         # Clean all additional data for the given athlete
-        _main_helper_additional(athletes_name, activity_type, split_type)
+        _main_helper_additional(athletes_name, activity_type, split_type, verbose=False)
 
 
 if __name__ == '__main__':
@@ -910,7 +914,7 @@ if __name__ == '__main__':
     # Clean spreadsheet data
     ## main('spreadsheet')  # clean all spreadsheet data
     # TODO: Too slow, won't work in industry.
-    main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
+    # main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
 
     # Clean additional data
     activity_types = ['cycling', 'running', 'swimming']
