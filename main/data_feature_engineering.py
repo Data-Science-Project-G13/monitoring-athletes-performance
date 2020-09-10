@@ -83,16 +83,18 @@ class AdditionalDataFeatureExtractor():
         # TODO: Please complete the function. This is related to hrTSS.
         #  self.dataframe is the dataframe for the csv file.
         #  self.activity_type is the activity type.
-        #  The function returns TSS (as a float)
+        #  The function returns TSS (as a float).
+        #  Return None if can't compute. Please handle this situation.
         #  @Spoorthi @Sindhu
-        tss = float(999)
+        tss = float(0)
         return tss
 
     def _get_tss_for_session_cycling(self):
         # TODO: Please complete the function. This is related to cycling TSS.
         #  self.dataframe is the dataframe for the csv file.
         #  self.activity_type is the activity type.
-        #  The function returns TSS (as a float)
+        #  The function returns TSS (as a float).
+        #  Return None if can't compute. Please handle this situation.
         #  @Spoorthi @Sindhu
         tss = float(0)
         return tss
@@ -102,7 +104,8 @@ class AdditionalDataFeatureExtractor():
         #  self.dataframe is the dataframe for the csv file.
         #  self.activity_type is the activity type.
         #  self.critical_swimming_speed is the critical swimming speed for the athlete.
-        #  The function returns TSS (as a float)
+        #  The function returns TSS (as a float).
+        #  Return None if can't compute. Please handle this situation.
         #  @Lin @Yuhan
         tss = float(0)
         return tss
