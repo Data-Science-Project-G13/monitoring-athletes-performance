@@ -6,7 +6,9 @@
         "height": 175,
         "pre weight": 72,
         "post weight": 68,
-        "injuries": "shin, foot"
+        "injuries": "shin, foot",
+        "critical swim speed": null,
+        "lactate threshold": null
     },
     "Eduardo Oliveira":{
         "athlete type": "intermediate",
@@ -15,7 +17,9 @@
         "height": 177,
         "pre weight": 82,
         "post weight": 79,
-        "injuries": "hamstring"
+        "injuries": "hamstring",
+        "critical swim speed": null,
+        "lactate threshold": null
     },
     "Juliet Forsyth":{
         "athlete type": "advance",
@@ -24,7 +28,9 @@
         "height": 158,
         "pre weight": 52,
         "post weight": 48,
-        "injuries": "foot"
+        "injuries": "foot",
+        "critical swim speed": null,
+        "lactate threshold": null
     },
     "Narelle Hayes":{
         "athlete type": "novice",
@@ -33,7 +39,9 @@
         "height": null,
         "pre weight": null,
         "post weight": null,
-        "injuries": null
+        "injuries": null,
+        "critical swim speed": null,
+        "lactate threshold": null
     },
     "Ollie Allan":{
         "athlete type": "advance",
@@ -42,7 +50,9 @@
         "height": 181,
         "pre weight": 79,
         "post weight": 74,
-        "injuries": "achilles"
+        "injuries": "achilles",
+        "critical swim speed": null,
+        "lactate threshold": null
     },
     "Rach Madden":{
         "athlete type": "high intermediate",
@@ -51,7 +61,9 @@
         "height": 173,
         "pre weight": 65,
         "post weight": 63,
-        "injuries": "none"
+        "injuries": "none",
+        "critical swim speed": null,
+        "lactate threshold": null
     },
     "Sam Woodland":{
         "athlete type": "advance world champion",
@@ -60,7 +72,9 @@
         "height": 168,
         "pre weight": 64,
         "post weight": 60.5,
-        "injuries": "MTPJ inflammation"
+        "injuries": "MTPJ inflammation",
+        "critical swim speed": null,
+        "lactate threshold": null
     },
     "Simon R Gronow":{
         "athlete type": "novice",
@@ -69,7 +83,9 @@
         "height": 170,
         "pre weight": 83,
         "post weight": 77,
-        "injuries": "none"
+        "injuries": "none",
+        "critical swim speed": null,
+        "lactate threshold": null
     },
     "Sophie Perry":{
         "athlete type": "advance",
@@ -78,6 +94,8 @@
         "height": 167,
         "pre weight": 62,
         "post weight": 59,
-        "injuries": "achilles"
+        "injuries": "achilles",
+        "critical swim speed": null,
+        "lactate threshold": null
     }
 }
