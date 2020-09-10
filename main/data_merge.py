@@ -14,21 +14,28 @@ def _save_merged_df(file_name, merged_dataframe: pd.DataFrame):
 
 
 def merge_spreadsheet_additional(athletes_name):
-    """Merge the spreadsheet data and the additional data
+    """Merge the spreadsheet data and the features extracted from additional data
     """
     spreadsheet = data_feature_engineering.main('spreadsheet', athletes_name)
     additionals = data_feature_engineering.main('additional', athletes_name)
+    additional_features = additionals['features']
+    for feature in additional_features:
+        spreadsheet[feature] = pd.Series(0, index=spreadsheet.index)
 
     for index, record in spreadsheet.iterrows():
         date = record['Date'].split(' ')[0]  # + record['Date'].split(' ')[1][:2]
-        if date in additionals.keys():
+        activity_type = record['Activity Type'].split(' ')[-1]
+        if date in additionals.keys() and activity_type == additionals[date]['Activity Type']:
             spreadsheet.at[index, 'Training Stress Score®'] = additionals[date]['TSS']
+            for feature in additional_features:
+                spreadsheet.at[index, feature] = additionals[date][feature]
     return spreadsheet
 
 
 def main():
     athletes_names = ['eduardo oliveira']
     merged_df = merge_spreadsheet_additional(athletes_names[0])
+    print(merged_df)
     file_name = 'merged_{}'.format('_'.join(athletes_names[0].split(' ')))
     _save_merged_df(file_name, merged_df)
 
