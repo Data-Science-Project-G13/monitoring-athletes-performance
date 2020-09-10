@@ -22,6 +22,7 @@ functions:
 
 import os
 import re
+import json
 from configparser import ConfigParser
 
 
@@ -163,9 +164,22 @@ def get_outlier_color_labels_additional():
              'indigo', 'magenta', 'crimson', 'red']
 
 
+def get_athlete_info_path():
+    return '{}/main/config/athlete_personal_info.json'.format(os.path.pardir)
+
+
+def get_athlete_css(athletes_name):
+    """ Get the critical swim speed of an athlete """
+    with open(get_athlete_info_path(), 'r') as file:
+        athletes_info_json = json.load(file)
+    return athletes_info_json[athletes_name.title()]["critical swim speed"]
+
+
+
 if __name__ == '__main__':
     # The lines below are for test
     print(get_all_spreadsheet_data_file_names())
     print(get_all_additional_data_folder_names())
+    print(get_athlete_css('eduardo oliveira'))
 
 
