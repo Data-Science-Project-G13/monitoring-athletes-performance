@@ -70,31 +70,24 @@ class SpreadsheetDataCleaner():
         self.missing_val_logger = []
         self.outlier_dict_logger = {'Outlier Index': [], 'Column': [], 'Reason': []}
 
-        # self.main_dataframe = dataframe
-        # self.dataframe_swim=pd.DataFrame()
-        # self.dataframe_cycle = pd.DataFrame()
-        # self.dataframe_run = pd.DataFrame()
-        # self.dataframe_others=pd.DataFrame()
-        # self._split_dataframe_by_activity()
-        # del self.main_dataframe
-
     def _split_dataframe_by_activity(self):
-        self.dataframe_swim = self.dataframe_work_on.loc[
+        dataframe_swim = self.dataframe_work_on.loc[
             self.dataframe_work_on['Activity Type'].isin(['Pool Swimming', 'Open Water Swimming', 'Swimming'])]
-        self.dataframe_cycle = self.dataframe_work_on.loc[
+        dataframe_cycle = self.dataframe_work_on.loc[
             self.dataframe_work_on['Activity Type'].isin(['Virtual Cycling', 'Indoor Cycling', 'Road Cycling', 'Cycling'])]
-        self.dataframe_run = self.dataframe_work_on.loc[
+        dataframe_run = self.dataframe_work_on.loc[
             self.dataframe_work_on['Activity Type'].isin(['Running', 'Treadmill Running'])]
-        self.dataframe_st = self.dataframe_work_on.loc[
+        dataframe_st = self.dataframe_work_on.loc[
             self.dataframe_work_on['Activity Type'].isin(['Strength Training'])]
-        self.dataframe_others = self.dataframe_work_on.loc[
+        dataframe_others = self.dataframe_work_on.loc[
             self.dataframe_work_on['Activity Type'].isin(['Hiking', 'Multisport', 'Indoor Rowing'])]
+        return dataframe_swim, dataframe_cycle, dataframe_run, dataframe_st, dataframe_others
 
-    def _concat_dataframe_by_activity(self):
-        self.dataframe_work_on = pd.concat(
-            [self.dataframe_swim, self.dataframe_cycle, self.dataframe_run,self.dataframe_st, self.dataframe_others])
-        del self.dataframe_swim, self.dataframe_cycle, self.dataframe_run,self.dataframe_st, self.dataframe_others
-        self.dataframe_work_on = self.dataframe_work_on.sort_index(inplace=True)
+    # def _concat_dataframe_by_activity(self):
+    #     self.dataframe_work_on = pd.concat(
+    #         [self.dataframe_swim, self.dataframe_cycle, self.dataframe_run,self.dataframe_st, self.dataframe_others])
+    #     del self.dataframe_swim, self.dataframe_cycle, self.dataframe_run,self.dataframe_st, self.dataframe_others
+    #     self.dataframe_work_on = self.dataframe_work_on.sort_index(inplace=True)
 
     def _drop_columns(self) :
         columns_to_drop = [ #'Avg HR', 'Max HR', 'Training Stress Score®',
@@ -132,24 +125,24 @@ class SpreadsheetDataCleaner():
         self.dataframe_work_on['Time_sec'] = pd.to_timedelta(
             pd.to_datetime(self.dataframe_work_on["Time"]).dt.strftime('%H:%M:%S')).dt.total_seconds()
 
-    def _find_missing_percent(self):
+    def _find_missing_percent(self, dataframe):
         """
         Returns dataframe containing the total missing values and percentage of total
         missing values of a column.
         """
-        missing_val_df = pd.DataFrame({'ColumnName' : [], 'TotalMissingVals' : [], 'PercentMissing' : []})
-        for col in self.dataframe_work_on.columns :
-            sum_miss_val = self.dataframe_work_on[col].isnull().sum()
-            percent_miss_val = round((sum_miss_val / self.dataframe_work_on.shape[0]) * 100, 2)
+        missing_val_df, colNames = pd.DataFrame({'ColumnName' : [], 'TotalMissingVals' : [], 'PercentMissing' : []}), []
+        for col in dataframe.columns :
+            sum_miss_val = dataframe[col].isnull().sum()
+            percent_miss_val = round((sum_miss_val / dataframe.shape[0]) * 100, 2)
             missing_val_df = missing_val_df.append(
                 dict(zip(missing_val_df.columns, [col, sum_miss_val, percent_miss_val])),
                 ignore_index=True)
-            missing_above_80 = missing_val_df[missing_val_df['PercentMissing'] > 80.0]
+            missing_above_80 = missing_val_df[missing_val_df['PercentMissing'] > 60.0]
             colNames = missing_above_80['ColumnName']
             colNames = colNames.tolist()
-            self.dataframe_work_on.drop(colNames, axis=1)
+        dataframe = dataframe.drop(colNames, axis=1)
         print("Columns with at least 80% missing values", colNames)
-        return missing_val_df
+        return colNames
 
     def plot_missing_val_bar(self) :
         graph = msno.bar(self.dataframe_work_on)
@@ -180,39 +173,49 @@ class SpreadsheetDataCleaner():
         categorical_columns = categorical_df.columns.values
         return categorical_columns
 
-    def _apply_mean_imputation(self, columns):
-        new_data = self.dataframe_work_on.copy()
-        imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
-        new_data = pd.DataFrame(imputer.fit_transform(new_data[[columns]]), columns=[columns])
-        self.dataframe_work_on[columns] = new_data[columns]
+    def _apply_mean_imputation(self, sub_df_work_on, columns):
+        not_null_cols = [col for col in columns if col in sub_df_work_on.columns]
+        not_null_cols = [col for col in not_null_cols if not sub_df_work_on[col].isnull().all()]
+        print(sub_df_work_on[not_null_cols])
+        for column in not_null_cols:
+            sub_df_work_on[column].fillna(sub_df_work_on[column].mean(), inplace=True)
+        # new_data = sub_df_work_on.copy()
+        # imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
+        # new_data = pd.DataFrame(imputer.fit_transform(new_data[not_null_cols]), columns=[not_null_cols])
+        # sub_df_work_on[not_null_cols] = new_data[not_null_cols]
+        print(sub_df_work_on[not_null_cols])
 
-    def _apply_mice_imputation(self, columns):
-        new_data = self.dataframe_work_on.copy()
+    def _apply_mice_imputation(self, sub_df_work_on, columns):
+        not_null_cols = [col for col in columns if not sub_df_work_on[col].isnull().all()]
+        new_data = sub_df_work_on.copy()
         imputer = IterativeImputer(GradientBoostingRegressor())
-        new_data = pd.DataFrame(imputer.fit_transform(new_data[columns]), columns=[columns])
-        self.dataframe_work_on[columns] = new_data[columns]
+        new_data = pd.DataFrame(imputer.fit_transform(new_data[not_null_cols]), columns=[not_null_cols])
+        sub_df_work_on[not_null_cols] = new_data[not_null_cols]
 
-    def _apply_knn_imputation(self, columns):
-        new_data = self.dataframe_work_on.copy()
+    def _apply_knn_imputation(self, sub_df_work_on, columns):
+        not_null_cols = [col for col in columns if not sub_df_work_on[col].isnull().all()]
+        new_data = sub_df_work_on.copy()
         imputer = KNNImputer(n_neighbors=23)
-        new_data = pd.DataFrame(imputer.fit_transform(new_data[columns]), columns=[columns])
-        self.dataframe_work_on[columns] = new_data[columns]
+        new_data = pd.DataFrame(imputer.fit_transform(new_data[not_null_cols]), columns=[not_null_cols])
+        sub_df_work_on[not_null_cols] = new_data[not_null_cols]
 
-    def _apply_imputations(self, columns_need_imputation):
-        for impute_tech, column_names in self.column_groups_imputation.items():
-            column_intersection = column_names.intersection(columns_need_imputation)
-            if column_intersection:
-                if impute_tech == "mean":
-                    self._apply_mean_imputation(list(column_intersection))
-                elif impute_tech == "mice":
-                    self._apply_mice_imputation(list(column_intersection))
-                elif impute_tech == "knn":
-                    self._apply_knn_imputation(list(column_intersection))
+    def _apply_mode_imputation(self, dataframe_work_on_categorical):
+        """ Mode Imputation
+        """
+        for col in dataframe_work_on_categorical.columns:
+            mode = dataframe_work_on_categorical[col].mode().iloc[0]
+            dataframe_work_on_categorical[col] = dataframe_work_on_categorical[col].fillna(mode)
 
-    # def _apply_mean_imputation(self, data_numeric):
-    #     for col in data_numeric.columns :
-    #         mean = data_numeric[col].mean()
-    #         data_numeric[col] = data_numeric[col].fillna(mean)
+    def _apply_imputations(self, sub_df_work_on, columns_need_imputation, column_type="numerical", impute_tech="mean"):
+        if column_type == 'numerical':
+            if impute_tech == "mean":
+                self._apply_mean_imputation(sub_df_work_on, columns_need_imputation)
+            elif impute_tech == "mice":
+                self._apply_mice_imputation(sub_df_work_on, columns_need_imputation)
+            elif impute_tech == "knn":
+                self._apply_knn_imputation(sub_df_work_on, columns_need_imputation)
+        else:
+            self._apply_mode_imputation(sub_df_work_on)
 
     def _apply_linear_interpolation(self, numeric_column_df):
         for col in numeric_column_df.columns:
@@ -223,15 +226,6 @@ class SpreadsheetDataCleaner():
         scaler = MinMaxScaler()
         scaling = pd.DataFrame(scaler.fit_transform(numeric_column_df), columns=numeric_column_values)
         return scaling
-
-    def _apply_mode_imputation(self, categorical_columns):
-        """
-        Mode Imputation
-        """
-        for col in categorical_columns.columns:
-            mode = categorical_columns[col].mode().iloc[0]
-            categorical_columns[col] = categorical_columns[col].fillna(mode)
-        return categorical_columns
 
     def _find_missing_index(self, data_numeric_regr, target_cols) :
         miss_index_dict = {}
@@ -344,21 +338,26 @@ class SpreadsheetDataCleaner():
         """
         # ================ Base Clean ====================
         self._drop_columns()
-        self._convert_strings_to_lower_case()
+        # self._convert_strings_to_lower_case()
         self._handle_commas()
         self._format_missing_val_with_nan()
         self._convert_columns_to_numeric()
-        self._find_missing_percent()
-        # self._convert_column_types_to_float()
         self._format_datetime()
         self._convert_columns_to_numeric()
-
-        # ================ Imputations ====================
         numerical_columns = self.get_numerical_columns()
         categorical_columns = self.get_categorical_columns()
-        self._apply_knn_imputation(numerical_columns)
-        # self._apply_mice_imputation(numerical_columns)
-        # self._apply_mode_imputation(categorical_columns)
+
+        for sub_df_work_on in self._split_dataframe_by_activity():
+            # ================ Imputations ====================
+            print('=======================')
+            columns_to_drop = self._find_missing_percent(sub_df_work_on)
+            columns_keep = [column for column in sub_df_work_on.columns if column not in columns_to_drop]
+            sub_df_work_on = sub_df_work_on[columns_keep]
+            if not sub_df_work_on.empty:
+                self._apply_imputations(sub_df_work_on, numerical_columns)
+        self.dataframe[self.dataframe_work_on.columns] = self.dataframe_work_on[self.dataframe_work_on.columns]
+
+        # print(list(self.dataframe.isna().any()))
 
         # data_numeric = self.dataframe[numeric_column_values]
         # self._apply_mean_imputation(data_numeric)
@@ -374,13 +373,11 @@ class SpreadsheetDataCleaner():
         # self._apply_knn_imputation(numeric_column_df, numeric_column_values)  # assigning imputaion can change later
 
         # ================ Outliers ====================
-        self.out_iqr(numerical_columns)
-        self.out_std(numerical_columns)
-        self.out_zscore(numerical_columns)
-        # self.out_plot("Distance")
-        self.localOutlierFactor(numerical_columns)
-
-        self.dataframe[self.dataframe_work_on.columns] = self.dataframe_work_on[self.dataframe_work_on.columns]
+        # self.out_iqr(numerical_columns)
+        # self.out_std(numerical_columns)
+        # self.out_zscore(numerical_columns)
+        # # self.out_plot("Distance")
+        # self.localOutlierFactor(numerical_columns)
 
 
 class AdditionalDataCleaner():
@@ -856,10 +853,10 @@ if __name__ == '__main__':
 
     # Clean spreadsheet data
     # main('spreadsheet')  # clean all spreadsheet data
-    # main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
+    main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
 
-    # Clean additional data
-    activity_types = ['cycling', 'running', 'swimming']
-    split_type = 'real-time'
-    for activity_type in activity_types:
-        main('additional', athletes_name=athletes_names[0], activity_type=activity_type, split_type=split_type)
+    # # Clean additional data
+    # activity_types = ['cycling', 'running', 'swimming']
+    # split_type = 'real-time'
+    # for activity_type in activity_types:
+    #     main('additional', athletes_name=athletes_names[0], activity_type=activity_type, split_type=split_type)
