@@ -15,46 +15,27 @@ import os
 import datetime as dt
 import pandas_profiling
 import warnings
-# import xgboost
-import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 import matplotlib
 import seaborn as sns
 import missingno as msno
-
 from scipy import stats
-from datetime import datetime
-from matplotlib.pyplot import figure
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import SimpleImputer, IterativeImputer, KNNImputer
-from sklearn.ensemble import (GradientBoostingRegressor, GradientBoostingClassifier)
+from sklearn.ensemble import GradientBoostingRegressor, GradientBoostingClassifier
 from sklearn.preprocessing import MinMaxScaler
-from sklearn import preprocessing
-from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
-from sklearn.linear_model import LogisticRegression
-from IPython.display import Image
-from sklearn.preprocessing import StandardScaler
-from sklearn.experimental import enable_iterative_imputer
-from sklearn.preprocessing import OrdinalEncoder
 from sklearn.impute import KNNImputer
 from sklearn.neighbors import LocalOutlierFactor
-from sklearn.ensemble import IsolationForest
-
 # Self-defined modules
 import utility
 from data_loader import DataLoader
-
 # Settings
 warnings.filterwarnings('ignore')
-
 plt.style.use('ggplot')
 matplotlib.rcParams['figure.figsize'] = (12, 8)
-
 pd.options.mode.chained_assignment = None
-
 sns.set(style="darkgrid", palette="pastel", color_codes=True)
 sns.set_context('talk')
-
 # Set the data frame display option
 pd.set_option('display.max_row', 20)
 pd.set_option('display.max_columns', 10)
@@ -83,6 +64,7 @@ class SpreadsheetDataCleaner():
 
     def __init__(self, dataframe: pd.DataFrame):
         self.dataframe = dataframe
+        self.dataframe_work_on = self.dataframe.copy()
         self.columns_to_numeric = utility.get_numerical_columns('spreadsheet')
         self.column_groups_imputation = utility.get_column_groups_for_imputation('spreadsheet')
         self.missing_val_logger = []
@@ -97,58 +79,58 @@ class SpreadsheetDataCleaner():
         # del self.main_dataframe
 
     def _split_dataframe_by_activity(self):
-        self.dataframe_swim = self.dataframe.loc[
-            self.dataframe['Activity Type'].isin(['Pool Swimming', 'Open Water Swimming', 'Swimming'])]
-        self.dataframe_cycle = self.dataframe.loc[
-            self.dataframe['Activity Type'].isin(['Virtual Cycling', 'Indoor Cycling', 'Road Cycling', 'Cycling'])]
-        self.dataframe_run = self.dataframe.loc[
-            self.dataframe['Activity Type'].isin(['Running', 'Treadmill Running'])]
-        self.dataframe_st = self.dataframe.loc[
-            self.dataframe['Activity Type'].isin(['Strength Training'])]
-        self.dataframe_others = self.dataframe.loc[
-            self.dataframe['Activity Type'].isin(['Hiking', 'Multisport', 'Indoor Rowing'])]
+        self.dataframe_swim = self.dataframe_work_on.loc[
+            self.dataframe_work_on['Activity Type'].isin(['Pool Swimming', 'Open Water Swimming', 'Swimming'])]
+        self.dataframe_cycle = self.dataframe_work_on.loc[
+            self.dataframe_work_on['Activity Type'].isin(['Virtual Cycling', 'Indoor Cycling', 'Road Cycling', 'Cycling'])]
+        self.dataframe_run = self.dataframe_work_on.loc[
+            self.dataframe_work_on['Activity Type'].isin(['Running', 'Treadmill Running'])]
+        self.dataframe_st = self.dataframe_work_on.loc[
+            self.dataframe_work_on['Activity Type'].isin(['Strength Training'])]
+        self.dataframe_others = self.dataframe_work_on.loc[
+            self.dataframe_work_on['Activity Type'].isin(['Hiking', 'Multisport', 'Indoor Rowing'])]
 
     def _concat_dataframe_by_activity(self):
-        self.dataframe = pd.concat(
+        self.dataframe_work_on = pd.concat(
             [self.dataframe_swim, self.dataframe_cycle, self.dataframe_run,self.dataframe_st, self.dataframe_others])
         del self.dataframe_swim, self.dataframe_cycle, self.dataframe_run,self.dataframe_st, self.dataframe_others
-        self.dataframe = self.dataframe.sort_index(inplace=True)
+        self.dataframe_work_on = self.dataframe_work_on.sort_index(inplace=True)
 
     def _drop_columns(self) :
-        columns_to_drop = ['Favorite', 'Aerobic TE', 'Avg Run Cadence', 'Max Run Cadence', 'Avg Stride Length',
+        columns_to_drop = [ #'Avg HR', 'Max HR', 'Training Stress Score®',
+                           'Favorite', 'Aerobic TE', 'Avg Run Cadence', 'Max Run Cadence', 'Avg Stride Length',
                            'Avg Vertical Ratio', 'Avg Vertical Oscillation', 'Avg Ground Contact Time',
                            'Avg GCT Balance', 'L/R Balance', 'Grit', 'Flow', 'Total Reps', 'Total Sets',
                            'Bottom Time', 'Min Temp', 'Surface Interval', 'Decompression', 'Best Lap Time', 'Max Temp']
-        self.dataframe.drop(columns_to_drop, axis=1, inplace=True)
+        self.dataframe_work_on.drop(columns_to_drop, axis=1, inplace=True)
 
     def _convert_strings_to_lower_case(self) :
-        self.dataframe['Activity Type'] = self.dataframe['Activity Type'].str.lower()
-        self.dataframe['Title'] = self.dataframe['Title'].str.lower()
+        self.dataframe_work_on['Activity Type'] = self.dataframe_work_on['Activity Type'].str.lower()
+        self.dataframe_work_on['Title'] = self.dataframe_work_on['Title'].str.lower()
 
     def _handle_commas(self) :
-        columns_remove_comma = self.dataframe.columns
+        columns_remove_comma = self.dataframe_work_on.columns
         # TODO: Might not simply replace the comma with an empty string
         for column in columns_remove_comma :
-            self.dataframe[column] = self.dataframe[column].astype(str).str.replace(',', '')
+            self.dataframe_work_on[column] = self.dataframe_work_on[column].astype(str).str.replace(',', '')
 
     def _format_missing_val_with_nan(self) :
         # TODO: Missing value situations in config and in functions to handle
-        self.dataframe = self.dataframe.replace({"--" : np.nan, "..." : np.nan})
-        self.dataframe.loc[self.dataframe['Max Speed'].str.contains(":", na=False), 'Max Speed'] = np.nan
-        self.dataframe.loc[self.dataframe['Avg Speed'].str.contains(":", na=False), 'Avg Speed'] = np.nan
+        self.dataframe_work_on = self.dataframe_work_on.replace({"--" : np.nan, "..." : np.nan})
+        self.dataframe_work_on.loc[self.dataframe_work_on['Max Speed'].str.contains(":", na=False), 'Max Speed'] = np.nan
+        self.dataframe_work_on.loc[self.dataframe_work_on['Avg Speed'].str.contains(":", na=False), 'Avg Speed'] = np.nan
 
 
     def _convert_columns_to_numeric(self) :
-
-        self.dataframe[self.columns_to_numeric] = self.dataframe[self.columns_to_numeric].apply(pd.to_numeric)
+        self.dataframe_work_on[self.columns_to_numeric] = self.dataframe_work_on[self.columns_to_numeric].apply(pd.to_numeric)
 
 
     def _format_datetime(self):
-        self.dataframe['Date_extracted'] = pd.to_datetime(self.dataframe["Date"]).dt.normalize()
-        self.dataframe['Time_extracted'] = pd.to_datetime(self.dataframe["Date"]).dt.time
-        self.dataframe['Date'] = pd.to_datetime(self.dataframe['Date'])
-        self.dataframe['Time_sec'] = pd.to_timedelta(
-            pd.to_datetime(self.dataframe["Time"]).dt.strftime('%H:%M:%S')).dt.total_seconds()
+        self.dataframe_work_on['Date_extracted'] = pd.to_datetime(self.dataframe_work_on["Date"]).dt.normalize()
+        self.dataframe_work_on['Time_extracted'] = pd.to_datetime(self.dataframe_work_on["Date"]).dt.time
+        self.dataframe_work_on['Date'] = pd.to_datetime(self.dataframe_work_on['Date'])
+        self.dataframe_work_on['Time_sec'] = pd.to_timedelta(
+            pd.to_datetime(self.dataframe_work_on["Time"]).dt.strftime('%H:%M:%S')).dt.total_seconds()
 
     def _find_missing_percent(self):
         """
@@ -156,121 +138,91 @@ class SpreadsheetDataCleaner():
         missing values of a column.
         """
         missing_val_df = pd.DataFrame({'ColumnName' : [], 'TotalMissingVals' : [], 'PercentMissing' : []})
-        for col in self.dataframe.columns :
-            sum_miss_val = self.dataframe[col].isnull().sum()
-            percent_miss_val = round((sum_miss_val / self.dataframe.shape[0]) * 100, 2)
+        for col in self.dataframe_work_on.columns :
+            sum_miss_val = self.dataframe_work_on[col].isnull().sum()
+            percent_miss_val = round((sum_miss_val / self.dataframe_work_on.shape[0]) * 100, 2)
             missing_val_df = missing_val_df.append(
                 dict(zip(missing_val_df.columns, [col, sum_miss_val, percent_miss_val])),
                 ignore_index=True)
             missing_above_80 = missing_val_df[missing_val_df['PercentMissing'] > 80.0]
             colNames = missing_above_80['ColumnName']
             colNames = colNames.tolist()
-            self.dataframe.drop(colNames, axis=1)
+            self.dataframe_work_on.drop(colNames, axis=1)
         print("Columns with at least 80% missing values", colNames)
         return missing_val_df
 
     def plot_missing_val_bar(self) :
-        graph = msno.bar(self.dataframe)
+        graph = msno.bar(self.dataframe_work_on)
         return graph
 
     def get_missingno_matrix(self) :
-        matrix = msno.matrix(self.dataframe)
+        matrix = msno.matrix(self.dataframe_work_on)
         return matrix
 
     def make_heatmap(self) :
-        heatmap = msno.heatmap(self.dataframe)
+        heatmap = msno.heatmap(self.dataframe_work_on)
         return heatmap
 
     def get_deno_gram(self) :
-        dendogram = msno.dendrogram(self.dataframe)
+        dendogram = msno.dendrogram(self.dataframe_work_on)
         return (dendogram)
 
     def get_profile_report(self) :
-        return pandas_profiling.ProfileReport(self.dataframe)
-
+        return pandas_profiling.ProfileReport(self.dataframe_work_on)
 
     def get_numerical_columns(self) :
-        numeric_column_df = self.dataframe.select_dtypes(include=[np.number])
-        numeric_column_values = numeric_column_df.columns.values
-        return numeric_column_df, numeric_column_values
+        numeric_column_df = self.dataframe_work_on.select_dtypes(include=[np.number])
+        numeric_column_columns = numeric_column_df.columns.values
+        return numeric_column_columns
 
     def get_categorical_columns(self) :
-        categorical_columns = self.dataframe.select_dtypes(exclude=[np.number])
-        categoric_values = categorical_columns.columns.values
-        return categorical_columns, categoric_values
+        categorical_df = self.dataframe_work_on.select_dtypes(exclude=[np.number])
+        categorical_columns = categorical_df.columns.values
+        return categorical_columns
 
-    # ==================================================
-    """ Fred is now working on this part. Please don't change"""
-    def _apply_univariate_imputation(self, columns):
-        new_data = self.dataframe.copy()
+    def _apply_mean_imputation(self, columns):
+        new_data = self.dataframe_work_on.copy()
         imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
-        new_data = pd.DataFrame(imputer.fit_transform(new_data[[columns]]))
-        new_data.columns = [columns]
-        self.dataframe[columns] = new_data[columns]
+        new_data = pd.DataFrame(imputer.fit_transform(new_data[[columns]]), columns=[columns])
+        self.dataframe_work_on[columns] = new_data[columns]
 
-    def _apply_multivariate_imputation(self, columns):
-        null_cols = [col for col in columns if self.dataframe[col].isnull().all()]
-        if null_cols:
-            # If there are columns with all values missing, apply regression or ignore the column first.
-            self.missing_val_logger.append("All the values in column(s) {} are missing. "
-                                           "Not able to apply imputation.".format(null_cols))
-        else:
-            new_data = self.dataframe.copy()
-            iter_imputer = IterativeImputer(max_iter=10, random_state=0)
-            new_data = pd.DataFrame(iter_imputer.fit_transform(new_data[columns]))
-            if not new_data.empty:
-                new_data.columns = columns
-                self.dataframe[columns] = new_data[columns]
-            else:
-                self.missing_val_logger.append("All the values in column(s) {} are missing. "
-                                               "Not able to apply imputation.".format(columns))
+    def _apply_mice_imputation(self, columns):
+        new_data = self.dataframe_work_on.copy()
+        imputer = IterativeImputer(GradientBoostingRegressor())
+        new_data = pd.DataFrame(imputer.fit_transform(new_data[columns]), columns=[columns])
+        self.dataframe_work_on[columns] = new_data[columns]
 
-    def _apply_interpolation_imputation(self, columns):
-        for column in columns:
-            interpolated_column = self.dataframe[column].interpolate(method='spline', order=2, limit=2)
-            self.dataframe[column] = interpolated_column
-
-    def _apply_regression_prediction_imputation(self, column_names):
-        # TODO: for whole column missing
-        pass
+    def _apply_knn_imputation(self, columns):
+        new_data = self.dataframe_work_on.copy()
+        imputer = KNNImputer(n_neighbors=23)
+        new_data = pd.DataFrame(imputer.fit_transform(new_data[columns]), columns=[columns])
+        self.dataframe_work_on[columns] = new_data[columns]
 
     def _apply_imputations(self, columns_need_imputation):
         for impute_tech, column_names in self.column_groups_imputation.items():
             column_intersection = column_names.intersection(columns_need_imputation)
             if column_intersection:
-                if impute_tech == "univariate":
-                    self._apply_univariate_imputation(list(column_intersection))
-                elif impute_tech == "multivariate1" or "multivariate2":
-                    self._apply_multivariate_imputation(list(column_intersection))
-                elif impute_tech == "interpolation":
-                    self._apply_regression_prediction_imputation(list(column_intersection))
+                if impute_tech == "mean":
+                    self._apply_mean_imputation(list(column_intersection))
+                elif impute_tech == "mice":
+                    self._apply_mice_imputation(list(column_intersection))
+                elif impute_tech == "knn":
+                    self._apply_knn_imputation(list(column_intersection))
 
-    # ==================================================
-
-    def _apply_mean_imputation(self, data_numeric):
-        for col in data_numeric.columns :
-            mean = data_numeric[col].mean()
-            data_numeric[col] = data_numeric[col].fillna(mean)
-        return data_numeric
+    # def _apply_mean_imputation(self, data_numeric):
+    #     for col in data_numeric.columns :
+    #         mean = data_numeric[col].mean()
+    #         data_numeric[col] = data_numeric[col].fillna(mean)
 
     def _apply_linear_interpolation(self, numeric_column_df):
         for col in numeric_column_df.columns:
             numeric = numeric_column_df.interpolate(method='linear', limit_direction='forward', axis=0).ffill().bfill()
-
-    def _apply_mice_imputation_numeric(self, numeric_column_df):
-        iter_imp_numeric = IterativeImputer(GradientBoostingRegressor())
-        imputed_eddy = iter_imp_numeric.fit_transform(numeric_column_df)
-        eddy_numeric_imp = pd.DataFrame(imputed_eddy, columns=numeric_column_df.columns, index=numeric_column_df.index)
 
     def get_minmax(self, numeric_column_df, numeric_column_values):
         # when imputing a knn data must be normalised to reduce the bias in the imputation
         scaler = MinMaxScaler()
         scaling = pd.DataFrame(scaler.fit_transform(numeric_column_df), columns=numeric_column_values)
         return scaling
-
-    def _apply_knn_imputation(self, numeric_column_df, numeric_column_values):
-        imputer = KNNImputer(n_neighbors=23)
-        imputed_KNN = pd.DataFrame(imputer.fit_transform(numeric_column_df), columns=numeric_column_values)
 
     def _apply_mode_imputation(self, categorical_columns):
         """
@@ -306,7 +258,7 @@ class SpreadsheetDataCleaner():
 
     def out_iqr(self,numeric_column_values):
         for index in numeric_column_values:
-            q25, q75 = np.quantile(self.dataframe[index], 0.25), np.quantile(self.dataframe[index], 0.75)
+            q25, q75 = np.quantile(self.dataframe_work_on[index], 0.25), np.quantile(self.dataframe_work_on[index], 0.75)
             # calculate the IQR
             iqr = q75 - q25
             # calculate the outlier cutoff
@@ -317,34 +269,33 @@ class SpreadsheetDataCleaner():
             print('The lower bound value is', lower)
             print('The upper bound value is', upper)
             # Calculate the number of records below and above lower and above bound value respectively
-            df1 = self.dataframe[self.dataframe[index] > upper]
-            df2 = self.dataframe[self.dataframe[index] < lower]
+            df1 = self.dataframe_work_on[self.dataframe_work_on[index] > upper]
+            df2 = self.dataframe_work_on[self.dataframe_work_on[index] < lower]
             print("Total number of outliers for the column ",index," are", df1.shape[0]+ df2.shape[0])
             df = pd.concat([df1, df2])
             print("Outlier indexes are", df.index)
             del df, df1, df2
 
-
     def out_plot(self, column):
         plt.figure(figsize=(10, 6))
-        sns.distplot(self.dataframe[column], kde=False)
-        q25, q75 = np.quantile(self.dataframe[column], 0.25), np.quantile(self.dataframe[column], 0.75)
+        sns.distplot(self.dataframe_work_on[column], kde=False)
+        q25, q75 = np.quantile(self.dataframe_work_on[column], 0.25), np.quantile(self.dataframe_work_on[column], 0.75)
         # calculate the IQR
         iqr = q75 - q25
         # calculate the outlier cutoff
         cut_off = iqr * 1.5
         # calculate the lower and upper bound value
         lower, upper = q25 - cut_off, q75 + cut_off
-        plt.axvspan(xmin=lower, xmax=self.dataframe[column].min(), alpha=0.2, color='red')
-        plt.axvspan(xmin=upper, xmax=self.dataframe[column].max(), alpha=0.2, color='red')
+        plt.axvspan(xmin=lower, xmax=self.dataframe_work_on[column].min(), alpha=0.2, color='red')
+        plt.axvspan(xmin=upper, xmax=self.dataframe_work_on[column].max(), alpha=0.2, color='red')
         plt.show()
-        sns.distplot(self.dataframe[column])
+        sns.distplot(self.dataframe_work_on[column])
         plt.show()
 
     def out_std(self,numeric_column_values) :
         for index in numeric_column_values:
             # calculate the mean and standard deviation of the data frame
-            data_mean, data_std = self.dataframe[index].mean(), self.dataframe[index].std()
+            data_mean, data_std = self.dataframe_work_on[index].mean(), self.dataframe_work_on[index].std()
             # calculate the cutoff value
             cut_off = data_std * 3
             # calculate the lower and upper bound value
@@ -352,8 +303,8 @@ class SpreadsheetDataCleaner():
             print('The lower bound value is', lower)
             print('The upper bound value is', upper)
             # Calculate the number of records below and above lower and above bound value respectively
-            df1 = self.dataframe[index][self.dataframe[index] > upper]
-            df2 = self.dataframe[index][self.dataframe[index] < lower]
+            df1 = self.dataframe_work_on[index][self.dataframe_work_on[index] > upper]
+            df2 = self.dataframe_work_on[index][self.dataframe_work_on[index] < lower]
             print("Total number of outliers for the column ",index," are", df1.shape[0]+ df2.shape[0])
             df=pd.concat([df1,df2])
             print("Outlier indexes are",df.index)
@@ -365,9 +316,9 @@ class SpreadsheetDataCleaner():
             outliers = []
             zscore = []
             indices=[]
-            mean = np.mean(self.dataframe[index])
-            std = np.std(self.dataframe[index])
-            for i,j in zip(self.dataframe[index], self.dataframe[index].index):
+            mean = np.mean(self.dataframe_work_on[index])
+            std = np.std(self.dataframe_work_on[index])
+            for i,j in zip(self.dataframe_work_on[index], self.dataframe_work_on[index].index):
                 z_score = (i - mean) / std
                 zscore.append(z_score)
                 if np.abs(z_score) > threshold :
@@ -377,7 +328,7 @@ class SpreadsheetDataCleaner():
 
     def localOutlierFactor(self,numeric_column_values):
         clf = LocalOutlierFactor(n_neighbors=50, contamination='auto')
-        X = self.dataframe[numeric_column_values].values
+        X = self.dataframe_work_on[numeric_column_values].values
         y_pred = clf.fit_predict(X)
         indices=np.where(y_pred == -1)
         y_pred = np.unique(y_pred, return_counts=True)
@@ -402,39 +353,34 @@ class SpreadsheetDataCleaner():
         self._format_datetime()
         self._convert_columns_to_numeric()
 
-        # # ================ Imputations ====================
-        # self._apply_linear_interpolation()
-        # self._apply_knn_imputation()
-        # self._apply_mean_imputation()
-        # self._apply_mode_imputation()
-        #
-        # numeric_column_df, numeric_column_values = self.get_numerical_columns()
-        # categorical_columns, categoric_values = self.get_categorical_columns()
-        #
+        # ================ Imputations ====================
+        numerical_columns = self.get_numerical_columns()
+        categorical_columns = self.get_categorical_columns()
+        self._apply_knn_imputation(numerical_columns)
+        # self._apply_mice_imputation(numerical_columns)
+        # self._apply_mode_imputation(categorical_columns)
+
         # data_numeric = self.dataframe[numeric_column_values]
         # self._apply_mean_imputation(data_numeric)
         # data_numeric_regr = self.dataframe[numeric_column_values]
-        # # # # # # '''Numeric columns with missing values which acts as target in training'''
+        # # '''Numeric columns with missing values which acts as target in training'''
         # target_cols = ['Avg. Swolf', 'Total Strokes', 'Avg Speed', 'Avg HR', 'Max HR', 'Avg Bike Cadence',
         #                'Max Bike Cadence', "Distance", "Calories", "Avg Stroke Rate", "Number of Laps"]
         # data_numeric_regr.drop(target_cols, axis=1)
         # miss_index_dict = self._find_missing_index(data_numeric_regr, target_cols)
-        # # self._apply_regression_imputation(data_numeric_regr, target_cols, miss_index_dict)
+        # self._apply_regression_imputation(data_numeric_regr, target_cols, miss_index_dict)
         # self._apply_linear_interpolation(numeric_column_df)
-        # eddy_numeric_imp = self._apply_mice_imputation_numeric(numeric_column_df)
         # self.get_minmax(numeric_column_df, numeric_column_values)
         # self._apply_knn_imputation(numeric_column_df, numeric_column_values)  # assigning imputaion can change later
-        # self._apply_mode_imputation(categorical_columns)
-        #
-        # print(self.dataframe.isna().any())
-        # print(self.dataframe.isna().sum())
 
-        # # ================ Outliers ====================
-        # self.out_iqr(numeric_column_values)
-        # self.out_std(numeric_column_values)
-        # self.out_zscore(numeric_column_values)
+        # ================ Outliers ====================
+        self.out_iqr(numerical_columns)
+        self.out_std(numerical_columns)
+        self.out_zscore(numerical_columns)
         # self.out_plot("Distance")
-        # self.localOutlierFactor(numeric_column_values)
+        self.localOutlierFactor(numerical_columns)
+
+        self.dataframe[self.dataframe_work_on.columns] = self.dataframe_work_on[self.dataframe_work_on.columns]
 
 
 class AdditionalDataCleaner():
@@ -837,7 +783,7 @@ def _main_helper_spreadsheet(athletes_name=None, file_name: str = None, verbose=
         file_name = data_loader_spreadsheet.config.get('SPREADSHEET-DATA-SETS', athletes_name.lower())
     spreadsheet_data_cleaner = SpreadsheetDataCleaner(athlete_df)
     spreadsheet_data_cleaner.process_data_cleaning()
-    cleaned_df = spreadsheet_data_cleaner.dataframe
+    cleaned_df = spreadsheet_data_cleaner.dataframe_work_on
     _save_cleaned_df('spreadsheet', athletes_name, file_name, cleaned_df, verbose=verbose)
 
 
@@ -911,10 +857,10 @@ if __name__ == '__main__':
     # Clean spreadsheet data
     ## main('spreadsheet')  # clean all spreadsheet data
     # TODO: Too slow, won't work in industry.
-    # main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
+    main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
 
     # Clean additional data
-    activity_types = ['cycling', 'running', 'swimming']
-    split_type = 'real-time'
-    for activity_type in activity_types:
-        main('additional', athletes_name=athletes_names[0], activity_type=activity_type, split_type=split_type)
+    # activity_types = ['cycling', 'running', 'swimming']
+    # split_type = 'real-time'
+    # for activity_type in activity_types:
+    #     main('additional', athletes_name=athletes_names[0], activity_type=activity_type, split_type=split_type)
