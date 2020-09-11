@@ -150,7 +150,8 @@ def get_activity_types(data_type):
 
 def get_column_groups_for_imputation(data_type):
     if data_type == 'spreadsheet':
-        return {}
+        return {'knn': {},
+                'mice': {}}
     elif data_type == 'additional':
         return {'univariate': {'timezone'},
                 'multivariate1': {"distance", "timestamp"},

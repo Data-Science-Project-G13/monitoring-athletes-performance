@@ -35,7 +35,7 @@ def initialize_critical_swim_speed(athletes_name: str):
                 if abs(distance_in_meters-400) < 10:
                     first_400m_times.append(time[i]-time[0])
                     first_400m_distance.append(distance_in_meters)
-        mean_dis_diff = sum(first_400m_distance) / len(first_400m_distance) - sum(first_50m_distance)/len(first_50m_distance)
+        mean_dis_diff = sum(first_400m_distance)/len(first_400m_distance) - sum(first_50m_distance)/len(first_50m_distance)
         mean_time_diff = sum(first_400m_times)/len(first_400m_times) - sum(first_50m_times)/len(first_50m_times)
         return mean_dis_diff/mean_time_diff
 
