@@ -458,11 +458,12 @@ class AdditionalDataCleaner():
         self.dataframe.insert(1, 'time_in_seconds', time_in_seconds, True)
 
     def _apply_univariate_imputation(self, columns):
-        new_data = self.dataframe.copy()
-        imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
-        new_data = pd.DataFrame(imputer.fit_transform(new_data[[columns]]))
-        new_data.columns = [columns]
-        self.dataframe[columns] = new_data[columns]
+        if columns:
+            new_data = self.dataframe.copy()
+            imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
+            new_data = pd.DataFrame(imputer.fit_transform(new_data[columns]), columns = columns)
+            self.dataframe[columns] = new_data[columns]
+            del new_data
 
     def _apply_multivariate_imputation(self, columns_need_imputation, column_group):
         null_cols = [col for col in columns_need_imputation if self.dataframe[col].isnull().all()]
@@ -477,7 +478,6 @@ class AdditionalDataCleaner():
             new_data = self.dataframe.copy()
             try:
                 new_data.replace('None', None)
-                print(self.file_name)
                 iter_imputer = IterativeImputer(max_iter=10, random_state=0)
                 new_data = pd.DataFrame(iter_imputer.fit_transform(new_data[column_group]))
                 if not new_data.empty :
@@ -488,6 +488,7 @@ class AdditionalDataCleaner():
                                                    "Not able to apply imputation.".format(column_group))
             except:
                 pass
+            del new_data
 
 
     def _apply_interpolation_imputation(self, columns):
@@ -575,8 +576,7 @@ class AdditionalDataCleaner():
                                   'FEWER RECORDS FOR THIS TIME SEGMENT(<%d)!' % (self.ROW_COUNT_THRESHOLD))
 
     def _filter_by_continuity_assumption(self, i, rec_color):
-        ## The change of temperature should not exceed 1 degree
-
+        # The change of temperature should not exceed 1 degree
         if (rec_color[i] == rec_color[i - 1] and rec_color[i] != self.OUTLIER_COLOR_LABEL):
             diff = abs(self.dataframe.loc[i, 'temperature'] - self.dataframe.loc[i - 1, 'temperature'])
             if diff > 1:
@@ -848,19 +848,18 @@ def main(data_type='spreadsheet', athletes_name: str = None, activity_type: str 
 
     elif data_type == 'additional':
         # Clean all additional data for the given athlete
-        _main_helper_additional(athletes_name, activity_type, split_type, verbose=False)
+        _main_helper_additional(athletes_name, activity_type, split_type, verbose=True)
 
 
 if __name__ == '__main__':
     athletes_names = ['eduardo oliveira']
 
     # Clean spreadsheet data
-    ## main('spreadsheet')  # clean all spreadsheet data
-    # TODO: Too slow, won't work in industry.
-    main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
+    # main('spreadsheet')  # clean all spreadsheet data
+    # main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
 
     # Clean additional data
-    # activity_types = ['cycling', 'running', 'swimming']
-    # split_type = 'real-time'
-    # for activity_type in activity_types:
-    #     main('additional', athletes_name=athletes_names[0], activity_type=activity_type, split_type=split_type)
+    activity_types = ['cycling', 'running', 'swimming']
+    split_type = 'real-time'
+    for activity_type in activity_types:
+        main('additional', athletes_name=athletes_names[0], activity_type=activity_type, split_type=split_type)
