@@ -48,7 +48,28 @@ def initialize_lactate_threshold(athletes_name: str):
     ----------
     athletes_name: str
     '''
-    pass
+    data_loader_additional = DataLoader('additional')
+    cleaned_additional_data_filenames = data_loader_additional.load_cleaned_additional_data(athletes_name)
+
+    def _calculate_Joe_Freil_lactate_threshold():
+        heart_rate_entry=[]
+        for file_name in [file_name for file_name in cleaned_additional_data_filenames if 'running' in file_name]:
+            temporary_list=[]
+            df = pd.read_csv(file_name)
+            time, heart_rate = list(df['time_in_seconds']), list(df['heart_rate'])
+            for i,t in enumerate(time):
+                time_difference_current=time[i]-time[0]
+                time_difference_next=time[i+1]-time[0]
+                if 600 <= time_difference_current <= 1805:
+                    temporary_list.append(heart_rate)
+                    if time_difference_next>1805:
+                        heart_rate_entry=heart_rate_entry+temporary_list
+                        break
+        average_heart_rate=sum(heart_rate_entry)/len(heart_rate_entry)
+        return average_heart_rate
+
+
+    return _calculate_Joe_Freil_lactate_threshold()
 
 
 def initialize_system():
@@ -65,6 +86,8 @@ def initialize_system():
             athletes_info_json[athletes_name.title()]["critical swim speed"] = athletes_css
             json_changes_made = True
         if not athletes_info_json[athletes_name.title()]["lactate threshold"]:
+            lactate_threshold=initialize_lactate_threshold(athletes_name)
+            athletes_info_json[athletes_name.title()]["lactate threshold"]=lactate_threshold
             json_changes_made = True
         if json_changes_made:
             with open(athlete_info_json_path, 'w') as file:
