@@ -59,14 +59,18 @@ def initialize_lactate_threshold(athletes_name: str):
             time, heart_rate = list(df['time_in_seconds']), list(df['heart_rate'])
             for i,t in enumerate(time):
                 time_difference_current=time[i]-time[0]
-                time_difference_next=time[i+1]-time[0]
+                #time_difference_next=time[i+1]-time[0]
                 if 600 <= time_difference_current <= 1805:
-                    temporary_list.append(heart_rate)
-                    if time_difference_next>1805:
+                    temporary_list.append(heart_rate[i])
+                    #print(temporary_list,file_name)
+                    #if time_difference_next>1805:
+                    if abs(time_difference_current-1800)<5:
                         heart_rate_entry=heart_rate_entry+temporary_list
                         break
+        print(heart_rate_entry)
         average_heart_rate=sum(heart_rate_entry)/len(heart_rate_entry)
-        return average_heart_rate
+        #print(average_heart_rate)
+        #return average_heart_rate
 
 
     return _calculate_Joe_Freil_lactate_threshold()
