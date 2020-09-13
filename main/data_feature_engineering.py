@@ -84,6 +84,7 @@ class AdditionalDataFeatureExtractor():
         #  @Spoorthi @Sindhu
         jf_lact_thr = self.athletes_lact_thr[0]
         ac_lact_thr = self.athletes_lact_thr[1]
+        print('Thresholds: ', jf_lact_thr, ac_lact_thr)  # Just for you to check @Spoorthi
         tss = float(0)
         return tss
 
@@ -118,7 +119,7 @@ class AdditionalDataFeatureExtractor():
         elif self.activity_type == 'cycling':
             tss = self._get_tss_for_session_cycling()
         elif self.activity_type == 'swimming':
-            tss = self._get_tss_for_session_running()
+            tss = self._get_tss_for_session_swimming()
         return tss
 
     def _extract_other_feature_1(self):
