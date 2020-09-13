@@ -84,7 +84,30 @@ class AdditionalDataFeatureExtractor():
         #  @Spoorthi @Sindhu
         jf_lact_thr = self.athletes_lact_thr[0]
         ac_lact_thr = self.athletes_lact_thr[1]
-        print('Thresholds: ', jf_lact_thr, ac_lact_thr)  # Just for you to check @Spoorthi
+        time, heart_rate = list(self.session_df['time_in_seconds']), list(self.session_df['heart_rate'])
+        average_heart_rate = sum(heart_rate) / len(heart_rate)
+        time_elapsed=time[len(time)-1]-time[0]
+        if jf_lact_thr*0 <= average_heart_rate < jf_lact_thr*0.283 :
+            tss=20*(time_elapsed/3600)
+        if jf_lact_thr*0.283 <= average_heart_rate < jf_lact_thr*0.566:
+            tss=30*(time_elapsed/3600)
+        if jf_lact_thr*0.566 <= average_heart_rate < jf_lact_thr*0.85:
+            tss=40*(time_elapsed/3600)
+        if jf_lact_thr*0.85 <= average_heart_rate < jf_lact_thr*0.875:
+            tss=50*(time_elapsed/3600)
+        if jf_lact_thr*0.875 <= average_heart_rate <= jf_lact_thr*0.89:
+            tss=60*(time_elapsed/3600)
+        if jf_lact_thr*0.90 <= average_heart_rate <= jf_lact_thr*0.94:
+            tss=70*(time_elapsed/3600)
+        if jf_lact_thr*0.95 <= average_heart_rate <= jf_lact_thr*0.99:
+            tss=80*(time_elapsed/3600)
+        if jf_lact_thr*1.00 <= average_heart_rate <= jf_lact_thr*1.02:
+            tss=100*(time_elapsed/3600)
+        if jf_lact_thr*1.03 <= average_heart_rate <= jf_lact_thr*1.06:
+            tss=120*(time_elapsed/3600)
+        if jf_lact_thr*1.06 <= average_heart_rate:
+            tss=140*(time_elapsed/3600)
+        print(average_heart_rate,tss,time_elapsed)
         tss = float(0)
         return tss
 
