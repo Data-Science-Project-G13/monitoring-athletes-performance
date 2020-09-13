@@ -12,6 +12,11 @@ def create_directory_structures():
     """
     pass
 
+def create_config_files():
+    """ Create all files, config and json, that are needed for the project
+    """
+    pass
+
 
 def initialize_critical_swim_speed(athletes_name: str):
     ''' Initialize the critical swim speed of an athlete
@@ -63,36 +68,35 @@ def initialize_lactate_threshold(athletes_name: str):
                 time_difference_current=time[i]-time[0]
                 if 600 <= time_difference_current <= 1805:
                     temporary_list.append(heart_rate[i])
-                    if abs(time_difference_current-1800)<5:
+                    if abs(time_difference_current-1805)<5:
                         heart_rate_entry=heart_rate_entry+temporary_list
                         break
         average_heart_rate=sum(heart_rate_entry)/len(heart_rate_entry)
         return average_heart_rate
 
+    def _calculate_Andy_Coogan__lactate_threshold():
+        # TODO: @Spoorthi
+        return 0
 
-    return _calculate_Joe_Freil_lactate_threshold()
+    return _calculate_Joe_Freil_lactate_threshold(), _calculate_Andy_Coogan__lactate_threshold()
 
 
 def initialize_system():
     """ Initialize the whole system
     """
     create_directory_structures()
+    create_config_files()
     athletes = ['eduardo oliveira']
     for athletes_name in athletes:
         with open(athlete_info_json_path, 'r') as file:
             athletes_info_json = json.load(file)
-        json_changes_made = False
-        if not athletes_info_json[athletes_name.title()]["critical swim speed"]:
-            athletes_css = initialize_critical_swim_speed(athletes_name)
-            athletes_info_json[athletes_name.title()]["critical swim speed"] = athletes_css
-            json_changes_made = True
-        if not athletes_info_json[athletes_name.title()]["lactate threshold"]:
-            lactate_threshold=initialize_lactate_threshold(athletes_name)
-            athletes_info_json[athletes_name.title()]["lactate threshold"]=lactate_threshold
-            json_changes_made = True
-        if json_changes_made:
-            with open(athlete_info_json_path, 'w') as file:
-                json.dump(athletes_info_json, file, indent=4)
+        athletes_css = initialize_critical_swim_speed(athletes_name)
+        athletes_info_json[athletes_name.title()]["critical swim speed"] = athletes_css
+        jf_threshold, ac_threshold = initialize_lactate_threshold(athletes_name)
+        athletes_info_json[athletes_name.title()]["joe freil lactate threshold"] = jf_threshold
+        athletes_info_json[athletes_name.title()]["andy coogan lactate threshold"] = ac_threshold
+        with open(athlete_info_json_path, 'w') as file:
+            json.dump(athletes_info_json, file, indent=4)
 
 
 if __name__ == '__main__':
