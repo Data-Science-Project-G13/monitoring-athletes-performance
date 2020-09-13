@@ -107,7 +107,7 @@ class AdditionalDataFeatureExtractor():
             tss=120*(time_elapsed/3600)
         if jf_lact_thr*1.06 <= average_heart_rate:
             tss=140*(time_elapsed/3600)
-        print(average_heart_rate,tss,time_elapsed)
+        print(tss)
         tss = float(0)
         return tss
 
