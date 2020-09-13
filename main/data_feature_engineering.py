@@ -84,6 +84,9 @@ class AdditionalDataFeatureExtractor():
         #  @Spoorthi @Sindhu
         jf_lact_thr = self.athletes_lact_thr[0]
         ac_lact_thr = self.athletes_lact_thr[1]
+        if self.session_df['heart_rate'].isnull().values.any() == True:
+            tss=float(0)
+            return tss
         time, heart_rate = list(self.session_df['time_in_seconds']), list(self.session_df['heart_rate'])
         average_heart_rate = sum(heart_rate) / len(heart_rate)
         time_elapsed=time[len(time)-1]-time[0]
@@ -107,8 +110,6 @@ class AdditionalDataFeatureExtractor():
             tss=120*(time_elapsed/3600)
         if jf_lact_thr*1.06 <= average_heart_rate:
             tss=140*(time_elapsed/3600)
-        print(tss)
-        tss = float(0)
         return tss
 
     def _get_tss_for_session_cycling(self):
