@@ -170,11 +170,18 @@ def get_athlete_info_path():
     return '{}/main/config/athlete_personal_info.json'.format(os.path.pardir)
 
 
-def get_athlete_css(athletes_name):
+def get_athlete_css(athletes_name) -> float:
     """ Get the critical swim speed of an athlete """
     with open(get_athlete_info_path(), 'r') as file:
         athletes_info_json = json.load(file)
     return athletes_info_json[athletes_name.title()]["critical swim speed"]
+
+def get_athletes_lact_thr(athletes_name) -> (float, float):
+    with open(get_athlete_info_path(), 'r') as file:
+        athletes_info_json = json.load(file)
+    jf_lact_thr = athletes_info_json[athletes_name.title()]["joe freil lactate threshold"]
+    ac_lact_thr = athletes_info_json[athletes_name.title()]["andy coogan lactate threshold"]
+    return (jf_lact_thr, ac_lact_thr)
 
 
 
