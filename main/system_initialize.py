@@ -76,7 +76,22 @@ def initialize_lactate_threshold(athletes_name: str):
 
     def _calculate_Andy_Coogan__lactate_threshold():
         # TODO: @Spoorthi
-        return 0
+        heart_rate_entry = []
+        for file_name in [file_name for file_name in cleaned_additional_data_filenames if 'running' in file_name]:
+            temporary_list = []
+            df = pd.read_csv(file_name)
+            if df['heart_rate'].isnull().values.any() == True:
+                continue
+            time, heart_rate = list(df['time_in_seconds']), list(df['heart_rate'])
+            for i, t in enumerate(time):
+                time_difference_current = time[i] - time[0]
+                if time_difference_current <= 3605:
+                    temporary_list.append(heart_rate[i])
+                    if abs(time_difference_current - 3605) < 5:
+                        heart_rate_entry = heart_rate_entry + temporary_list
+                        break
+        average_heart_rate = sum(heart_rate_entry) / len(heart_rate_entry)
+        return average_heart_rate
 
     return _calculate_Joe_Freil_lactate_threshold(), _calculate_Andy_Coogan__lactate_threshold()
 
