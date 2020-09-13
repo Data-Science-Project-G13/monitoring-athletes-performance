@@ -111,7 +111,6 @@ class AdditionalDataFeatureExtractor():
             print(tss, "tss7888")
         if jf_lact_thr*1.05 < average_heart_rate:
             tss=140*(time_elapsed/3600)
-            print(tss,"tss7")
         return tss
 
     def _get_tss_for_session_cycling(self):
