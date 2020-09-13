@@ -58,7 +58,7 @@ class SpreadsheetDataFeatureExtractor():
 
 class AdditionalDataFeatureExtractor():
 
-    def __init__(self, file_name: str, athletes_css: float=None, athletes_lact_thr: float=None):
+    def __init__(self, file_name: str, athletes_css: float=None, athletes_lact_thr: (float,float)=None):
         self.file_name = file_name
         self.activity_type = self._get_activity_type()
         self.session_df = pd.read_csv(file_name)
@@ -82,6 +82,8 @@ class AdditionalDataFeatureExtractor():
         #  The function returns TSS (as a float).
         #  Return float(0) if can't compute. Please handle this situation.
         #  @Spoorthi @Sindhu
+        jf_lact_thr = self.athletes_lact_thr[0]
+        ac_lact_thr = self.athletes_lact_thr[1]
         tss = float(0)
         return tss
 
@@ -181,6 +183,7 @@ def main(data_type: str, athletes_name: str):
 
     elif data_type == 'additional':
         athletes_css = utility.get_athlete_css(athletes_name)
+        athletes_lact_thr = utility.get_athletes_lact_thr(athletes_name)
         data_loader_additional = DataLoader('additional')
         cleaned_additional_data_filenames = data_loader_additional.load_cleaned_additional_data(athletes_name)
         if cleaned_additional_data_filenames:
@@ -193,7 +196,9 @@ def main(data_type: str, athletes_name: str):
                 test_type = 'running'
                 if not _function_for_testing(file_name, test_type):
                     continue
-                additional_feature_extractor = AdditionalDataFeatureExtractor(file_name, athletes_css=athletes_css)
+                additional_feature_extractor = AdditionalDataFeatureExtractor(file_name,
+                                                                              athletes_css=athletes_css,
+                                                                              athletes_lact_thr=athletes_lact_thr)
                 features_extracted = additional_feature_extractor.process_feature_engineering()
                 additional_features[features_extracted['Date']] = features_extracted
                 print('Preview of the features extracted: \n', features_extracted)
