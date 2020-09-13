@@ -8,7 +8,8 @@
         "post weight": 68,
         "injuries": "shin, foot",
         "critical swim speed": null,
-        "lactate threshold": null
+        "joe freil lactate threshold": null,
+        "andy coogan lactate threshold": null
     },
     "Eduardo Oliveira": {
         "athlete type": "intermediate",
@@ -19,7 +20,8 @@
         "post weight": 79,
         "injuries": "hamstring",
         "critical swim speed": 1.1547619047619049,
-        "lactate threshold": 152.5881977514851
+        "joe freil lactate threshold": 152.5881977514851,
+        "andy coogan lactate threshold": null
     },
     "Juliet Forsyth": {
         "athlete type": "advance",
@@ -30,7 +32,8 @@
         "post weight": 48,
         "injuries": "foot",
         "critical swim speed": null,
-        "lactate threshold": null
+        "joe freil lactate threshold": null,
+        "andy coogan lactate threshold": null
     },
     "Narelle Hayes": {
         "athlete type": "novice",
@@ -41,7 +44,8 @@
         "post weight": null,
         "injuries": null,
         "critical swim speed": null,
-        "lactate threshold": null
+        "joe freil lactate threshold": null,
+        "andy coogan lactate threshold": null
     },
     "Ollie Allan": {
         "athlete type": "advance",
@@ -52,7 +56,8 @@
         "post weight": 74,
         "injuries": "achilles",
         "critical swim speed": null,
-        "lactate threshold": null
+        "joe freil lactate threshold": null,
+        "andy coogan lactate threshold": null
     },
     "Rach Madden": {
         "athlete type": "high intermediate",
@@ -63,7 +68,8 @@
         "post weight": 63,
         "injuries": "none",
         "critical swim speed": null,
-        "lactate threshold": null
+        "joe freil lactate threshold": null,
+        "andy coogan lactate threshold": null
     },
     "Sam Woodland": {
         "athlete type": "advance world champion",
@@ -74,7 +80,8 @@
         "post weight": 60.5,
         "injuries": "MTPJ inflammation",
         "critical swim speed": null,
-        "lactate threshold": null
+        "joe freil lactate threshold": null,
+        "andy coogan lactate threshold": null
     },
     "Simon R Gronow": {
         "athlete type": "novice",
@@ -85,7 +92,8 @@
         "post weight": 77,
         "injuries": "none",
         "critical swim speed": null,
-        "lactate threshold": null
+        "joe freil lactate threshold": null,
+        "andy coogan lactate threshold": null
     },
     "Sophie Perry": {
         "athlete type": "advance",
@@ -96,6 +104,7 @@
         "post weight": 59,
         "injuries": "achilles",
         "critical swim speed": null,
-        "lactate threshold": null
+        "joe freil lactate threshold": null,
+        "andy coogan lactate threshold": null
     }
 }
