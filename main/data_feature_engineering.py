@@ -100,16 +100,18 @@ class AdditionalDataFeatureExtractor():
             tss=50*(time_elapsed/3600)
         if jf_lact_thr*0.875 <= average_heart_rate <= jf_lact_thr*0.89:
             tss=60*(time_elapsed/3600)
-        if jf_lact_thr*0.90 <= average_heart_rate <= jf_lact_thr*0.94:
+        if jf_lact_thr*0.89 < average_heart_rate <= jf_lact_thr*0.94:
             tss=70*(time_elapsed/3600)
-        if jf_lact_thr*0.95 <= average_heart_rate <= jf_lact_thr*0.99:
+        if jf_lact_thr*0.94 < average_heart_rate <= jf_lact_thr*0.99:
             tss=80*(time_elapsed/3600)
-        if jf_lact_thr*1.00 <= average_heart_rate <= jf_lact_thr*1.02:
+        if jf_lact_thr*0.99 < average_heart_rate <= jf_lact_thr*1.02:
             tss=100*(time_elapsed/3600)
-        if jf_lact_thr*1.03 <= average_heart_rate <= jf_lact_thr*1.06:
+        if jf_lact_thr*1.02 < average_heart_rate <= jf_lact_thr*1.05:
             tss=120*(time_elapsed/3600)
-        if jf_lact_thr*1.06 <= average_heart_rate:
+            print(tss, "tss7888")
+        if jf_lact_thr*1.05 < average_heart_rate:
             tss=140*(time_elapsed/3600)
+            print(tss,"tss7")
         return tss
 
     def _get_tss_for_session_cycling(self):
