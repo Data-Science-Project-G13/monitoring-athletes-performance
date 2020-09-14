@@ -84,32 +84,32 @@ class AdditionalDataFeatureExtractor():
         #  @Spoorthi @Sindhu
         jf_lact_thr = self.athletes_lact_thr[0]
         ac_lact_thr = self.athletes_lact_thr[1]
+        tss = float(0)
         if self.session_df['heart_rate'].isnull().values.any() == True:
-            tss=float(0)
             return tss
         time, heart_rate = list(self.session_df['time_in_seconds']), list(self.session_df['heart_rate'])
         average_heart_rate = sum(heart_rate) / len(heart_rate)
         time_elapsed=time[len(time)-1]-time[0]
         if jf_lact_thr*0 <= average_heart_rate < jf_lact_thr*0.283 :
             tss=20*(time_elapsed/3600)
-        if jf_lact_thr*0.283 <= average_heart_rate < jf_lact_thr*0.566:
+        elif jf_lact_thr*0.283 <= average_heart_rate < jf_lact_thr*0.566:
             tss=30*(time_elapsed/3600)
-        if jf_lact_thr*0.566 <= average_heart_rate < jf_lact_thr*0.85:
+        elif jf_lact_thr*0.566 <= average_heart_rate < jf_lact_thr*0.85:
             tss=40*(time_elapsed/3600)
-        if jf_lact_thr*0.85 <= average_heart_rate < jf_lact_thr*0.875:
+        elif jf_lact_thr*0.85 <= average_heart_rate < jf_lact_thr*0.875:
             tss=50*(time_elapsed/3600)
-        if jf_lact_thr*0.875 <= average_heart_rate <= jf_lact_thr*0.89:
+        elif jf_lact_thr*0.875 <= average_heart_rate <= jf_lact_thr*0.89:
             tss=60*(time_elapsed/3600)
-        if jf_lact_thr*0.89 < average_heart_rate <= jf_lact_thr*0.94:
+        elif jf_lact_thr*0.89 < average_heart_rate <= jf_lact_thr*0.94:
             tss=70*(time_elapsed/3600)
-        if jf_lact_thr*0.94 < average_heart_rate <= jf_lact_thr*0.99:
+        elif jf_lact_thr*0.94 < average_heart_rate <= jf_lact_thr*0.99:
             tss=80*(time_elapsed/3600)
-        if jf_lact_thr*0.99 < average_heart_rate <= jf_lact_thr*1.02:
+        elif jf_lact_thr*0.99 < average_heart_rate <= jf_lact_thr*1.02:
             tss=100*(time_elapsed/3600)
-        if jf_lact_thr*1.02 < average_heart_rate <= jf_lact_thr*1.05:
+        elif jf_lact_thr*1.02 < average_heart_rate <= jf_lact_thr*1.05:
             tss=120*(time_elapsed/3600)
             print(tss, "tss7888")
-        if jf_lact_thr*1.05 < average_heart_rate:
+        elif jf_lact_thr*1.05 < average_heart_rate:
             tss=140*(time_elapsed/3600)
         return tss
 
