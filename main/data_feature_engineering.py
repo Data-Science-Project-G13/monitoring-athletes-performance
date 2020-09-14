@@ -132,8 +132,21 @@ class AdditionalDataFeatureExtractor():
         #  Return float(0) if can't compute. Please handle this situation.
         #  @Lin @Yuhan
         if self.critical_swim_speed:
-            """ Implement function here @Lin """
-            pass
+            CSS = self.critical_swim_speed
+            df = self.session_df
+            dist_list = []
+            time_list = []
+            for i in range(len(df) - 1):
+                dist = df.distance[i + 1] - df.distance[i]
+                time = df.time_in_seconds[i + 1] - df.time_in_seconds[i]
+                if time < 0:
+                    continue
+                dist_list.append(dist)
+                time_list.append(time)
+            Distance, Duration = sum(dist_list) * 1000, sum(time_list)
+            Pace = Duration / (Distance / 100)
+            TSS = (CSS / Pace) ** 3 * (Duration / 3600) * 100
+            return TSS
         else:
             return float(0)
 
@@ -219,7 +232,7 @@ def main(data_type: str, athletes_name: str):
                 #  For example if you are testing cycling TSS, just use the function below.
                 #  If you want to test running, change the test_type to 'running'. Similarly for swimming.
                 #  @Spoorthi @Sindhu @Lin @Yuhan
-                test_type = 'running'
+                test_type = 'swimming'
                 if not _function_for_testing(file_name, test_type):
                     continue
                 additional_feature_extractor = AdditionalDataFeatureExtractor(file_name,
@@ -229,8 +242,8 @@ def main(data_type: str, athletes_name: str):
                 additional_features[features_extracted['Date']] = features_extracted
                 print('Preview of the features extracted: \n', features_extracted)
                 # TODO: If you want to test all the files, comment out the '_function_for_testing's below.
-                if _function_for_testing(file_name, test_type):
-                    break
+               #if _function_for_testing(file_name, test_type):
+               #     break
             return additional_features
         else:
             return None
