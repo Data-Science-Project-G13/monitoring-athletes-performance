@@ -205,9 +205,10 @@ class SpreadsheetDataCleaner():
         return sub_df_work_on
 
     def _apply_knn_imputation(self, sub_df_work_on, columns):
-        not_null_cols = [col for col in columns if not sub_df_work_on[col].isnull().all()]
+        not_null_cols = [col for col in columns if col in sub_df_work_on.columns]
+        not_null_cols = [col for col in not_null_cols if not sub_df_work_on[col].isnull().all()]
+        imputer = KNNImputer(n_neighbors=10)
         new_data = sub_df_work_on.copy()
-        imputer = KNNImputer(n_neighbors=23)
         new_data = pd.DataFrame(imputer.fit_transform(new_data[not_null_cols]), columns=[not_null_cols])
         sub_df_work_on[not_null_cols] = new_data[not_null_cols]
         return sub_df_work_on
@@ -366,13 +367,17 @@ class SpreadsheetDataCleaner():
             print('=======================')
             columns_to_drop = self._find_missing_percent(sub_df_work_on)
             columns_keep = [column for column in sub_df_work_on.columns if column not in columns_to_drop]
-            sub_df_work_on_columns = sub_df_work_on[columns_keep]
-            if not sub_df_work_on_columns.empty:
-                sub_df_work_on_columns_imputed = self._apply_imputations(sub_df_work_on_columns, numerical_columns)
+            sub_df_col_selected = sub_df_work_on[columns_keep]
+            if not sub_df_col_selected.empty:
+                sub_df_work_on_columns_imputed = self._apply_imputations(sub_df_col_selected, numerical_columns)
                 sub_df_work_on[columns_keep] = sub_df_work_on_columns_imputed
             sub_df_imputed.append(sub_df_work_on)
         self._replace_dataframe_parts_with_imputed_subdatasets(sub_df_imputed)
         self.dataframe[self.dataframe_work_on.columns] = self.dataframe_work_on[self.dataframe_work_on.columns]
+        # Apply imputation for all activity
+        all_activity_imputation_columns = ['Avg HR', 'Max HR', 'Normalized Power® (NP®)',
+                                           'Max Avg Power (20 min)', 'Avg Power', 'Max Power']
+        self.dataframe = self._apply_imputations(self.dataframe, all_activity_imputation_columns, impute_tech='knn')
 
         # print(list(self.dataframe.isna().any()))
 
