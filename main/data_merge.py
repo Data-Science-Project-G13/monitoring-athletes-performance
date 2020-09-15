@@ -23,10 +23,19 @@ def _add_fitness_fatigue(spreadsheet):
 
 
 def _label_data_record(spreadsheet):
-    """ Label the data for modeling
+    """Label the data for modeling
     Label 1 if over-training, 0 if appropriate, 1 if under-training
     """
-    spreadsheet['Training Load Indicator'] = pd.Series(0, index=spreadsheet.index)
+    indicators = []
+    for index, record in spreadsheet.iterrows():
+        form = record['CTL'] - record['ATL']
+        if form >= 5:
+            indicators.append(-1)
+        elif form <= -30:
+            indicators.append(1)
+        else:
+            indicators.append(0)
+    spreadsheet['Training Load Indicator'] = pd.Series(indicators, index=spreadsheet.index)
 
 
 def merge_spreadsheet_additional(athletes_name):
@@ -47,6 +56,7 @@ def merge_spreadsheet_additional(athletes_name):
                 for feature in additional_features:
                     spreadsheet.at[index, feature] = additionals[date][feature]
     _add_fitness_fatigue(spreadsheet)
+    _label_data_record(spreadsheet)
     print(spreadsheet.head())
     return spreadsheet
 
