@@ -14,9 +14,12 @@ def _save_merged_df(file_name, merged_dataframe: pd.DataFrame):
 
 
 def _add_fitness_fatigue(spreadsheet):
-    spreadsheet['Date'] = pd.to_datetime(spreadsheet['Date'])
     spreadsheet['ATL'] = spreadsheet.rolling('7d', min_periods=1, on='Date')['Training Stress Score®'].mean()
     spreadsheet['CTL'] = spreadsheet.rolling('42d', min_periods=1, on='Date')['Training Stress Score®'].mean()
+
+
+def _add_rolling_tss(spreadsheet):
+    spreadsheet['ROLL TSS SUM'] = spreadsheet.rolling('14d', min_periods=1, on='Date')['Training Stress Score®'].sum()
 
 
 def _label_data_record(spreadsheet):
@@ -27,11 +30,11 @@ def _label_data_record(spreadsheet):
     for index, record in spreadsheet.iterrows():
         form = record['CTL'] - record['ATL']
         if form >= 5:
-            indicators.append(-1)
-        elif form <= -30:
-            indicators.append(1)
-        else:
             indicators.append(0)
+        elif form <= -30:
+            indicators.append(2)
+        else:
+            indicators.append(1)
     spreadsheet['Training Load Indicator'] = pd.Series(indicators, index=spreadsheet.index)
 
 
@@ -57,7 +60,9 @@ def merge_spreadsheet_additional(athletes_name):
             # Replace TSS with None when it equals to zero for a more accurate ATL CTL calculation
             if spreadsheet.at[index, 'Training Stress Score®'] == 0:
                 spreadsheet.at[index, 'Training Stress Score®'] = None
+    spreadsheet['Date'] = pd.to_datetime(spreadsheet['Date'])
     _add_fitness_fatigue(spreadsheet)
+    _add_rolling_tss(spreadsheet)
     _label_data_record(spreadsheet)
     return spreadsheet
 
