@@ -377,7 +377,7 @@ class SpreadsheetDataCleaner():
         # Apply imputation for all activity
         all_activity_imputation_columns = ['Avg HR', 'Max HR', 'Normalized Power® (NP®)',
                                            'Max Avg Power (20 min)', 'Avg Power', 'Max Power']
-        self.dataframe = self._apply_imputations(self.dataframe, all_activity_imputation_columns, impute_tech='knn')
+        self._apply_imputations(self.dataframe, all_activity_imputation_columns, impute_tech='knn')
 
         # print(list(self.dataframe.isna().any()))
 
@@ -802,7 +802,7 @@ def _main_helper_spreadsheet(athletes_name=None, file_name: str = None, verbose=
         file_name = data_loader_spreadsheet.config.get('SPREADSHEET-DATA-SETS', athletes_name.lower())
     spreadsheet_data_cleaner = SpreadsheetDataCleaner(athlete_df)
     spreadsheet_data_cleaner.process_data_cleaning()
-    cleaned_df = spreadsheet_data_cleaner.dataframe_work_on
+    cleaned_df = spreadsheet_data_cleaner.dataframe
     _save_cleaned_df('spreadsheet', athletes_name, file_name, cleaned_df, verbose=verbose)
 
 
@@ -877,8 +877,8 @@ if __name__ == '__main__':
     # main('spreadsheet')  # clean all spreadsheet data
     main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
 
-    # # Clean additional data
-    # activity_types = ['cycling', 'running', 'swimming']
-    # split_type = 'real-time'
-    # for activity_type in activity_types:
-    #     main('additional', athletes_name=athletes_names[0], activity_type=activity_type, split_type=split_type)
+    # Clean additional data
+    activity_types = ['cycling', 'running', 'swimming']
+    split_type = 'real-time'
+    for activity_type in activity_types:
+        main('additional', athletes_name=athletes_names[0], activity_type=activity_type, split_type=split_type)
