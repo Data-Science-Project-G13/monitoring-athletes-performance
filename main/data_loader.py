@@ -57,6 +57,8 @@ class DataLoader():
         -------
             Pandas data frame
         """
+        if file_name == None and athletes_name == None:
+            raise Exception("No inputs in load_spreadsheet_data. Input a file name or an athlete's name.")
         if self.data_type == 'spreadsheet':
             file_path = '{}/{}'.format(self.data_path, file_name)
             if os.path.isfile(file_path):
@@ -137,9 +139,12 @@ class DataLoader():
                 return None
 
 
+    def load_merged_data(self, athletes_name):
+        file_path = '{}/merged_dataframes/merged_{}'.format(self.data_path, '_'.join(athletes_name.lower().split()))
+        return pd.read_csv(file_path, sep=',')
+
 
 if __name__ == '__main__':
-
     # ====== Get all file names of the spreadsheet data ======
     data_loader_spreadsheet = DataLoader('spreadsheet')
     spreadsheet_data_names = utility.get_all_spreadsheet_data_file_names()
@@ -170,5 +175,10 @@ if __name__ == '__main__':
     # Load cleaned additional data
     cleaned_additional_df_example = data_loader_additional.load_cleaned_additional_data(athletes_name='eduardo oliveira')
     print(cleaned_additional_df_example)
+
+
+    # ====== Load merged data ======
+    merged_data_example = DataLoader().load_merged_data('eduardo oliveira')
+    print(merged_data_example.head())
 
 
