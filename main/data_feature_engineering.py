@@ -11,7 +11,7 @@ environment you are running this script in.
 # Packages
 import pandas as pd
 import numpy as np
-from sklearn.decomposition import PCA
+from sklearn.preprocessing import LabelBinarizer
 # Self-defined modules
 import utility
 import data_merge
@@ -28,13 +28,42 @@ class SpreadsheetDataFeatureExtractor():
             hh, mm, ss = map(float, hh_mm_ss.split(':'))
             return hh*60*60 + mm*60 + ss
         self.dataframe['Duration'] = self.dataframe['Time'].apply(lambda x: time_to_seconds(x))
-        print(self.dataframe[['Time', 'Duration']])
+
+    def _add_activity_encode(self):
+        # Encode the activities to five more general categories
+        activities = self.dataframe['Activity Type'].astype('category').cat.categories.tolist()
+        codes = []
+        for activity in activities:
+            if 'swimming' in activity.lower():
+                codes.append('1')
+            elif 'cycling' in activity.lower():
+                codes.append('2')
+            elif 'running' in activity.lower():
+                codes.append('3')
+            elif 'strength' in activity.lower():
+                codes.append('4')
+            else:
+                codes.append('5')
+        encode_dict = {k: v for k, v in zip(activities, codes)}
+        self.dataframe['Activity Code'] = self.dataframe['Activity Type'].copy()
+        self.dataframe['Activity Code'].replace(encode_dict, inplace=True)
+        # Then use one-hot encoder for a better encoding
+        encoder = LabelBinarizer()
+        encoder.fit(self.dataframe['Activity Code'])
+        transformed = encoder.transform(self.dataframe['Activity Code'])
+        one_hot_df = pd.DataFrame(transformed,
+                                  columns=['Activity Code 0', 'Activity Code 1', 'Activity Code 2', 'Activity Code 3', 'Activity Code 4'])
+        self.dataframe = pd.concat([self.dataframe, one_hot_df], axis=1).drop(['Activity Code'], axis=1)
+
+    def _add_num_activity_types_in_one_week(self):
+        pass
 
     def process_feature_engineering(self):
         """
         Process Feature Engineering on a spreadsheet data
         """
         self._add_activity_duration()
+        self._add_activity_encode()
 
 
 class AdditionalDataFeatureExtractor():
