@@ -34,3 +34,5 @@ are not always match, hence match them by date and the activity types.
 ## Building Models
 May need to train models activity-wisely, since the features are filling out differently between activities.
 Otherwise, should only choose the features that have same situations across activities.
+
+Because imputation was done activity-wisely, many of the values are nnot imputed.
