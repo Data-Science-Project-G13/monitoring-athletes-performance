@@ -228,10 +228,10 @@ def main(data_type: str, athletes_name: str):
         data_loader_additional = DataLoader('additional')
         cleaned_additional_data_filenames = data_loader_additional.load_cleaned_additional_data(athletes_name)
         if cleaned_additional_data_filenames:
-            additional_features = {'features': ['Other Feature 1', 'Other Feature 2']}
+            additional_features = {'features': ['Other Feature 1', 'Other Feature 2']}  # followed by {date: features_extracted}
             for file_name in cleaned_additional_data_filenames:
-                # TODO: A reminder, you can use the function below to test your functions for ONE .csv file instead all
-                #  If you want to test running, change the test_type to 'running'. Similarly for swimming and cycling.
+                """ A reminder, you can use the function below to test your functions for ONE .csv file instead all
+                    If you want to test running, change the test_type to 'running'. Similarly for swimming and cycling."""
                 test_type = 'all'
                 if not _function_for_testing(file_name, test_type):
                     continue
@@ -240,7 +240,7 @@ def main(data_type: str, athletes_name: str):
                                                                               athletes_lact_thr=athletes_lact_thr)
                 features_extracted = additional_feature_extractor.process_feature_engineering()
                 additional_features[features_extracted['Date']] = features_extracted
-                # print('Preview of the features extracted: \n', features_extracted)
+                print('Preview of the features extracted: \n', features_extracted)
             return additional_features
         else:
             return None
