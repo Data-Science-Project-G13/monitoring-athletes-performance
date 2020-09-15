@@ -14,8 +14,8 @@ import numpy as np
 from sklearn.decomposition import PCA
 # Self-defined modules
 import utility
+import data_merge
 from data_loader import DataLoader
-
 
 
 class SpreadsheetDataFeatureExtractor():
@@ -102,7 +102,7 @@ class AdditionalDataFeatureExtractor():
             tss=100*(time_elapsed/3600)
         elif jf_lact_thr*1.02 < average_heart_rate <= jf_lact_thr*1.05:
             tss=120*(time_elapsed/3600)
-            print(tss, "tss7888")
+            # print(tss, "tss7888")
         elif jf_lact_thr*1.05 < average_heart_rate:
             tss=140*(time_elapsed/3600)
         return tss
@@ -181,11 +181,12 @@ class AdditionalDataFeatureExtractor():
         return self.features_extracted
 
 
-def _function_for_testing(file_name, test_type):
+def _function_for_testing(file_name, test_type='all'):
     """
     """
     """*** This is the function that is used for testing only and will be removed ***"""
-    if test_type in file_name: return True
+    if test_type == 'all': return True
+    elif test_type in file_name: return True
     else: return False
 
 
@@ -217,7 +218,7 @@ def main(data_type: str, athletes_name: str):
             for file_name in cleaned_additional_data_filenames:
                 # TODO: A reminder, you can use the function below to test your functions for ONE .csv file instead all
                 #  If you want to test running, change the test_type to 'running'. Similarly for swimming and cycling.
-                test_type = 'running'
+                test_type = 'all'
                 if not _function_for_testing(file_name, test_type):
                     continue
                 additional_feature_extractor = AdditionalDataFeatureExtractor(file_name,
@@ -225,10 +226,7 @@ def main(data_type: str, athletes_name: str):
                                                                               athletes_lact_thr=athletes_lact_thr)
                 features_extracted = additional_feature_extractor.process_feature_engineering()
                 additional_features[features_extracted['Date']] = features_extracted
-                print('Preview of the features extracted: \n', features_extracted)
-                # TODO: If you want to test all the files, comment out the '_function_for_testing's below.
-               # if _function_for_testing(file_name, test_type):
-               #     break
+                # print('Preview of the features extracted: \n', features_extracted)
             return additional_features
         else:
             return None
