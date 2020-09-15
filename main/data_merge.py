@@ -47,10 +47,9 @@ def merge_spreadsheet_additional(athletes_name):
         for index, record in spreadsheet.iterrows():
             date = record['Date'].split(' ')[0]  # + record['Date'].split(' ')[1][:2]
             activity_type = record['Activity Type'].split(' ')[-1]
-
             if date in additionals.keys():
                 # and activity_type.lower() == additionals[date]['Activity Type']:
-                # dditional data activities and spreadsheet not always matched
+                # Additional data activities and spreadsheet not always matched
                 if additionals[date]['TSS'] is not None and additionals[date]['TSS'] != 0:
                     spreadsheet.at[index, 'Training Stress Score®'] = additionals[date]['TSS']
                 for feature in additional_features:
@@ -60,8 +59,6 @@ def merge_spreadsheet_additional(athletes_name):
                 spreadsheet.at[index, 'Training Stress Score®'] = None
     _add_fitness_fatigue(spreadsheet)
     _label_data_record(spreadsheet)
-    print(spreadsheet.head())
-    print(spreadsheet.columns)
     return spreadsheet
 
 
@@ -70,6 +67,7 @@ def main():
     merged_df = merge_spreadsheet_additional(athletes_names[0])
     file_name = 'merged_{}.csv'.format('_'.join(athletes_names[0].split(' ')))
     _save_merged_df(file_name, merged_df)
+
 
 if __name__ == '__main__':
     main()
