@@ -4,13 +4,27 @@ import pandas as pd
 # Self-defined modules
 import data_feature_engineering
 
+# Set the data frame display option
+pd.set_option('display.max_row', 20)
+pd.set_option('display.max_columns', 20)
 
 def _save_merged_df(file_name, merged_dataframe: pd.DataFrame):
     merged_data_folder = '{}/data/merged_dataframes'.format(os.path.pardir)
     if not os.path.exists(merged_data_folder):
         os.mkdir(merged_data_folder)
-    merged_dataframe.to_csv('{}/{}'.format(merged_data_folder, file_name))
+    merged_dataframe.to_csv('{}/{}'.format(merged_data_folder, file_name), index=False)
     print('Merged {} data saved!'.format(file_name))
+
+
+def _add_fitness_fatigue(spreadsheet):
+    spreadsheet['Date'] = pd.to_datetime(spreadsheet['Date'])
+    spreadsheet['ATL'] = spreadsheet.rolling('7d', min_periods=1, on='Date')['Training Stress Score®'].mean()
+    spreadsheet['CTL'] = spreadsheet.rolling('42d', min_periods=1, on='Date')['Training Stress Score®'].mean()
+
+
+def _label_data_record(spreadsheet):
+    # Label 1 if over-training, 0 if appropriate, 1 if under-training
+    spreadsheet['Training Load Indicator'] = pd.Series(0, index=spreadsheet.index)
 
 
 def merge_spreadsheet_additional(athletes_name):
@@ -22,14 +36,16 @@ def merge_spreadsheet_additional(athletes_name):
         additional_features = additionals['features']
         for feature in additional_features:
             spreadsheet[feature] = pd.Series(0, index=spreadsheet.index)
-
         for index, record in spreadsheet.iterrows():
             date = record['Date'].split(' ')[0]  # + record['Date'].split(' ')[1][:2]
             activity_type = record['Activity Type'].split(' ')[-1]
             if date in additionals.keys() and activity_type == additionals[date]['Activity Type']:
-                spreadsheet.at[index, 'Training Stress Score®'] = additionals[date]['TSS']
+                if additionals[date]['TSS'] is not None and additionals[date]['TSS'] != 0:
+                    spreadsheet.at[index, 'Training Stress Score®'] = additionals[date]['TSS']
                 for feature in additional_features:
                     spreadsheet.at[index, feature] = additionals[date][feature]
+    _add_fitness_fatigue(spreadsheet)
+    print(spreadsheet.head())
     return spreadsheet
 
 
