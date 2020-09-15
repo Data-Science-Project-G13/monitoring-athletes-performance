@@ -101,12 +101,11 @@ class SpreadsheetDataCleaner():
     #     self.dataframe_work_on = self.dataframe_work_on.sort_index(inplace=True)
 
     def _drop_columns(self) :
-        columns_to_drop = [ #'Avg HR', 'Max HR', 'Training Stress Score®',
-                           'Favorite', 'Aerobic TE', 'Avg Run Cadence', 'Max Run Cadence', 'Avg Stride Length',
-                           'Avg Vertical Ratio', 'Avg Vertical Oscillation', 'Avg Ground Contact Time',
-                           'Avg GCT Balance', 'L/R Balance', 'Grit', 'Flow', 'Total Reps', 'Total Sets',
-                           'Bottom Time', 'Min Temp', 'Surface Interval', 'Decompression', 'Best Lap Time', 'Max Temp']
-        self.dataframe_work_on.drop(columns_to_drop, axis=1, inplace=True)
+        columns_no_imputation = ['Favorite', 'Aerobic TE', 'Avg Run Cadence', 'Max Run Cadence', 'Avg Stride Length',
+                                 'Avg Vertical Ratio', 'Avg Vertical Oscillation', 'Avg Ground Contact Time',
+                                 'Avg GCT Balance', 'L/R Balance', 'Grit', 'Flow', 'Total Reps', 'Total Sets',
+                                 'Bottom Time', 'Min Temp', 'Surface Interval', 'Decompression', 'Best Lap Time', 'Max Temp']
+        self.dataframe_work_on.drop(columns_no_imputation, axis=1, inplace=True)
 
     def _convert_strings_to_lower_case(self) :
         self.dataframe_work_on['Activity Type'] = self.dataframe_work_on['Activity Type'].str.lower()
