@@ -35,15 +35,15 @@ class SpreadsheetDataFeatureExtractor():
         codes = []
         for activity in activities:
             if 'swimming' in activity.lower():
-                codes.append('1')
+                codes.append(1)
             elif 'cycling' in activity.lower():
-                codes.append('2')
+                codes.append(2)
             elif 'running' in activity.lower():
-                codes.append('3')
+                codes.append(3)
             elif 'strength' in activity.lower():
-                codes.append('4')
+                codes.append(4)
             else:
-                codes.append('5')
+                codes.append(5)
         encode_dict = {k: v for k, v in zip(activities, codes)}
         self.dataframe['Activity Code'] = self.dataframe['Activity Type'].copy()
         self.dataframe['Activity Code'].replace(encode_dict, inplace=True)
@@ -53,10 +53,13 @@ class SpreadsheetDataFeatureExtractor():
         transformed = encoder.transform(self.dataframe['Activity Code'])
         one_hot_df = pd.DataFrame(transformed,
                                   columns=['Activity Code 0', 'Activity Code 1', 'Activity Code 2', 'Activity Code 3', 'Activity Code 4'])
-        self.dataframe = pd.concat([self.dataframe, one_hot_df], axis=1).drop(['Activity Code'], axis=1)
+        self.dataframe = pd.concat([self.dataframe, one_hot_df], axis=1)
 
     def _add_num_activity_types_in_one_week(self):
-        pass
+        self.dataframe['Date'] = pd.to_datetime(self.dataframe['Date'])
+        self.dataframe['Num Uniq Acts Weekly'] = self.dataframe.rolling('7d', min_periods=1, on='Date')['Activity Code']\
+            .apply(lambda arr: pd.Series(arr).nunique())
+        # print(list(self.dataframe['Num Activities']))
 
     def process_feature_engineering(self):
         """
@@ -64,6 +67,7 @@ class SpreadsheetDataFeatureExtractor():
         """
         self._add_activity_duration()
         self._add_activity_encode()
+        self._add_num_activity_types_in_one_week()
 
 
 class AdditionalDataFeatureExtractor():
