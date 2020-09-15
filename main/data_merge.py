@@ -45,7 +45,7 @@ def merge_spreadsheet_additional(athletes_name):
         for feature in additional_features:
             spreadsheet[feature] = pd.Series(0, index=spreadsheet.index)
         for index, record in spreadsheet.iterrows():
-            date = record['Date'].split(' ')[0]  # + record['Date'].split(' ')[1][:2]
+            date = str(record['Date']).split(' ')[0]  # + record['Date'].split(' ')[1][:2]
             activity_type = record['Activity Type'].split(' ')[-1]
             if date in additionals.keys():
                 # and activity_type.lower() == additionals[date]['Activity Type']:

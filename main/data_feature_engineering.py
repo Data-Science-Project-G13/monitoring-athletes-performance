@@ -240,7 +240,7 @@ def main(data_type: str, athletes_name: str):
                                                                               athletes_lact_thr=athletes_lact_thr)
                 features_extracted = additional_feature_extractor.process_feature_engineering()
                 additional_features[features_extracted['Date']] = features_extracted
-                print('Preview of the features extracted: \n', features_extracted)
+                # print('Preview of the features extracted: \n', features_extracted)
             return additional_features
         else:
             return None
