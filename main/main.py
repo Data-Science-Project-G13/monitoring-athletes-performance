@@ -11,7 +11,7 @@ functions:
 import system_initialize
 import data_cleaning
 import data_merge
-import data_modeling
+import data_modelling
 
 
 def main(athletes_name):
@@ -29,7 +29,7 @@ def main(athletes_name):
     data_merge.merge_spreadsheet_additional(athletes_name)
 
     # Modeling
-    data_modeling.process_train_load_modeling(athletes_name)
+    data_modelling.process_train_load_modeling(athletes_name)
 
 
 if __name__ == '__main__':
