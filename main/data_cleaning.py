@@ -7,7 +7,6 @@ environment you are running this script in.
 
 This file can also be imported as a module
 """
-# TODO: Clean up packages
 # Packages
 import numpy as np
 import pandas as pd
@@ -82,6 +81,18 @@ class SpreadsheetDataCleaner():
         dataframe_others = self.dataframe_work_on.loc[
             self.dataframe_work_on['Activity Type'].isin(['Hiking', 'Multisport', 'Indoor Rowing'])]
         return dataframe_swim, dataframe_cycle, dataframe_run, dataframe_st, dataframe_others
+
+    def _replace_dataframe_parts_with_imputed_subdatasets(self, imputed_subdatasets: []):
+        self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
+            isin(['Pool Swimming', 'Open Water Swimming', 'Swimming'])] = imputed_subdatasets[0]
+        self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
+            isin(['Virtual Cycling', 'Indoor Cycling', 'Road Cycling', 'Cycling'])] = imputed_subdatasets[1]
+        self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
+            isin(['Running', 'Treadmill Running'])] = imputed_subdatasets[2]
+        self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
+            isin(['Strength Training'])] = imputed_subdatasets[3]
+        self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
+            isin(['Hiking', 'Multisport', 'Indoor Rowing'])] = imputed_subdatasets[4]
 
     # def _concat_dataframe_by_activity(self):
     #     self.dataframe_work_on = pd.concat(
@@ -179,6 +190,7 @@ class SpreadsheetDataCleaner():
         # print(sub_df_work_on[not_null_cols])
         for column in not_null_cols:
             sub_df_work_on[column].fillna(sub_df_work_on[column].mean(), inplace=True)
+        return sub_df_work_on
         # new_data = sub_df_work_on.copy()
         # imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
         # new_data = pd.DataFrame(imputer.fit_transform(new_data[not_null_cols]), columns=[not_null_cols])
@@ -191,6 +203,7 @@ class SpreadsheetDataCleaner():
         imputer = IterativeImputer(GradientBoostingRegressor())
         new_data = pd.DataFrame(imputer.fit_transform(new_data[not_null_cols]), columns=[not_null_cols])
         sub_df_work_on[not_null_cols] = new_data[not_null_cols]
+        return sub_df_work_on
 
     def _apply_knn_imputation(self, sub_df_work_on, columns):
         not_null_cols = [col for col in columns if not sub_df_work_on[col].isnull().all()]
@@ -198,6 +211,7 @@ class SpreadsheetDataCleaner():
         imputer = KNNImputer(n_neighbors=23)
         new_data = pd.DataFrame(imputer.fit_transform(new_data[not_null_cols]), columns=[not_null_cols])
         sub_df_work_on[not_null_cols] = new_data[not_null_cols]
+        return sub_df_work_on
 
     def _apply_mode_imputation(self, dataframe_work_on_categorical):
         """ Mode Imputation
@@ -205,17 +219,18 @@ class SpreadsheetDataCleaner():
         for col in dataframe_work_on_categorical.columns:
             mode = dataframe_work_on_categorical[col].mode().iloc[0]
             dataframe_work_on_categorical[col] = dataframe_work_on_categorical[col].fillna(mode)
+        return dataframe_work_on_categorical
 
     def _apply_imputations(self, sub_df_work_on, columns_need_imputation, column_type="numerical", impute_tech="mean"):
         if column_type == 'numerical':
             if impute_tech == "mean":
-                self._apply_mean_imputation(sub_df_work_on, columns_need_imputation)
+                return self._apply_mean_imputation(sub_df_work_on, columns_need_imputation)
             elif impute_tech == "mice":
-                self._apply_mice_imputation(sub_df_work_on, columns_need_imputation)
+                return self._apply_mice_imputation(sub_df_work_on, columns_need_imputation)
             elif impute_tech == "knn":
-                self._apply_knn_imputation(sub_df_work_on, columns_need_imputation)
+                return self._apply_knn_imputation(sub_df_work_on, columns_need_imputation)
         else:
-            self._apply_mode_imputation(sub_df_work_on)
+            return self._apply_mode_imputation(sub_df_work_on)
 
     def _apply_linear_interpolation(self, numeric_column_df):
         for col in numeric_column_df.columns:
@@ -346,15 +361,18 @@ class SpreadsheetDataCleaner():
         self._convert_columns_to_numeric()
         numerical_columns = self.get_numerical_columns()
         categorical_columns = self.get_categorical_columns()
-
+        sub_df_imputed = []
         for sub_df_work_on in self._split_dataframe_by_activity():
             # ================ Imputations ====================
             print('=======================')
             columns_to_drop = self._find_missing_percent(sub_df_work_on)
             columns_keep = [column for column in sub_df_work_on.columns if column not in columns_to_drop]
-            sub_df_work_on = sub_df_work_on[columns_keep]
-            if not sub_df_work_on.empty:
-                self._apply_imputations(sub_df_work_on, numerical_columns)
+            sub_df_work_on_columns = sub_df_work_on[columns_keep]
+            if not sub_df_work_on_columns.empty:
+                sub_df_work_on_columns_imputed = self._apply_imputations(sub_df_work_on_columns, numerical_columns)
+                sub_df_work_on[columns_keep] = sub_df_work_on_columns_imputed
+            sub_df_imputed.append(sub_df_work_on)
+        self._replace_dataframe_parts_with_imputed_subdatasets(sub_df_imputed)
         self.dataframe[self.dataframe_work_on.columns] = self.dataframe_work_on[self.dataframe_work_on.columns]
 
         # print(list(self.dataframe.isna().any()))
@@ -855,8 +873,8 @@ if __name__ == '__main__':
     # main('spreadsheet')  # clean all spreadsheet data
     main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
 
-    # Clean additional data
-    activity_types = ['cycling', 'running', 'swimming']
-    split_type = 'real-time'
-    for activity_type in activity_types:
-        main('additional', athletes_name=athletes_names[0], activity_type=activity_type, split_type=split_type)
+    # # Clean additional data
+    # activity_types = ['cycling', 'running', 'swimming']
+    # split_type = 'real-time'
+    # for activity_type in activity_types:
+    #     main('additional', athletes_name=athletes_names[0], activity_type=activity_type, split_type=split_type)
