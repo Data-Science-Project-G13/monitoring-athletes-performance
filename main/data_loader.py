@@ -140,7 +140,7 @@ class DataLoader():
 
 
     def load_merged_data(self, athletes_name):
-        file_path = '{}/merged_dataframes/merged_{}'.format(self.data_path, '_'.join(athletes_name.lower().split()))
+        file_path = '{}/merged_dataframes/merged_{}.csv'.format(self.data_path, '_'.join(athletes_name.lower().split()))
         return pd.read_csv(file_path, sep=',')
 
 
