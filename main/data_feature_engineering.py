@@ -76,12 +76,6 @@ class AdditionalDataFeatureExtractor():
         return None
 
     def _get_tss_for_session_running(self):
-        # TODO: Please complete the function. This is related to hrTSS.
-        #  self.dataframe is the dataframe for the csv file.
-        #  self.activity_type is the activity type.
-        #  The function returns TSS (as a float).
-        #  Return float(0) if can't compute. Please handle this situation.
-        #  @Spoorthi @Sindhu
         jf_lact_thr = self.athletes_lact_thr[0]
         ac_lact_thr = self.athletes_lact_thr[1]
         tss = float(0)
@@ -124,13 +118,6 @@ class AdditionalDataFeatureExtractor():
         return tss
 
     def _get_tss_for_session_swimming(self):
-        # TODO: Please complete the function. This is related to swimming TSS.
-        #  self.dataframe is the dataframe for the csv file.
-        #  self.activity_type is the activity type.
-        #  self.critical_swimming_speed is the critical swimming speed for the athlete.
-        #  The function returns TSS (as a float).
-        #  Return float(0) if can't compute. Please handle this situation.
-        #  @Lin @Yuhan
         if self.critical_swim_speed:
             CSS = self.critical_swim_speed
             df = self.session_df
@@ -229,10 +216,8 @@ def main(data_type: str, athletes_name: str):
             additional_features = {'features': ['Other Feature 1', 'Other Feature 2']}
             for file_name in cleaned_additional_data_filenames:
                 # TODO: A reminder, you can use the function below to test your functions for ONE .csv file instead all
-                #  For example if you are testing cycling TSS, just use the function below.
-                #  If you want to test running, change the test_type to 'running'. Similarly for swimming.
-                #  @Spoorthi @Sindhu @Lin @Yuhan
-                test_type = 'swimming'
+                #  If you want to test running, change the test_type to 'running'. Similarly for swimming and cycling.
+                test_type = 'running'
                 if not _function_for_testing(file_name, test_type):
                     continue
                 additional_feature_extractor = AdditionalDataFeatureExtractor(file_name,
@@ -242,7 +227,7 @@ def main(data_type: str, athletes_name: str):
                 additional_features[features_extracted['Date']] = features_extracted
                 print('Preview of the features extracted: \n', features_extracted)
                 # TODO: If you want to test all the files, comment out the '_function_for_testing's below.
-               #if _function_for_testing(file_name, test_type):
+               # if _function_for_testing(file_name, test_type):
                #     break
             return additional_features
         else:
