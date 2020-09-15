@@ -4,9 +4,6 @@ import pandas as pd
 # Self-defined modules
 import data_feature_engineering
 
-# Set the data frame display option
-pd.set_option('display.max_row', 20)
-pd.set_option('display.max_columns', 20)
 
 def _save_merged_df(file_name, merged_dataframe: pd.DataFrame):
     merged_data_folder = '{}/data/merged_dataframes'.format(os.path.pardir)
@@ -64,6 +61,7 @@ def merge_spreadsheet_additional(athletes_name):
     _add_fitness_fatigue(spreadsheet)
     _label_data_record(spreadsheet)
     print(spreadsheet.head())
+    print(spreadsheet.columns)
     return spreadsheet
 
 
