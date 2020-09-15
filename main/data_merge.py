@@ -23,7 +23,9 @@ def _add_fitness_fatigue(spreadsheet):
 
 
 def _label_data_record(spreadsheet):
-    # Label 1 if over-training, 0 if appropriate, 1 if under-training
+    """ Label the data for modeling
+    Label 1 if over-training, 0 if appropriate, 1 if under-training
+    """
     spreadsheet['Training Load Indicator'] = pd.Series(0, index=spreadsheet.index)
 
 
