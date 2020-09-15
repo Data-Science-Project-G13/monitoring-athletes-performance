@@ -23,37 +23,18 @@ class SpreadsheetDataFeatureExtractor():
     def __init__(self, dataframe: pd.DataFrame):
         self.dataframe = dataframe
 
-    def process_pca(self, low_dimension, path):
-        """
-        PCA (Principal Component Analysis)
-        A method used to dimension reduction, selecting the most effective variables
-        Parameters
-        -------
-        low_dimension : int
-            How many variables left after PCA processing
-        file_name : str
-            Path of raw dataset needs to be reduced
-        """
-        data = np.loadtxt(path, dtype=str, delimiter=',')
-        # read athlete dataset
-        col_name = data[0,]
-        # variables name of the dataset
-        pca = PCA(n_components=low_dimension)
-        # set how many variables will be kept
-        data_processed = pca.fit_transform(data[1:, ])
-        # use PCA function to calculate the effect (from 0 to 1) of each variables
-        variance_ratio = dict(zip(col_name, pca.explained_variance_ratio_))
-        rank = sorted(variance_ratio.items(), key=lambda x: x[1], reverse=True)
-        # variables' effect are ranked in descend order
-        return rank
+    def _add_activity_duration(self):
+        def time_to_seconds(hh_mm_ss):
+            hh, mm, ss = map(float, hh_mm_ss.split(':'))
+            return hh*60*60 + mm*60 + ss
+        self.dataframe['Duration'] = self.dataframe['Time'].apply(lambda x: time_to_seconds(x))
+        print(self.dataframe[['Time', 'Duration']])
 
     def process_feature_engineering(self):
         """
         Process Feature Engineering on a spreadsheet data
         """
-        """ *** Main function of the extractor @Spoorthi @Sindhu, the self.dataframe 
-        should be done feature engineering after call this function*** """
-        pass
+        self._add_activity_duration()
 
 
 class AdditionalDataFeatureExtractor():
@@ -235,5 +216,5 @@ def main(data_type: str, athletes_name: str):
 if __name__ == '__main__':
     athletes_names = ['eduardo oliveira']
     main('spreadsheet', athletes_names[0])
-    main('additional', athletes_names[0])
+    # main('additional', athletes_names[0])
 
