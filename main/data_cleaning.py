@@ -176,14 +176,14 @@ class SpreadsheetDataCleaner():
     def _apply_mean_imputation(self, sub_df_work_on, columns):
         not_null_cols = [col for col in columns if col in sub_df_work_on.columns]
         not_null_cols = [col for col in not_null_cols if not sub_df_work_on[col].isnull().all()]
-        print(sub_df_work_on[not_null_cols])
+        # print(sub_df_work_on[not_null_cols])
         for column in not_null_cols:
             sub_df_work_on[column].fillna(sub_df_work_on[column].mean(), inplace=True)
         # new_data = sub_df_work_on.copy()
         # imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
         # new_data = pd.DataFrame(imputer.fit_transform(new_data[not_null_cols]), columns=[not_null_cols])
         # sub_df_work_on[not_null_cols] = new_data[not_null_cols]
-        print(sub_df_work_on[not_null_cols])
+        # print(sub_df_work_on[not_null_cols])
 
     def _apply_mice_imputation(self, sub_df_work_on, columns):
         not_null_cols = [col for col in columns if not sub_df_work_on[col].isnull().all()]
@@ -746,7 +746,7 @@ def _create_log_folders(data_type, athletes_name=None):
 
 def _save_cleaned_df(data_type, athletes_name, file_name, cleaned_df, verbose=False):
     if data_type == 'spreadsheet':
-        cleaned_df.to_csv('{}/data/cleaned_spreadsheet/{}'.format(os.path.pardir, file_name))
+        cleaned_df.to_csv('{}/data/cleaned_spreadsheet/{}'.format(os.path.pardir, file_name), index=False)
         if verbose: print('Cleaned {} data saved.'.format(file_name))
 
     elif data_type == 'additional':
@@ -754,7 +754,7 @@ def _save_cleaned_df(data_type, athletes_name, file_name, cleaned_df, verbose=Fa
                                                                                         '_'.join(athletes_name.lower().split()))
         if not os.path.exists(athlete_cleaned_additional_data_folder):
             os.mkdir(athlete_cleaned_additional_data_folder)
-        cleaned_df.to_csv('{}/{}'.format(athlete_cleaned_additional_data_folder, file_name.split('/')[-1]))
+        cleaned_df.to_csv('{}/{}'.format(athlete_cleaned_additional_data_folder, file_name.split('/')[-1]), index=False)
         if verbose: print('{}\'s cleaned {} data saved.'.format(athletes_name.capitalize(), file_name.split('/')[-1]))
 
 
@@ -767,7 +767,7 @@ def _save_log(data_type, log_type, file_name, log_df, athletes_name=None):
     else:
         raise Exception('No {} type of datasets'.format(data_type))
     if not log_df.empty:
-        log_df.to_csv(log_file_path)
+        log_df.to_csv(log_file_path, index=False)
 
 
 def _main_helper_spreadsheet(athletes_name=None, file_name: str = None, verbose=False):
@@ -855,8 +855,8 @@ if __name__ == '__main__':
     # main('spreadsheet')  # clean all spreadsheet data
     main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
 
-    # # Clean additional data
-    # activity_types = ['cycling', 'running', 'swimming']
-    # split_type = 'real-time'
-    # for activity_type in activity_types:
-    #     main('additional', athletes_name=athletes_names[0], activity_type=activity_type, split_type=split_type)
+    # Clean additional data
+    activity_types = ['cycling', 'running', 'swimming']
+    split_type = 'real-time'
+    for activity_type in activity_types:
+        main('additional', athletes_name=athletes_names[0], activity_type=activity_type, split_type=split_type)
