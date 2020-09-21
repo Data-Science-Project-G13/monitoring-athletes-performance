@@ -8,7 +8,7 @@ from xgboost import XGBClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
-
+from sklearn.ensemble import AdaBoostClassifier
 from sklearn.preprocessing import LabelEncoder
 # Self-defined modules
 import utility
@@ -66,6 +66,11 @@ class TrainLoadModelBuilder():
         xgb.fit(X_train, y_train)
         return xgb
 
+    def _process_Adaboost(self, X_train, y_train):
+        AB = AdaBoostClassifier(base_estimator=None, n_estimators=50, learning_rate=1.0, algorithm='SAMME.R', random_state=None)
+        AB.fit(X_train,y_train)
+        return AB
+
     def _validate_model(self, X_test, y_test, classifier):
         y_preds = classifier.predict(X_test)  # predict classes for y test
         print(y_preds)
@@ -104,7 +109,10 @@ class TrainLoadModelBuilder():
         classifier = self._process_xgboost(X_train, y_train)
         accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
         self._display_performance_results('xgboost', accuracy, precision, recall, f1)
-
+        ##== == == == == == Adaboost == == == == == ==
+        classifier = self._process_Adaboost(X_train, y_train)
+        accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
+        self._display_performance_results('Adaboost', accuracy, precision, recall, f1)
 
 
 class PerformanceModelBuilder():
