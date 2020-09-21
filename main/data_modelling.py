@@ -4,9 +4,11 @@ import pandas as pd
 from tensorflow.keras import Sequential, layers
 from tensorflow.keras.utils import to_categorical
 from sklearn import svm
+from xgboost import XGBClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+
 from sklearn.preprocessing import LabelEncoder
 # Self-defined modules
 import utility
@@ -59,6 +61,10 @@ class TrainLoadModelBuilder():
         classifier = svm.SVC(decision_function_shape='ovo')
         classifier.fit(X_train, y_train)
         return classifier
+    def _process_xgboost(self, X_train, y_train):
+        xgb = XGBClassifier()
+        xgb.fit(X_train, y_train)
+        return xgb
 
     def _validate_model(self, X_test, y_test, classifier):
         y_preds = classifier.predict(X_test)  # predict classes for y test
@@ -94,6 +100,10 @@ class TrainLoadModelBuilder():
         self._display_performance_results('SVM', accuracy, precision, recall, f1)
         # ============ Neural Network ============
         classifier = self._process_neural_network(X_train, X_test, y_train, y_test)
+        ##== == == == == == xgboost == == == == == ==
+        classifier = self._process_xgboost(X_train, y_train)
+        accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
+        self._display_performance_results('xgboost', accuracy, precision, recall, f1)
 
 
 

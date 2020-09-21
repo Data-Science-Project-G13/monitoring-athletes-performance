@@ -197,6 +197,7 @@ class AdditionalDataFeatureExtractor():
 
 def _function_for_testing(file_name, test_type='all'):
     """
+
     """
     """*** This is the function that is used for testing only and will be removed ***"""
     if test_type == 'all': return True
