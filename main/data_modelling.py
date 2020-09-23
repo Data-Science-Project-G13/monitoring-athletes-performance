@@ -58,7 +58,8 @@ class TrainLoadModelBuilder():
         return rfc
 
     def _process_svm_classification(self, X_train, y_train):
-        classifier = svm.SVC(decision_function_shape='ovo')
+        classifier = svm.SVC(C=1.0,kernel='poly',degree=5)
+        #classifier = svm.SVC(class_weight='balanced')
         classifier.fit(X_train, y_train)
         return classifier
     def _process_xgboost(self, X_train, y_train):
@@ -95,6 +96,7 @@ class TrainLoadModelBuilder():
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
         print('X-y train-test shapes', X_train.shape, y_train.shape, X_test.shape, y_test.shape)
+        print(np.unique(y_train,return_counts=True))
         # # ============ Random Forest ============
         classifier = self._process_random_forest(X_train, y_train)
         accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)

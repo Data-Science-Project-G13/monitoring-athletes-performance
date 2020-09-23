@@ -145,8 +145,10 @@ class AdditionalDataFeatureExtractor():
                 dist_list.append(dist)
                 time_list.append(time)
             Distance, Duration = sum(dist_list) * 1000, sum(time_list)
+            print(Distance,Duration)
             Pace = Duration / (Distance / 100)
             TSS = (CSS / Pace) ** 3 * (Duration / 3600) * 100
+            print(TSS)
             return TSS
         else:
             return float(0)
@@ -234,14 +236,14 @@ def main(data_type: str, athletes_name: str):
                 """ A reminder, you can use the function below to test your functions for ONE .csv file instead all
                     If you want to test running, change the test_type to 'running'. Similarly for swimming and cycling."""
                 test_type = 'all'
-                if not _function_for_testing(file_name, test_type):
-                    continue
+                #if not _function_for_testing(file_name, test_type):
+                    #continue
                 additional_feature_extractor = AdditionalDataFeatureExtractor(file_name,
                                                                               athletes_css=athletes_css,
                                                                               athletes_lact_thr=athletes_lact_thr)
                 features_extracted = additional_feature_extractor.process_feature_engineering()
                 additional_features[features_extracted['Date']] = features_extracted
-                # print('Preview of the features extracted: \n', features_extracted)
+                #print('Preview of the features extracted: \n', features_extracted)
             return additional_features
         else:
             return None
@@ -250,5 +252,5 @@ def main(data_type: str, athletes_name: str):
 if __name__ == '__main__':
     athletes_names = ['eduardo oliveira']
     main('spreadsheet', athletes_names[0])
-    # main('additional', athletes_names[0])
+    main('additional', athletes_names[0])
 

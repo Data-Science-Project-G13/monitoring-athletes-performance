@@ -49,9 +49,10 @@ def merge_spreadsheet_additional(athletes_name):
             spreadsheet[feature] = pd.Series(0, index=spreadsheet.index)
         for index, record in spreadsheet.iterrows():
             date = str(record['Date']).split(' ')[0]  # + record['Date'].split(' ')[1][:2]
+            print(date,additionals.keys())
             activity_type = record['Activity Type'].split(' ')[-1]
-            if date in additionals.keys():
-                # and activity_type.lower() == additionals[date]['Activity Type']:
+            if date in additionals.keys() and activity_type.lower() == additionals[date]['Activity Type']:
+                #print(activity_type.lower(),additionals[date]['Activity Type'],date,additionals.keys())
                 # Additional data activities and spreadsheet not always matched
                 if additionals[date]['TSS'] is not None and additionals[date]['TSS'] != 0:
                     spreadsheet.at[index, 'Training Stress Score®'] = additionals[date]['TSS']
