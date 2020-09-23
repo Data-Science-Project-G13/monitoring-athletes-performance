@@ -1,8 +1,8 @@
 # Packages
 import numpy as np
 import pandas as pd
-from tensorflow.keras import Sequential, layers
-from tensorflow.keras.utils import to_categorical
+# from tensorflow.keras import Sequential, layers
+# from tensorflow.keras.utils import to_categorical
 from sklearn import svm
 from xgboost import XGBClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -36,21 +36,21 @@ class TrainLoadModelBuilder():
         X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size = 0.2, random_state = 25)
         return X_train, X_test, y_train, y_test
 
-    def _process_neural_network(self, X_train, X_test, y_train, y_test):
-        neural_network = Sequential()
-        verbose, epochs, batch_size = 0, 30, 4
-        neural_network.add(layers.Dense(265, input_shape=(self.num_features,), activation='relu'))
-        neural_network.add(layers.BatchNormalization())
-        neural_network.add(layers.Dense(64, activation='relu'))
-        neural_network.add(layers.Dense(1, activation='sigmoid'))
-        neural_network.compile(loss='binary_crossentropy', optimizer='sgd', metrics=['accuracy'])
-        neural_network.fit(X_train, y_train,  validation_data=(X_test, y_test),
-                           epochs=epochs, batch_size=batch_size, shuffle=True)
-        # TODO: Add Grid Search
-        train_acc = neural_network.evaluate(X_train, y_train, verbose=0)[1]
-        test_acc = neural_network.evaluate(X_test, y_test, verbose=0)[1]
-        print('Training Set Accuracy: {}, Test Set Accuracy: {}'.format(train_acc, test_acc))
-        return neural_network
+    # def _process_neural_network(self, X_train, X_test, y_train, y_test):
+    #     neural_network = Sequential()
+    #     verbose, epochs, batch_size = 0, 30, 4
+    #     neural_network.add(layers.Dense(265, input_shape=(self.num_features,), activation='relu'))
+    #     neural_network.add(layers.BatchNormalization())
+    #     neural_network.add(layers.Dense(64, activation='relu'))
+    #     neural_network.add(layers.Dense(1, activation='sigmoid'))
+    #     neural_network.compile(loss='binary_crossentropy', optimizer='sgd', metrics=['accuracy'])
+    #     neural_network.fit(X_train, y_train,  validation_data=(X_test, y_test),
+    #                        epochs=epochs, batch_size=batch_size, shuffle=True)
+    #     # TODO: Add Grid Search
+    #     train_acc = neural_network.evaluate(X_train, y_train, verbose=0)[1]
+    #     test_acc = neural_network.evaluate(X_test, y_test, verbose=0)[1]
+    #     print('Training Set Accuracy: {}, Test Set Accuracy: {}'.format(train_acc, test_acc))
+    #     return neural_network
 
     def _process_random_forest(self, X_train, y_train):
         rfc = RandomForestClassifier(max_depth=3, random_state=0)
@@ -63,7 +63,9 @@ class TrainLoadModelBuilder():
         classifier.fit(X_train, y_train)
         return classifier
     def _process_xgboost(self, X_train, y_train):
-        xgb = XGBClassifier()
+        xgb = XGBClassifier(alpha=15, colsample_bytree=0.1,learning_rate=1, max_depth=5,reg_lambda=10.0)
+        # xgb = XGBClassifier(objective ='gbtree', learning_rate = 0.8,
+        #         max_depth = 5, alpha = 10, n_estimators = 900)
         xgb.fit(X_train, y_train)
         return xgb
 
@@ -106,7 +108,7 @@ class TrainLoadModelBuilder():
         accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
         self._display_performance_results('SVM', accuracy, precision, recall, f1)
         # ============ Neural Network ============
-        classifier = self._process_neural_network(X_train, X_test, y_train, y_test)
+        # classifier = self._process_neural_network(X_train, X_test, y_train, y_test)
         ##== == == == == == xgboost == == == == == ==
         classifier = self._process_xgboost(X_train, y_train)
         accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
