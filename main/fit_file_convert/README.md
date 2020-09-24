@@ -69,3 +69,56 @@ By default, the program will always try to copy/process FIT files unless you add
 ## Additional Help
 
 You can use `python3 process_all.py --help` to see more information.# fit-file-processing
+
+```angular2
+optional arguments:
+  -h, --help            show this help message and exit
+  --subject-name SUBJECT_NAME
+                        name of subject
+  --fit-source-dir FIT_SOURCE_DIR
+                        source data for garmin fit
+  --fit-target-dir FIT_TARGET_DIR
+                        target directory for FIT data; default uses subject
+                        name
+  --fit-processed-csv-dir FIT_PROCESSED_CSV_DIR
+                        target directory for CSVs of processed fit data;
+                        default uses subject name
+  --erase-copied-fit-files
+                        If True, will delete any copied FIT files (not the
+                        originals, though)
+  --gpx-source-dir GPX_SOURCE_DIR
+                        directory for gpx files (if desired)
+  --gpx-target-dir GPX_TARGET_DIR
+                        directory to store processed gpx csv in
+  --subject-dir SUBJECT_DIR
+                        default directory to store subject data in
+  --gpx-summary-filename GPX_SUMMARY_FILENAME
+                        the summary filename for gpx data
+  --fit-overwrite       Will overwrite any previously created CSVs from fit
+                        data
+  --fit-ignore-splits-and-laps
+                        Will not write split/lap data if specified
+  --censorfile CENSORFILE
+                        If provided, will use censorfile CSV to create a copy
+                        of data with censored locations around different
+                        latitude/longitude/radii
+  --censor-string CENSOR_STRING
+                        This is what censored fields are replaced with in
+                        censored data
+  --archive-results     If True, will package data into an archive
+  --archive-censored-only
+                        If True, will only package data that is censored
+  --archive-extra-files ARCHIVE_EXTRA_FILES [ARCHIVE_EXTRA_FILES ...]
+                        Will copy these extra files into an archive if it is
+                        being created
+  --archive-output-dir ARCHIVE_OUTPUT_DIR
+                        location for archived output
+  --archive-filename ARCHIVE_FILENAME
+                        archive filename; will use name for default if none
+                        specified
+  --skip-gpx-conversion
+                        Skips GPX conversion if used
+  --skip-fit-conversion
+                        Skips FIT conversion if used
+
+```
