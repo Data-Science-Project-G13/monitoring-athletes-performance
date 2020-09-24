@@ -888,8 +888,8 @@ if __name__ == '__main__':
     # main('spreadsheet')  # clean all spreadsheet data
     main('spreadsheet', athletes_name=athletes_names[2])  # clean spreadsheet data for one athlete
 
-    # # Clean additional data
-    # activity_types = ['cycling', 'running', 'swimming']
-    # split_type = 'real-time'
-    # for activity_type in activity_types:
-    #     main('additional', athletes_name=athletes_names[0], activity_type=activity_type, split_type=split_type)
+    # Clean additional data
+    activity_types = ['cycling', 'running', 'swimming']
+    split_type = 'real-time'
+    for activity_type in activity_types:
+        main('additional', athletes_name=athletes_names[2], activity_type=activity_type, split_type=split_type)
