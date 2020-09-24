@@ -82,17 +82,27 @@ class SpreadsheetDataCleaner():
             self.dataframe_work_on['Activity Type'].isin(['Hiking', 'Multisport', 'Indoor Rowing'])]
         return dataframe_swim, dataframe_cycle, dataframe_run, dataframe_st, dataframe_others
 
-    def _replace_dataframe_parts_with_imputed_subdatasets(self, imputed_subdatasets: []):
-        self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
-            isin(['Pool Swimming', 'Open Water Swimming', 'Swimming'])] = imputed_subdatasets[0]
-        self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
-            isin(['Virtual Cycling', 'Indoor Cycling', 'Road Cycling', 'Cycling'])] = imputed_subdatasets[1]
-        self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
-            isin(['Running', 'Treadmill Running'])] = imputed_subdatasets[2]
-        self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
-            isin(['Strength Training'])] = imputed_subdatasets[3]
-        self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
-            isin(['Hiking', 'Multisport', 'Indoor Rowing'])] = imputed_subdatasets[4]
+    def _replace_dataframe_parts_with_imputed_subdatasets(self, imputed_subdatasets: dict):
+        def _helper(types: [], general_type: str):
+            if general_type in imputed_subdatasets.keys():
+                self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
+                    isin(types)] = imputed_subdatasets[general_type]
+        _helper(['Pool Swimming', 'Open Water Swimming', 'Swimming'], 'swimming')
+        _helper(['Virtual Cycling', 'Indoor Cycling', 'Road Cycling', 'Cycling'], 'cycling')
+        _helper(['Running', 'Treadmill Running'], 'running')
+        _helper(['Strength Training'], 'training')
+        _helper(['Hiking', 'Multisport', 'Indoor Rowing'], 'others')
+
+        # self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
+        #     isin(['Pool Swimming', 'Open Water Swimming', 'Swimming'])] = imputed_subdatasets['swimming']
+        # self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
+        #     isin(['Virtual Cycling', 'Indoor Cycling', 'Road Cycling', 'Cycling'])] = imputed_subdatasets['cycling']
+        # self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
+        #     isin(['Running', 'Treadmill Running'])] = imputed_subdatasets['running']
+        # self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
+        #     isin(['Strength Training'])] = imputed_subdatasets['training']
+        # self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
+        #     isin(['Hiking', 'Multisport', 'Indoor Rowing'])] = imputed_subdatasets['others']
 
     # def _concat_dataframe_by_activity(self):
     #     self.dataframe_work_on = pd.concat(
@@ -370,19 +380,24 @@ class SpreadsheetDataCleaner():
         self._convert_columns_to_numeric()
         self._format_datetime()
         self._convert_columns_to_numeric()
+
+        # ================ Imputations ====================
         numerical_columns = self.get_numerical_columns()
         categorical_columns = self.get_categorical_columns()
-        sub_df_imputed = []
+        sub_df_imputed = {}
         for sub_df_work_on in self._split_dataframe_by_activity():
-            # ================ Imputations ====================
-            print('=======================')
-            columns_to_drop = self._find_missing_percent(sub_df_work_on)
-            columns_keep = [column for column in sub_df_work_on.columns if column not in columns_to_drop]
-            sub_df_col_selected = sub_df_work_on[columns_keep]
-            if not sub_df_col_selected.empty:
-                sub_df_work_on_columns_imputed = self._apply_imputations(sub_df_col_selected, numerical_columns)
-                sub_df_work_on[columns_keep] = sub_df_work_on_columns_imputed
-            sub_df_imputed.append(sub_df_work_on)
+            if not sub_df_work_on.empty:
+                activity_type = sub_df_work_on.iloc[0]['Activity Type'].split()[-1].lower()
+                if activity_type not in {'running', 'swimming', 'cycling', 'training'}:
+                    activity_type = 'others'
+                print('====== Activity: {} ======'.format(activity_type))
+                columns_missing_too_many_values = self._find_missing_percent(sub_df_work_on)
+                columns_keep = [column for column in sub_df_work_on.columns if column not in columns_missing_too_many_values]
+                sub_df_col_selected = sub_df_work_on[columns_keep]
+                if not sub_df_col_selected.empty:
+                    sub_df_work_on_columns_imputed = self._apply_imputations(sub_df_col_selected, numerical_columns)
+                    sub_df_work_on[columns_keep] = sub_df_work_on_columns_imputed
+                sub_df_imputed[activity_type] = sub_df_work_on
         self._replace_dataframe_parts_with_imputed_subdatasets(sub_df_imputed)
         self.dataframe[self.dataframe_work_on.columns] = self.dataframe_work_on[self.dataframe_work_on.columns]
         # Apply imputation for all activity
@@ -489,11 +504,14 @@ class AdditionalDataCleaner():
 
     def _apply_univariate_imputation(self, columns):
         if columns:
-            new_data = self.dataframe.copy()
-            imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
-            new_data = pd.DataFrame(imputer.fit_transform(new_data[columns]), columns = columns)
-            self.dataframe[columns] = new_data[columns]
-            del new_data
+            try:
+                new_data = self.dataframe.copy()
+                imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
+                new_data = pd.DataFrame(imputer.fit_transform(new_data[columns]), columns = columns)
+                self.dataframe[columns] = new_data[columns]
+                del new_data
+            except Exception as e:
+                print(e)
 
     def _apply_multivariate_imputation(self, columns_need_imputation, column_group):
         null_cols = [col for col in columns_need_imputation if self.dataframe[col].isnull().all()]
@@ -886,10 +904,10 @@ if __name__ == '__main__':
 
     # Clean spreadsheet data
     # main('spreadsheet')  # clean all spreadsheet data
-    main('spreadsheet', athletes_name=athletes_names[2])  # clean spreadsheet data for one athlete
+    main('spreadsheet', athletes_name=athletes_names[1])  # clean spreadsheet data for one athlete
 
     # Clean additional data
     activity_types = ['cycling', 'running', 'swimming']
     split_type = 'real-time'
     for activity_type in activity_types:
-        main('additional', athletes_name=athletes_names[2], activity_type=activity_type, split_type=split_type)
+        main('additional', athletes_name=athletes_names[1], activity_type=activity_type, split_type=split_type)
