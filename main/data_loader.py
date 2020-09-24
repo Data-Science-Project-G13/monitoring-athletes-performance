@@ -162,20 +162,20 @@ if __name__ == '__main__':
     print(cleaned_spreadsheet_df_example2.head())
 
 
-    # # ====== Get all folder names of the additional data ======
-    # data_loader_additional = DataLoader('additional')
-    # add_data_folder_names = utility.get_all_additional_data_folder_names()
-    # print('Additional data folder names: ', add_data_folder_names)
-    # # Load additional data in two ways
-    # additional_df_example1 = data_loader_additional.load_additional_data(add_data_folder_names[0])    # Load with folder name
-    # additional_df_example2 = data_loader_additional.load_additional_data(athletes_name=athletes_names[0],
-    #                                                                      activity_type='swimming',
-    #                                                                      split_type='real-time')  # Load with athlete's name
-    # print(additional_df_example1)
-    # print(additional_df_example2)
-    # # Load cleaned additional data
-    # cleaned_additional_df_example = data_loader_additional.load_cleaned_additional_data(athletes_name=athletes_names[0])
-    # print(cleaned_additional_df_example)
+    # ====== Get all folder names of the additional data ======
+    data_loader_additional = DataLoader('additional')
+    add_data_folder_names = utility.get_all_additional_data_folder_names()
+    print('Additional data folder names: ', add_data_folder_names)
+    # Load additional data in two ways
+    additional_df_example1 = data_loader_additional.load_additional_data(add_data_folder_names[1])    # Load with folder name
+    additional_df_example2 = data_loader_additional.load_additional_data(athletes_name=athletes_names[1],
+                                                                         activity_type='swimming',
+                                                                         split_type='real-time')  # Load with athlete's name
+    print(additional_df_example1)
+    print(additional_df_example2)
+    # Load cleaned additional data
+    cleaned_additional_df_example = data_loader_additional.load_cleaned_additional_data(athletes_name=athletes_names[1])
+    print(cleaned_additional_df_example)
 
 
     # ====== Load merged data ======
