@@ -98,8 +98,9 @@ def parse_options():
                         help='Will overwrite any previously created CSVs from fit data'
     )
 
+    # TODO: Default changed by Tingli to True
     parser.add_argument('--fit-ignore-splits-and-laps', dest='fit_ignore_splits_and_laps',
-                        action='store_true', default=False, required=False,
+                        action='store_true', default=True, required=False,
                         help='Will not write split/lap data if specified'
     )
 

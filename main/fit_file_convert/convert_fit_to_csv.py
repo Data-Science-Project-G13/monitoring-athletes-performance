@@ -144,117 +144,122 @@ def write_fitfile_to_csv(
         is_overwritten=False,
         fit_ignore_splits_and_laps=False
 ):
-    tz_name = ''
-    local_tz = CST
-    changed_tz = False
-    position_long = None
-    position_lat = None
-    messages = fitfile.messages
-    data = []
-    lap_data = []
-    start_data = []
-    #this should probably work, but it's possibly 
-    #based on a certain version of the file/device
-    timestamp = get_timestamp(messages)
-    event_type = get_event_type(messages)
-    if event_type is None:
-        event_type = 'other'
-    output_file = event_type + '_' + timestamp.strftime('%Y-%m-%d_%H-%M-%S.csv')
-    
-    for m in messages:
-        skip=False
-        skip_lap = False 
-        skip_start = False 
-        if not hasattr(m, 'fields'):
-            continue
-        fields = m.fields
-        #check for important data types
-        mdata = {}
-        for field in fields:
-            if not changed_tz and field.name in ['position_lat','position_long', 'start_position_lat','start_position_long']:
-                if 'lat' in field.name:
-                    try:
-                        position_lat = float(field.value)
-                    except TypeError:
-                        pass
-                else:
-                    try:
-                        position_long = float(field.value)
-                    except TypeError:
-                        pass
-                if position_lat is not None and position_long is not None:
-                    changed_tz = True
-                    tz_name = tzwhere.tzNameAt(position_lat, position_long)
-                    # TODO: Tingli added this try catch
-                    try:
-                        local_tz = pytz.timezone(tz_name)
-                        if tz_name != 'US/Central':
-                            print('Using timezone %s' % tz_name)
-                    except Exception as e:
-                        print(e)
-                    
-                
-            if field.name in all_allowed_fields:
-                # currently saving timezone conversion to end, but keeping this here for now
-                if field.name=='timestamp' and False:
-                    mdata[field.name] = UTC.localize(field.value).astimezone(local_tz)
-                else:
-                    mdata[field.name] = field.value
-        # this is sort of a janky way of determining field type, but it works for now
-        for rf in required_fields:
-            if rf not in mdata:
-                skip=True
-        for lrf in lap_required_fields:
-            if lrf not in mdata:
-                skip_lap = True 
-        for srf in start_required_fields:
-            if srf not in mdata:
-                skip_start = True
-        if not skip:
-            data.append(mdata)
-        elif not skip_lap:
-            lap_data.append(mdata)
-        elif not skip_start:
-            start_data.append(mdata)
+    # TODO: Try-catch added by Tingli
+    try:
+        tz_name = ''
+        local_tz = CST
+        changed_tz = False
+        position_long = None
+        position_lat = None
 
-    # localize timezone
-    for row in data + lap_data + start_data:
-        if 'timestamp' in row:
-            row['timestamp_utc'] = row['timestamp']
-            row['timestamp'] = UTC.localize(row['timestamp']).astimezone(local_tz)
-            row['timezone'] = tz_name
-            
-    #write to csv
-    #general track info
-    with open(os.path.join(fit_processed_csv_dir, '{}_real-time.csv'.format(output_file[:-4])), 'w') as f:
-        writer = csv.writer(f)
-        writer.writerow(allowed_fields)
-        for entry in data:
-            writer.writerow([ str(entry.get(k, '')) for k in allowed_fields])
+        messages = fitfile.messages
+        data = []
+        lap_data = []
+        start_data = []
+        #this should probably work, but it's possibly
+        #based on a certain version of the file/device
+        timestamp = get_timestamp(messages)
+        event_type = get_event_type(messages)
+        if event_type is None:
+            event_type = 'other'
+        output_file = event_type + '_' + timestamp.strftime('%Y-%m-%d_%H-%M-%S.csv')
 
-    if not fit_ignore_splits_and_laps:
-        #lap info
-        with open(os.path.join(fit_processed_csv_dir, lap_filename(output_file)), 'w') as f:
+        for m in messages:
+            skip=False
+            skip_lap = False
+            skip_start = False
+            if not hasattr(m, 'fields'):
+                continue
+            fields = m.fields
+            #check for important data types
+            mdata = {}
+            for field in fields:
+                if not changed_tz and field.name in ['position_lat','position_long', 'start_position_lat','start_position_long']:
+                    if 'lat' in field.name:
+                        try:
+                            position_lat = float(field.value)
+                        except TypeError:
+                            pass
+                    else:
+                        try:
+                            position_long = float(field.value)
+                        except TypeError:
+                            pass
+                    if position_lat is not None and position_long is not None:
+                        changed_tz = True
+                        tz_name = tzwhere.tzNameAt(position_lat, position_long)
+                        # TODO: Tingli added this try catch
+                        try:
+                            local_tz = pytz.timezone(tz_name)
+                            if tz_name != 'US/Central':
+                                print('Using timezone %s' % tz_name)
+                        except Exception as e:
+                            print(e)
+
+
+                if field.name in all_allowed_fields:
+                    # currently saving timezone conversion to end, but keeping this here for now
+                    if field.name=='timestamp' and False:
+                        mdata[field.name] = UTC.localize(field.value).astimezone(local_tz)
+                    else:
+                        mdata[field.name] = field.value
+            # this is sort of a janky way of determining field type, but it works for now
+            for rf in required_fields:
+                if rf not in mdata:
+                    skip=True
+            for lrf in lap_required_fields:
+                if lrf not in mdata:
+                    skip_lap = True
+            for srf in start_required_fields:
+                if srf not in mdata:
+                    skip_start = True
+            if not skip:
+                data.append(mdata)
+            elif not skip_lap:
+                lap_data.append(mdata)
+            elif not skip_start:
+                start_data.append(mdata)
+
+        # localize timezone
+        for row in data + lap_data + start_data:
+            if 'timestamp' in row:
+                row['timestamp_utc'] = row['timestamp']
+                row['timestamp'] = UTC.localize(row['timestamp']).astimezone(local_tz)
+                row['timezone'] = tz_name
+
+        #write to csv
+        #general track info
+        with open(os.path.join(fit_processed_csv_dir, '{}_real-time.csv'.format(output_file[:-4])), 'w') as f:
             writer = csv.writer(f)
-            writer.writerow(lap_fields)
-            for entry in lap_data:
-                writer.writerow([ str(entry.get(k, '')) for k in lap_fields])
-        #start/stop info
-        with open(os.path.join(fit_processed_csv_dir, start_filename(output_file)), 'w') as f:
-            writer = csv.writer(f)
-            writer.writerow(start_fields)
-            for entry in start_data:
-                writer.writerow([ str(entry.get(k, '')) for k in start_fields])
-    print('wrote %s' % output_file)
-    if not fit_ignore_splits_and_laps:
-        print('wrote %s' % lap_filename(output_file))
-        print('wrote %s' % start_filename(output_file))
+            writer.writerow(allowed_fields)
+            for entry in data:
+                writer.writerow([ str(entry.get(k, '')) for k in allowed_fields])
 
-    if not is_overwritten:
-        append_log(original_filename, fit_processed_csv_dir)
+        if not fit_ignore_splits_and_laps:
+            #lap info
+            with open(os.path.join(fit_processed_csv_dir, lap_filename(output_file)), 'w') as f:
+                writer = csv.writer(f)
+                writer.writerow(lap_fields)
+                for entry in lap_data:
+                    writer.writerow([ str(entry.get(k, '')) for k in lap_fields])
+            #start/stop info
+            with open(os.path.join(fit_processed_csv_dir, start_filename(output_file)), 'w') as f:
+                writer = csv.writer(f)
+                writer.writerow(start_fields)
+                for entry in start_data:
+                    writer.writerow([ str(entry.get(k, '')) for k in start_fields])
+        print('wrote %s' % output_file)
+        if not fit_ignore_splits_and_laps:
+            print('wrote %s' % lap_filename(output_file))
+            print('wrote %s' % start_filename(output_file))
 
-    if not changed_tz:
-        print('TZ IS NOT CHANGED!')
+        if not is_overwritten:
+            append_log(original_filename, fit_processed_csv_dir)
+
+        if not changed_tz:
+            print('TZ IS NOT CHANGED!')
+    except:
+        print('"write_fitfile_to_csv" in "convert_fit_to_csv.py" not successful')
 
 if __name__=='__main__':
     raise NotImplementedError('There is no way to currently run this as a command-line script. It must be imported. Run process_all.py instead.')
