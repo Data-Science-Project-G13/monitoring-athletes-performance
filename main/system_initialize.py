@@ -101,7 +101,7 @@ def initialize_system():
     """
     create_directory_structures()
     create_config_files()
-    athletes = ['eduardo oliveira']
+    athletes = ['eduardo oliveira', 'xu chen']
     for athletes_name in athletes:
         with open(athlete_info_json_path, 'r') as file:
             athletes_info_json = json.load(file)

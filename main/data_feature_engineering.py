@@ -250,7 +250,7 @@ def main(data_type: str, athletes_name: str):
 
 
 if __name__ == '__main__':
-    athletes_names = ['eduardo oliveira']
-    main('spreadsheet', athletes_names[0])
-    main('additional', athletes_names[0])
+    athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
+    main('spreadsheet', athletes_names[1])
+    main('additional', athletes_names[1])
 
