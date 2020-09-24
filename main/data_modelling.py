@@ -3,12 +3,22 @@ import numpy as np
 import pandas as pd
 # from tensorflow.keras import Sequential, layers
 # from tensorflow.keras.utils import to_categorical
+
 from sklearn import svm
 from xgboost import XGBClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
+from mlxtend.classifier import StackingCVClassifier
+from warnings import filterwarnings
+filterwarnings('ignore')
+
 from sklearn.preprocessing import LabelEncoder
 # Self-defined modules
 import utility
@@ -64,11 +74,50 @@ class TrainLoadModelBuilder():
         return classifier
     def _process_xgboost(self, X_train, y_train):
         xgb = XGBClassifier(alpha=15, colsample_bytree=0.1,learning_rate=1, max_depth=5,reg_lambda=10.0)
-        # xgb = XGBClassifier(objective ='gbtree', learning_rate = 0.8,
-        #         max_depth = 5, alpha = 10, n_estimators = 900)
         xgb.fit(X_train, y_train)
         return xgb
+    def _process_stacking(self, X_train, y_train):
+        knn = KNeighborsClassifier(n_neighbors=1)
+        rf = RandomForestClassifier(max_depth=3,max_features =6,n_estimators=50,random_state=0)
+        SVM = svm.SVC(C=1.0,kernel='poly',degree=5)
+        Xgb = XGBClassifier(alpha=15, colsample_bytree=0.1,learning_rate=1, max_depth=5,reg_lambda=10.0)
+        gnb = GaussianNB()
+        lr = LogisticRegression(C = 10.0, dual=False,max_iter=100,solver='lbfgs')
 
+        sclf = StackingCVClassifier(classifiers=[knn, rf,lr,SVM,Xgb],
+                                    meta_classifier=gnb,
+                                    random_state=42)
+        sclf.fit(X_train,y_train)
+        return sclf
+
+        # params = {'kneighborsclassifier__n_neighbors': [1, 5],
+        #           'randomforestclassifier__n_estimators': [10, 50],
+        #           'randomforestclassifier__max_depth':[3, 5, 10, 13],
+        #           'randomforestclassifier__max_features': [2, 4, 6, 8, 10],
+        #           'XGBClassifier__n_estimators': [400,1000],
+        #           # 'XGBClassifier__max_depth': [15,20,25],
+        #           # 'XGBClassifier__reg_alpha': [1.1, 1.2, 1.3],
+        #           # 'XGBClassifier__reg_lambda': [1.1, 1.2, 1.3],
+        #           # 'XGBClassifier__subsample': [0.7, 0.8, 0.9],
+        #           'meta_classifier__C' : [0.1, 10.0]}
+
+        # grid = GridSearchCV(estimator=sclf,
+        #                     param_grid=params,
+        #                     cv=5,
+        #                     refit=True)
+        # grid.fit(X_train, y_train)
+
+        # cv_keys = ('mean_test_score', 'std_test_score', 'params')
+        #
+        # for r, _ in enumerate(grid.cv_results_['mean_test_score']) :
+        #     print("%0.3f +/- %0.2f %r"
+        #           % (grid.cv_results_[cv_keys[0]][r],
+        #              grid.cv_results_[cv_keys[1]][r] / 2.0,
+        #              grid.cv_results_[cv_keys[2]][r]))
+        #
+        # print('Best parameters: %s' % grid.best_params_)
+        # print('Accuracy: %.2f' % grid.best_score_)
+        # return grid
     def _process_Adaboost(self, X_train, y_train):
         AB = AdaBoostClassifier(base_estimator=None, n_estimators=50, learning_rate=1.0, algorithm='SAMME.R', random_state=None)
         AB.fit(X_train,y_train)
@@ -113,10 +162,17 @@ class TrainLoadModelBuilder():
         classifier = self._process_xgboost(X_train, y_train)
         accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
         self._display_performance_results('xgboost', accuracy, precision, recall, f1)
+        ##== == == == == == stacking == == == == == ==
+        classifier = self._process_stacking(X_train, y_train)
+        accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
+        self._display_performance_results('stacking', accuracy, precision, recall, f1)
         ##== == == == == == Adaboost == == == == == ==
         classifier = self._process_Adaboost(X_train, y_train)
         accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
         self._display_performance_results('Adaboost', accuracy, precision, recall, f1)
+
+
+
 
 
 class PerformanceModelBuilder():
