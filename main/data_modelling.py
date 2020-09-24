@@ -76,6 +76,7 @@ class TrainLoadModelBuilder():
         xgb = XGBClassifier(alpha=15, colsample_bytree=0.1,learning_rate=1, max_depth=5,reg_lambda=10.0)
         xgb.fit(X_train, y_train)
         return xgb
+
     def _process_stacking(self, X_train, y_train):
         knn = KNeighborsClassifier(n_neighbors=1)
         rf = RandomForestClassifier(max_depth=3,max_features =6,n_estimators=50,random_state=0)
@@ -118,6 +119,7 @@ class TrainLoadModelBuilder():
         # print('Best parameters: %s' % grid.best_params_)
         # print('Accuracy: %.2f' % grid.best_score_)
         # return grid
+
     def _process_Adaboost(self, X_train, y_train):
         AB = AdaBoostClassifier(base_estimator=None, n_estimators=50, learning_rate=1.0, algorithm='SAMME.R', random_state=None)
         AB.fit(X_train,y_train)
@@ -148,30 +150,28 @@ class TrainLoadModelBuilder():
         X_train, X_test, y_train, y_test = self._split_train_validation()
         print('X-y train-test shapes', X_train.shape, y_train.shape, X_test.shape, y_test.shape)
         print(np.unique(y_train,return_counts=True))
-        # # ============ Random Forest ============
+        # ============ Random Forest ============
         classifier = self._process_random_forest(X_train, y_train)
         accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
         self._display_performance_results('Random Forest', accuracy, precision, recall, f1)
-        # # ============ SVM ============
+        # ============ SVM ============
         classifier = self._process_svm_classification(X_train, y_train)
         accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
         self._display_performance_results('SVM', accuracy, precision, recall, f1)
         # ============ Neural Network ============
         # classifier = self._process_neural_network(X_train, X_test, y_train, y_test)
-        ##== == == == == == xgboost == == == == == ==
+        # ============ xgboost ============
         classifier = self._process_xgboost(X_train, y_train)
         accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
         self._display_performance_results('xgboost', accuracy, precision, recall, f1)
-        ##== == == == == == stacking == == == == == ==
+        # ============ stacking ============
         classifier = self._process_stacking(X_train, y_train)
         accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
         self._display_performance_results('stacking', accuracy, precision, recall, f1)
-        ##== == == == == == Adaboost == == == == == ==
+        # ============ Adaboost ============
         classifier = self._process_Adaboost(X_train, y_train)
         accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
         self._display_performance_results('Adaboost', accuracy, precision, recall, f1)
-
-
 
 
 
