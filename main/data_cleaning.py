@@ -64,7 +64,7 @@ class SpreadsheetDataCleaner():
     def __init__(self, dataframe: pd.DataFrame):
         self.dataframe = dataframe
         self.dataframe_work_on = self.dataframe.copy()
-        self.columns_to_numeric = utility.get_numerical_columns('spreadsheet')
+        self.columns_to_numeric = [column for column in self.dataframe_work_on.columns if column in utility.get_numerical_columns('spreadsheet')]
         self.column_groups_imputation = utility.get_column_groups_for_imputation('spreadsheet')
         self.missing_val_logger = []
         self.outlier_dict_logger = {'Outlier Index': [], 'Column': [], 'Reason': []}
@@ -101,11 +101,22 @@ class SpreadsheetDataCleaner():
     #     self.dataframe_work_on = self.dataframe_work_on.sort_index(inplace=True)
 
     def _drop_columns(self) :
-        columns_no_imputation = ['Favorite', 'Aerobic TE', 'Avg Run Cadence', 'Max Run Cadence', 'Avg Stride Length',
-                                 'Avg Vertical Ratio', 'Avg Vertical Oscillation', 'Avg Ground Contact Time',
-                                 'Avg GCT Balance', 'L/R Balance', 'Grit', 'Flow', 'Total Reps', 'Total Sets',
-                                 'Bottom Time', 'Min Temp', 'Surface Interval', 'Decompression', 'Best Lap Time', 'Max Temp']
-        self.dataframe_work_on.drop(columns_no_imputation, axis=1, inplace=True)
+
+        columns_need_imputation_general = ['Activity Type', 'Date', 'Title', 'Distance', 'Calories', 'Time', 'Avg HR', 'Max HR',
+                                   'Avg Speed', 'Max Speed', 'Elev Gain', 'Elev Loss', 'Avg Bike Cadence', 'Max Bike Cadence',
+                                   'Normalized Power® (NP®)', 'Training Stress Score®', 'Max Avg Power (20 min)', 'Avg Power',
+                                   'Max Power', 'Total Strokes', 'Avg. Swolf', 'Avg Stroke Rate', 'Climb Time', 'Number of Laps',
+                                   'Avg Resp', 'Min Resp', 'Max Resp']
+        columns_need_imputation_athlete = [column for column in self.dataframe_work_on.columns if column in columns_need_imputation_general]
+        self.dataframe_work_on = self.dataframe_work_on[columns_need_imputation_athlete]
+
+        # columns_no_imputation = ['Favorite', 'Aerobic TE', 'Avg Run Cadence', 'Max Run Cadence', 'Avg Stride Length',
+        #                          'Avg Vertical Ratio', 'Avg Vertical Oscillation', 'Avg Ground Contact Time',
+        #                          'Avg GCT Balance', 'L/R Balance', 'Grit', 'Flow', 'Total Reps', 'Total Sets',
+        #                          'Bottom Time', 'Min Temp', 'Surface Interval', 'Decompression', 'Best Lap Time',
+        #                          'Max Temp']
+        # # columns_need_imputation = [column for column in self.dataframe_work_on.columns if column not in columns_no_imputation]
+        # self.dataframe_work_on.drop(columns_no_imputation, axis=1, inplace=True)
 
     def _convert_strings_to_lower_case(self) :
         self.dataframe_work_on['Activity Type'] = self.dataframe_work_on['Activity Type'].str.lower()
@@ -871,14 +882,14 @@ def main(data_type='spreadsheet', athletes_name: str = None, activity_type: str 
 
 
 if __name__ == '__main__':
-    athletes_names = ['eduardo oliveira']
+    athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
 
     # Clean spreadsheet data
     # main('spreadsheet')  # clean all spreadsheet data
-    main('spreadsheet', athletes_name=athletes_names[0])  # clean spreadsheet data for one athlete
+    main('spreadsheet', athletes_name=athletes_names[2])  # clean spreadsheet data for one athlete
 
-    # Clean additional data
-    activity_types = ['cycling', 'running', 'swimming']
-    split_type = 'real-time'
-    for activity_type in activity_types:
-        main('additional', athletes_name=athletes_names[0], activity_type=activity_type, split_type=split_type)
+    # # Clean additional data
+    # activity_types = ['cycling', 'running', 'swimming']
+    # split_type = 'real-time'
+    # for activity_type in activity_types:
+    #     main('additional', athletes_name=athletes_names[0], activity_type=activity_type, split_type=split_type)
