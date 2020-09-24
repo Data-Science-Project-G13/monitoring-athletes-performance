@@ -115,9 +115,9 @@
         "pre weight": null,
         "post weight": null,
         "injuries": null,
-        "critical swim speed": null,
-        "joe freil lactate threshold": null,
-        "andy coogan lactate threshold": null
+        "critical swim speed": 1.1011842105263157,
+        "joe freil lactate threshold": 98.04940859797604,
+        "andy coogan lactate threshold": 95.7263293050734
     },
     "Carly Hart": {
         "athlete type": null,
