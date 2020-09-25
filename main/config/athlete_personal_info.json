@@ -19,9 +19,9 @@
         "pre weight": 82,
         "post weight": 79,
         "injuries": "hamstring",
-        "critical swim speed": 1.1547619047619049,
-        "joe freil lactate threshold": 149.05551403864632,
-        "andy coogan lactate threshold": 147.713712287971
+        "critical swim speed": 1.2829620710415415,
+        "joe freil lactate threshold": 150.64283224097056,
+        "andy coogan lactate threshold": 150.52847174506434
     },
     "Juliet Forsyth": {
         "athlete type": "advance",
@@ -127,8 +127,8 @@
         "pre weight": null,
         "post weight": null,
         "injuries": null,
-        "critical swim speed": null,
-        "joe freil lactate threshold": null,
-        "andy coogan lactate threshold": null
+        "critical swim speed": 1.350373692077728,
+        "joe freil lactate threshold": 166.9107477589503,
+        "andy coogan lactate threshold": 163.4790890831331
     }
 }
