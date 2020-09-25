@@ -99,6 +99,7 @@ def initialize_lactate_threshold(athletes_name: str):
 def initialize_system(athletes_names):
     """ Initialize the whole system
     """
+    utility.SystemReminder().display_initialization_start()
     create_directory_structures()
     create_config_files()
     for athletes_name in athletes_names:
@@ -111,8 +112,10 @@ def initialize_system(athletes_names):
         athletes_info_json[athletes_name.title()]["andy coogan lactate threshold"] = ac_threshold
         with open(athlete_info_json_path, 'w') as file:
             json.dump(athletes_info_json, file, indent=4)
-    print("System Initialized.")
+    utility.SystemReminder().display_initialization_end()
+
 
 
 if __name__ == '__main__':
-    initialize_system()
+    athletes_names = ['Eduardo Oliveira', 'Xu Chen', 'Carly Hart']
+    initialize_system(athletes_names)
