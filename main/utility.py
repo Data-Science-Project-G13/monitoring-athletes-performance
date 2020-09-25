@@ -198,6 +198,18 @@ class SystemReminder():
     def display_data_cleaning_end(self, athletes_name, data_type):
         print("{} {} data done cleaning".format(athletes_name, data_type))
 
+    def display_feature_engineering_start(self, athletes_name):
+        print("Processing feature engineering on {} data...".format(athletes_name))
+
+    def display_feature_engineering_end(self, athletes_name):
+        print("Feature engineering on {} data is done.".format(athletes_name))
+
+    def display_modeling_start(self, athletes_name, model_type):
+        print("Building {} model on {} data...".format(model_type, athletes_name))
+
+    def display_modeling_end(self, athletes_name, model_type):
+        print("{} modeling on {} data is done.".format(model_type, athletes_name))
+
 
 if __name__ == '__main__':
     # The lines below are for test
