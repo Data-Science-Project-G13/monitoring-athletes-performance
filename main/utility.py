@@ -184,6 +184,20 @@ def get_athletes_lact_thr(athletes_name) -> (float, float):
     return (jf_lact_thr, ac_lact_thr)
 
 
+class SystemReminder():
+
+    def display_initialization_start(self):
+        print("Initializing the System...")
+
+    def display_initialization_end(self):
+        print("System Initialized.")
+
+    def display_data_cleaning_start(self, athletes_name, data_type):
+        print("Cleaning {} {} data...".format(athletes_name, data_type))
+
+    def display_data_cleaning_end(self, athletes_name, data_type):
+        print("{} {} data done cleaning".format(athletes_name, data_type))
+
 
 if __name__ == '__main__':
     # The lines below are for test
