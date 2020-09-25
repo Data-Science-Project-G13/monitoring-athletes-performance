@@ -5,12 +5,13 @@ import pandas as pd
 import data_feature_engineering
 
 
-def _save_merged_df(file_name, merged_dataframe: pd.DataFrame):
+def _save_merged_df(file_name, merged_dataframe: pd.DataFrame, verbose):
     merged_data_folder = '{}/data/merged_dataframes'.format(os.path.pardir)
     if not os.path.exists(merged_data_folder):
         os.mkdir(merged_data_folder)
     merged_dataframe.to_csv('{}/{}'.format(merged_data_folder, file_name), index=False)
-    print('Merged {} data saved!'.format(file_name))
+    if verbose:
+        print('Merged {} data saved!'.format(file_name))
 
 
 def _add_fitness_fatigue(spreadsheet):
@@ -50,8 +51,8 @@ def merge_spreadsheet_additional(athletes_name):
         for index, record in spreadsheet.iterrows():
             date = str(record['Date']).split(' ')[0]  # + record['Date'].split(' ')[1][:2]
             activity_type = record['Activity Type'].split(' ')[-1]
-            if date in additionals.keys() and activity_type.lower() == additionals[date]['Activity Type']:
-                #print(activity_type.lower(),additionals[date]['Activity Type'],date,additionals.keys())
+            if date in additionals.keys():
+                # and activity_type.lower() == additionals[date]['Activity Type']:
                 # Additional data activities and spreadsheet not always matched
                 if additionals[date]['TSS'] is not None and additionals[date]['TSS'] != 0:
                     spreadsheet.at[index, 'Training Stress Score®'] = additionals[date]['TSS']
@@ -67,12 +68,12 @@ def merge_spreadsheet_additional(athletes_name):
     return spreadsheet
 
 
-def main(athletes_name):
+def process(athletes_name, verbose=False):
     merged_df = merge_spreadsheet_additional(athletes_name)
     file_name = 'merged_{}.csv'.format('_'.join(athletes_name.split(' ')))
-    _save_merged_df(file_name, merged_df)
+    _save_merged_df(file_name, merged_df, verbose)
 
 
 if __name__ == '__main__':
     athletes_name = ['Eduardo Oliveira']
-    main(athletes_name[0])
+    process(athletes_name[0])
