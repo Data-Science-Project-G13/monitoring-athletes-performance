@@ -96,13 +96,12 @@ def initialize_lactate_threshold(athletes_name: str):
     return _calculate_Joe_Freil_lactate_threshold(), _calculate_Andy_Coogan__lactate_threshold()
 
 
-def initialize_system():
+def initialize_system(athletes_names):
     """ Initialize the whole system
     """
     create_directory_structures()
     create_config_files()
-    athletes = ['eduardo oliveira', 'xu chen']
-    for athletes_name in athletes:
+    for athletes_name in athletes_names:
         with open(athlete_info_json_path, 'r') as file:
             athletes_info_json = json.load(file)
         athletes_css = initialize_critical_swim_speed(athletes_name)
@@ -112,6 +111,7 @@ def initialize_system():
         athletes_info_json[athletes_name.title()]["andy coogan lactate threshold"] = ac_threshold
         with open(athlete_info_json_path, 'w') as file:
             json.dump(athletes_info_json, file, indent=4)
+    print("System Initialized.")
 
 
 if __name__ == '__main__':
