@@ -1,11 +1,9 @@
 # Packages
 import numpy as np
 import pandas as pd
-# from tensorflow.keras import Sequential, layers
-# from tensorflow.keras.utils import to_categorical
-
+from tensorflow.keras import Sequential, layers
+from tensorflow.keras.utils import to_categorical
 from sklearn import svm
-from xgboost import XGBClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
@@ -15,15 +13,15 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
+from sklearn.preprocessing import LabelEncoder
+from xgboost import XGBClassifier
 from mlxtend.classifier import StackingCVClassifier
 from warnings import filterwarnings
 filterwarnings('ignore')
 
-from sklearn.preprocessing import LabelEncoder
 # Self-defined modules
 import utility
 import data_loader
-
 
 
 # Set the data frame display option
@@ -72,6 +70,7 @@ class TrainLoadModelBuilder():
         #classifier = svm.SVC(class_weight='balanced')
         classifier.fit(X_train, y_train)
         return classifier
+
     def _process_xgboost(self, X_train, y_train):
         xgb = XGBClassifier(alpha=15, colsample_bytree=0.1,learning_rate=1, max_depth=5,reg_lambda=10.0)
         xgb.fit(X_train, y_train)
@@ -160,18 +159,18 @@ class TrainLoadModelBuilder():
         self._display_performance_results('SVM', accuracy, precision, recall, f1)
         # ============ Neural Network ============
         # classifier = self._process_neural_network(X_train, X_test, y_train, y_test)
-        # ============ xgboost ============
-        classifier = self._process_xgboost(X_train, y_train)
+        # ============ XGBoost ============
+        # classifier = self._process_xgboost(X_train, y_train)
         accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
-        self._display_performance_results('xgboost', accuracy, precision, recall, f1)
-        # ============ stacking ============
-        classifier = self._process_stacking(X_train, y_train)
+        self._display_performance_results('XGBoost', accuracy, precision, recall, f1)
+        # ============ Stacking ============
+        # classifier = self._process_stacking(X_train, y_train)
         accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
-        self._display_performance_results('stacking', accuracy, precision, recall, f1)
+        self._display_performance_results('Stacking', accuracy, precision, recall, f1)
         # ============ Adaboost ============
         classifier = self._process_Adaboost(X_train, y_train)
         accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
-        self._display_performance_results('Adaboost', accuracy, precision, recall, f1)
+        self._display_performance_results('AdaBoost', accuracy, precision, recall, f1)
 
 
 
