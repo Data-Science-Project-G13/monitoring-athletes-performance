@@ -872,7 +872,7 @@ def _main_helper_additional(athletes_name, activity_type, split_type, verbose=Fa
                                                                                  activity_type))
 
 
-def main(data_type='spreadsheet', athletes_name: str = None, activity_type: str = None, split_type: str = None):
+def main(data_type='spreadsheet', athletes_name: str = None, activity_type: str = None, split_type: str = None, verbose=False):
     """The main function of processing data cleaning
 
     Parameters
@@ -890,21 +890,19 @@ def main(data_type='spreadsheet', athletes_name: str = None, activity_type: str 
     """
     _create_cleaned_data_folder(data_type)
     _create_log_folders(data_type, athletes_name)
-    utility.SystemReminder().display_data_cleaning_start(athletes_name, data_type)
     if data_type == 'spreadsheet':
         if athletes_name is None:
             # Clean all spreadsheet data
             spreadsheet_file_names = utility.get_all_spreadsheet_data_file_names()
             for file_name in spreadsheet_file_names:
-                _main_helper_spreadsheet(file_name=file_name, verbose=True)
+                _main_helper_spreadsheet(file_name=file_name, verbose=verbose)
         else:
             # Clean data for the given athlete
-            _main_helper_spreadsheet(athletes_name=athletes_name, verbose=True)
+            _main_helper_spreadsheet(athletes_name=athletes_name, verbose=verbose)
 
     elif data_type == 'additional':
         # Clean all additional data for the given athlete
-        _main_helper_additional(athletes_name, activity_type, split_type, verbose=True)
-    utility.SystemReminder().display_data_cleaning_start(athletes_name, data_type)
+        _main_helper_additional(athletes_name, activity_type, split_type, verbose=verbose)
 
 
 if __name__ == '__main__':
@@ -912,10 +910,10 @@ if __name__ == '__main__':
 
     # Clean spreadsheet data
     # main('spreadsheet')  # clean all spreadsheet data
-    main('spreadsheet', athletes_name=athletes_names[1])  # clean spreadsheet data for one athlete
+    main('spreadsheet', athletes_name=athletes_names[1], verbose=True)  # clean spreadsheet data for one athlete
 
     # Clean additional data
     activity_types = ['cycling', 'running', 'swimming']
     split_type = 'real-time'
     for activity_type in activity_types:
-        main('additional', athletes_name=athletes_names[1], activity_type=activity_type, split_type=split_type)
+        main('additional', athletes_name=athletes_names[1], activity_type=activity_type, split_type=split_type, verbose=True)
