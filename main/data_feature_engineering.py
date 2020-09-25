@@ -51,8 +51,8 @@ class SpreadsheetDataFeatureExtractor():
         encoder = LabelBinarizer()
         encoder.fit(self.dataframe['Activity Code'])
         transformed = encoder.transform(self.dataframe['Activity Code'])
-        one_hot_df = pd.DataFrame(transformed,
-                                  columns=['Activity Code 0', 'Activity Code 1', 'Activity Code 2', 'Activity Code 3', 'Activity Code 4'])
+        activity_codes = ['Activity Code {}'.format(i) for i in range(len(transformed[0]))]
+        one_hot_df = pd.DataFrame(transformed, columns=activity_codes)
         self.dataframe = pd.concat([self.dataframe, one_hot_df], axis=1)
 
     def _add_num_activity_types_in_one_week(self):
@@ -145,10 +145,10 @@ class AdditionalDataFeatureExtractor():
                 dist_list.append(dist)
                 time_list.append(time)
             Distance, Duration = sum(dist_list) * 1000, sum(time_list)
-            print(Distance,Duration)
+            # print(Distance,Duration)
             Pace = Duration / (Distance / 100)
             TSS = (CSS / Pace) ** 3 * (Duration / 3600) * 100
-            print(TSS)
+            # print(TSS)
             return TSS
         else:
             return float(0)
