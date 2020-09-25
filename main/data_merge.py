@@ -67,12 +67,12 @@ def merge_spreadsheet_additional(athletes_name):
     return spreadsheet
 
 
-def main():
-    athletes_names = ['eduardo oliveira']
-    merged_df = merge_spreadsheet_additional(athletes_names[0])
-    file_name = 'merged_{}.csv'.format('_'.join(athletes_names[0].split(' ')))
+def main(athletes_name):
+    merged_df = merge_spreadsheet_additional(athletes_name)
+    file_name = 'merged_{}.csv'.format('_'.join(athletes_name.split(' ')))
     _save_merged_df(file_name, merged_df)
 
 
 if __name__ == '__main__':
-    main()
+    athletes_name = ['Eduardo Oliveira']
+    main(athletes_name[0])
