@@ -161,6 +161,7 @@ class SpreadsheetDataCleaner():
         Returns dataframe containing the total missing values and percentage of total
         missing values of a column.
         """
+        threshold = 60.0
         missing_val_df, colNames = pd.DataFrame({'ColumnName' : [], 'TotalMissingVals' : [], 'PercentMissing' : []}), []
         for col in dataframe.columns :
             sum_miss_val = dataframe[col].isnull().sum()
@@ -168,11 +169,11 @@ class SpreadsheetDataCleaner():
             missing_val_df = missing_val_df.append(
                 dict(zip(missing_val_df.columns, [col, sum_miss_val, percent_miss_val])),
                 ignore_index=True)
-            missing_above_80 = missing_val_df[missing_val_df['PercentMissing'] > 60.0]
-            colNames = missing_above_80['ColumnName']
+            missing_above_thr = missing_val_df[missing_val_df['PercentMissing'] > threshold]
+            colNames = missing_above_thr['ColumnName']
             colNames = colNames.tolist()
-        dataframe = dataframe.drop(colNames, axis=1)
-        print("Columns with at least 80% missing values", colNames)
+        self.missing_val_logger.append("Columns with at least {}% missing values".format(threshold))
+        self.missing_val_logger.append(colNames)
         return colNames
 
     def plot_missing_val_bar(self) :
@@ -390,9 +391,9 @@ class SpreadsheetDataCleaner():
                 activity_type = sub_df_work_on.iloc[0]['Activity Type'].split()[-1].lower()
                 if activity_type not in {'running', 'swimming', 'cycling', 'training'}:
                     activity_type = 'others'
-                print('====== Activity: {} ======'.format(activity_type))
-                columns_missing_too_many_values = self._find_missing_percent(sub_df_work_on)
-                columns_keep = [column for column in sub_df_work_on.columns if column not in columns_missing_too_many_values]
+                self.missing_val_logger.append('====== Activity: {} ======'.format(activity_type))
+                columns_missing_values_above_thr = self._find_missing_percent(sub_df_work_on)
+                columns_keep = [column for column in sub_df_work_on.columns if column not in columns_missing_values_above_thr]
                 sub_df_col_selected = sub_df_work_on[columns_keep]
                 if not sub_df_col_selected.empty:
                     sub_df_work_on_columns_imputed = self._apply_imputations(sub_df_col_selected, numerical_columns)
@@ -822,7 +823,6 @@ def _save_log(data_type, log_type, file_name, log_df, athletes_name=None):
 
 
 def _main_helper_spreadsheet(athletes_name=None, file_name: str = None, verbose=False):
-    # TODO: Create missing value and outlier log for spreadsheet data
     data_loader_spreadsheet = DataLoader('spreadsheet')
     if file_name :
         athlete_df = data_loader_spreadsheet.load_spreadsheet_data(file_name=file_name)
@@ -833,6 +833,13 @@ def _main_helper_spreadsheet(athletes_name=None, file_name: str = None, verbose=
     spreadsheet_data_cleaner.process_data_cleaning()
     cleaned_df = spreadsheet_data_cleaner.dataframe
     _save_cleaned_df('spreadsheet', athletes_name, file_name, cleaned_df, verbose=verbose)
+    missing_val_log = pd.DataFrame(spreadsheet_data_cleaner.missing_val_logger,
+                                   columns=['Missing Values'])
+    _save_log(data_type='spreadsheet', log_type='missing_value', file_name=file_name,
+              athletes_name=athletes_name, log_df=missing_val_log)
+    outlier_log_df = pd.DataFrame(spreadsheet_data_cleaner.outlier_dict_logger)
+    _save_log(data_type='spreadsheet', log_type='outlier', file_name=file_name,
+              athletes_name=athletes_name, log_df=outlier_log_df)
 
 
 def _main_helper_additional(athletes_name, activity_type, split_type, verbose=False):
@@ -883,7 +890,7 @@ def main(data_type='spreadsheet', athletes_name: str = None, activity_type: str 
     """
     _create_cleaned_data_folder(data_type)
     _create_log_folders(data_type, athletes_name)
-
+    utility.SystemReminder().display_data_cleaning_start(athletes_name, data_type)
     if data_type == 'spreadsheet':
         if athletes_name is None:
             # Clean all spreadsheet data
@@ -897,6 +904,7 @@ def main(data_type='spreadsheet', athletes_name: str = None, activity_type: str 
     elif data_type == 'additional':
         # Clean all additional data for the given athlete
         _main_helper_additional(athletes_name, activity_type, split_type, verbose=True)
+    utility.SystemReminder().display_data_cleaning_start(athletes_name, data_type)
 
 
 if __name__ == '__main__':
