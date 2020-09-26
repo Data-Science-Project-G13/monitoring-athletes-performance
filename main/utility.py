@@ -229,16 +229,12 @@ class FeatureManager():
     def get_common_features_among_activities(self):
         return pattern.split(parser_activity_types.get('FEATURES', 'common'))
 
-    def get_swimming_features(self):
-        return pattern.split(parser_activity_types.get('FEATURES', 'swimming'))
-
-    def get_running_features(self):
-        return pattern.split(parser_activity_types.get('FEATURES', 'running'))
-
-    def get_cycling_features(self):
-        return pattern.split(parser_activity_types.get('FEATURES', 'cycling'))
-
-
+    def get_activity_specific_features(self, activity_type):
+        try:
+            return pattern.split(parser_activity_types.get('FEATURES', activity_type))
+        except:
+            print('No specific features for the given activity, return common features instead.')
+            return self.get_common_features_among_activities()
 
 
 if __name__ == '__main__':
@@ -247,5 +243,6 @@ if __name__ == '__main__':
     print(get_all_additional_data_folder_names())
     print(get_athlete_css('eduardo oliveira'))
     print(get_activity_subcategories('swimming'))
+    print(FeatureManager().get_all_features_for_modeling())
 
 
