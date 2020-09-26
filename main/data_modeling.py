@@ -29,8 +29,7 @@ pd.set_option('display.max_row', 20)
 pd.set_option('display.max_columns', 20)
 
 
-
-def split_dataframe_by_activities(athlete_dataframe) -> [pd.DataFrame]:
+def split_dataframe_by_activities(athlete_dataframe) -> {str: pd.DataFrame}:
     activities = utility.get_activity_types('spreadsheet')
     sub_dataframes, filtered_categoties, model_min_records = dict(), [], 10
     for activity in activities:
@@ -48,15 +47,12 @@ def split_dataframe_by_activities(athlete_dataframe) -> [pd.DataFrame]:
 
 class TrainLoadModelBuilder():
 
-    def __init__(self, dataframe):
-        general_features = ['Distance', 'Calories', 'Avg HR', 'Max HR',
-                    'Training Stress Score®', 'Num Uniq Acts Weekly', 'Duration', 'ROLL TSS SUM',
-                    'Activity Code 0', 'Activity Code 1', 'Activity Code 2', 'Activity Code 3', 'Activity Code 4',
-                    'Normalized Power® (NP®)', 'Max Avg Power (20 min)', 'Avg Power', 'Max Power']
-        features = [feature for feature in general_features if feature in dataframe.columns]
+    def __init__(self, dataframe, activity_features):
+        TSS = 'Training Stress Score®'
+        features = [feature for feature in activity_features if feature in dataframe.columns and feature != TSS]
         self.num_features = len(features)
         self.X = dataframe[features]
-        self.y = dataframe['Training Load Indicator']
+        self.y = dataframe[TSS]
 
     def _split_train_validation(self):
         X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size = 0.2, random_state = 25)
@@ -88,8 +84,8 @@ class TrainLoadModelBuilder():
 
 class ModelLinearRegression(TrainLoadModelBuilder):
 
-    def __init__(self, dataframe):
-        super().__init__(dataframe)
+    def __init__(self, dataframe, activity_features):
+        super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
         pass
@@ -102,8 +98,8 @@ class ModelLinearRegression(TrainLoadModelBuilder):
 
 class ModelSVM(TrainLoadModelBuilder):
 
-    def __init__(self, dataframe):
-        super().__init__(dataframe)
+    def __init__(self, dataframe, activity_features):
+        super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
         classifier = svm.SVC(C=1.0, kernel='poly', degree=5)
@@ -120,8 +116,8 @@ class ModelSVM(TrainLoadModelBuilder):
 
 class ModelNeuralNetwork(TrainLoadModelBuilder):
 
-    def __init__(self, dataframe):
-        super().__init__(dataframe)
+    def __init__(self, dataframe, activity_features):
+        super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, X_test, y_train, y_test):
         neural_network = Sequential()
@@ -146,8 +142,8 @@ class ModelNeuralNetwork(TrainLoadModelBuilder):
 
 class ModelRandomForest(TrainLoadModelBuilder):
 
-    def __init__(self, dataframe):
-        super().__init__(dataframe)
+    def __init__(self, dataframe, activity_features):
+        super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
         rfc = RandomForestClassifier(max_depth=3, random_state=0)
@@ -164,8 +160,8 @@ class ModelRandomForest(TrainLoadModelBuilder):
 
 class ModelXGBoost(TrainLoadModelBuilder):
 
-    def __init__(self, dataframe):
-        super().__init__(dataframe)
+    def __init__(self, dataframe, activity_features):
+        super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
         # TODO: Sindhu
@@ -182,8 +178,8 @@ class ModelXGBoost(TrainLoadModelBuilder):
 
 class ModelStacking(TrainLoadModelBuilder):
 
-    def __init__(self, dataframe):
-        super().__init__(dataframe)
+    def __init__(self, dataframe, activity_features):
+        super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
         knn = KNeighborsClassifier(n_neighbors=1)
@@ -236,8 +232,8 @@ class ModelStacking(TrainLoadModelBuilder):
 
 class ModelAdaBoost(TrainLoadModelBuilder):
 
-    def __init__(self, dataframe):
-        super().__init__(dataframe)
+    def __init__(self, dataframe, activity_features):
+        super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
         # TODO: @Yuhan
@@ -267,9 +263,13 @@ def process_train_load_modeling(athletes_name):
     # print([(k, v['Activity Type'].unique()) for k, v in sub_dataframe_dict.items()])
     for activity, sub_dataframe in sub_dataframe_dict.items():
         print('\nBuilding Model on {} activities...'.format(activity))
+        general_features = utility.FeatureManager().get_common_features_among_activities()
+        activity_specific_features = utility.FeatureManager().get_activity_specific_features(activity)
+        features = general_features + activity_specific_features
+        print('Features: ', features)
         # TODO: @Spoorthi @Lin @Sindhu @Yuhan
         #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
-        train_load_builder = ModelRandomForest(sub_dataframe)
+        train_load_builder = ModelRandomForest(sub_dataframe, features)
         # train_load_builder = ModelLinearRegression(sub_dataframe)
         # train_load_builder = ModelXGBoost(sub_dataframe)
         # train_load_builder = ModelAdaBoost(sub_dataframe)
