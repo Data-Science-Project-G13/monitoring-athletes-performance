@@ -49,10 +49,14 @@ class TrainLoadModelBuilder():
 
     def __init__(self, dataframe, activity_features):
         TSS = 'Training Stress Score®'
-        features = [feature for feature in activity_features if feature in dataframe.columns and feature != TSS]
+        dataframe = dataframe.replace({"--": np.nan, "...": np.nan})
+        features = [feature for feature in activity_features
+                    if feature in dataframe.columns and feature != TSS
+                    and not dataframe[feature].isnull().any()]
+
         self.num_features = len(features)
         self.X = dataframe[features]
-        self.y = dataframe[TSS]
+        self.y = dataframe['Training Load Indicator']
 
     def _split_train_validation(self):
         X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size = 0.2, random_state = 25)
