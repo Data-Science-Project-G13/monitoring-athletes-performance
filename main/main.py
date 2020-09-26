@@ -12,7 +12,7 @@ import utility
 import system_initialize
 import data_cleaning
 import data_merge
-import data_modelling
+import data_modeling
 from utility import SystemReminder as Reminder
 
 
@@ -43,10 +43,10 @@ def main(athletes_name):
 
     # Modeling
     Reminder().display_modeling_start(athletes_name, 'Assessing Training Load')
-    data_modelling.process_train_load_modeling(athletes_name)
+    data_modeling.process_train_load_modeling(athletes_name)
     Reminder().display_modeling_end(athletes_name, 'Assessing Training Load')
     Reminder().display_modeling_start(athletes_name, 'Predicting Performance')
-    data_modelling.process_performance_modeling(athletes_name)
+    data_modeling.process_performance_modeling(athletes_name)
     Reminder().display_modeling_end(athletes_name, 'Predicting Performance')
 
 
