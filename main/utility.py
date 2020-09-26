@@ -26,11 +26,14 @@ import json
 from configparser import ConfigParser
 
 
-config_parser = ConfigParser()
 data_names_config = '{}/main/config/data_file_names.cfg'.format(os.path.pardir)
 column_data_types_config = '{}/main/config/column_data_types.cfg'.format(os.path.pardir)
 activity_types_config = '{}/main/config/activity_types.cfg'.format(os.path.pardir)
 pattern = re.compile("^\s+|\s*,\s*|\s+$")
+parser_data_names, parser_column_types, parser_activity_types = ConfigParser(), ConfigParser(), ConfigParser()
+parser_data_names.read(data_names_config)
+parser_column_types.read(column_data_types_config)
+parser_activity_types.read(activity_types_config)
 
 
 def create_all_folders():
@@ -45,8 +48,7 @@ def get_all_spreadsheet_data_file_names():
     -------
         List of strings
     """
-    config_parser.read(data_names_config)
-    return [config_parser.get('SPREADSHEET-DATA-SETS', key) for key in list(config_parser['SPREADSHEET-DATA-SETS'].keys())]
+    return [parser_data_names.get('SPREADSHEET-DATA-SETS', key) for key in list(parser_data_names['SPREADSHEET-DATA-SETS'].keys())]
 
 
 def get_all_additional_data_folder_names():
@@ -56,8 +58,7 @@ def get_all_additional_data_folder_names():
     -------
         List of strings
     """
-    config_parser.read(data_names_config)
-    return [config_parser.get('ADDITIONAL-DATA-FOLDERS', key) for key in list(config_parser['ADDITIONAL-DATA-FOLDERS'].keys())]
+    return [parser_data_names.get('ADDITIONAL-DATA-FOLDERS', key) for key in list(parser_data_names['ADDITIONAL-DATA-FOLDERS'].keys())]
 
 
 def get_numerical_columns(data_type, column_type='all'):
@@ -74,7 +75,6 @@ def get_numerical_columns(data_type, column_type='all'):
     -------
         List of strings
     """
-    config_parser.read(column_data_types_config)
     if data_type == 'spreadsheet':
         if column_type == 'all':
             return ['Max Avg Power (20 min)', 'Avg Power', 'Avg Stroke Rate', 'Avg HR', 'Max HR', "Distance",
@@ -84,12 +84,12 @@ def get_numerical_columns(data_type, column_type='all'):
             # return pattern.split(config_parser.get('SPREADSHEET', 'numerical'))
     elif data_type == 'additional':
         if column_type == 'all':
-            return pattern.split(config_parser.get('ADDITIONAL', 'numerical_ordered')) + \
-                   pattern.split(config_parser.get('ADDITIONAL', 'numerical_fluctuating'))
+            return pattern.split(parser_column_types.get('ADDITIONAL', 'numerical_ordered')) + \
+                   pattern.split(parser_column_types.get('ADDITIONAL', 'numerical_fluctuating'))
         elif column_type == 'ordered':
-            return pattern.split(config_parser.get('ADDITIONAL', 'numerical_ordered'))
+            return pattern.split(parser_column_types.get('ADDITIONAL', 'numerical_ordered'))
         elif column_type == 'fluctuating':
-            return pattern.split(config_parser.get('ADDITIONAL', 'numerical_fluctuating'))
+            return pattern.split(parser_column_types.get('ADDITIONAL', 'numerical_fluctuating'))
 
 
 def get_categorical_columns(data_type, column_type='all'):
@@ -104,13 +104,12 @@ def get_categorical_columns(data_type, column_type='all'):
     -------
         List of strings
     """
-    config_parser.read(column_data_types_config)
     if data_type == 'spreadsheet':
         if column_type == 'all':
-            return pattern.split(config_parser.get('SPREADSHEET', 'categorical'))
+            return pattern.split(parser_column_types.get('SPREADSHEET', 'categorical'))
     elif data_type == 'additional':
         if column_type == 'all':
-            return pattern.split(config_parser.get('ADDITIONAL', 'categorical'))
+            return pattern.split(parser_column_types.get('ADDITIONAL', 'categorical'))
         elif column_type == 'ordinal':
             return
         elif column_type == 'non-ordinal':
@@ -141,11 +140,21 @@ def get_activity_types(data_type):
     -------
         List of strings
     """
-    config_parser.read(activity_types_config)
     if data_type == 'spreadsheet':
-        return pattern.split(config_parser.get('SPREADSHEET', 'activity_types'))
+        return pattern.split(parser_activity_types.get('SPREADSHEET', 'activity_types'))
     elif data_type == 'additional':
-        return pattern.split(config_parser.get('ADDITIONAL', 'activity_types'))
+        return pattern.split(parser_activity_types.get('ADDITIONAL', 'activity_types'))
+
+
+def get_activity_subcategories(activity_type):
+    if activity_type == 'running':
+        return pattern.split(parser_activity_types.get('CATEGORIES', 'running'))
+    elif activity_type == 'cycling':
+        return pattern.split(parser_activity_types.get('CATEGORIES', 'cycling'))
+    elif activity_type == 'swimming':
+        return pattern.split(parser_activity_types.get('CATEGORIES', 'swimming'))
+    elif activity_type == 'strength_training':
+        return pattern.split(parser_activity_types.get('CATEGORIES', 'strength_training'))
 
 
 def get_column_groups_for_imputation(data_type):
@@ -175,6 +184,7 @@ def get_athlete_css(athletes_name) -> float:
     with open(get_athlete_info_path(), 'r') as file:
         athletes_info_json = json.load(file)
     return athletes_info_json[athletes_name.title()]["critical swim speed"]
+
 
 def get_athletes_lact_thr(athletes_name) -> (float, float):
     with open(get_athlete_info_path(), 'r') as file:
@@ -211,10 +221,31 @@ class SystemReminder():
         print("{} modeling on {} data is done.".format(model_type, athletes_name))
 
 
+class FeatureManager():
+
+    def get_all_features_for_modeling(self):
+        pass
+
+    def get_common_features_among_activities(self):
+        pass
+
+    def get_swimming_features(self):
+        pass
+
+    def get_running_features(self):
+        pass
+
+    def get_cycling_features(self):
+        pass
+
+
+
+
 if __name__ == '__main__':
     # The lines below are for test
     print(get_all_spreadsheet_data_file_names())
     print(get_all_additional_data_folder_names())
     print(get_athlete_css('eduardo oliveira'))
+    print(get_activity_subcategories('swimming'))
 
 
