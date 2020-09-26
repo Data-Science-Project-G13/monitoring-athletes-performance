@@ -224,19 +224,19 @@ class SystemReminder():
 class FeatureManager():
 
     def get_all_features_for_modeling(self):
-        pass
+        return pattern.split(parser_activity_types.get('FEATURES', 'all'))
 
     def get_common_features_among_activities(self):
-        pass
+        return pattern.split(parser_activity_types.get('FEATURES', 'common'))
 
     def get_swimming_features(self):
-        pass
+        return pattern.split(parser_activity_types.get('FEATURES', 'swimming'))
 
     def get_running_features(self):
-        pass
+        return pattern.split(parser_activity_types.get('FEATURES', 'running'))
 
     def get_cycling_features(self):
-        pass
+        return pattern.split(parser_activity_types.get('FEATURES', 'cycling'))
 
 
 
