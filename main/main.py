@@ -28,12 +28,14 @@ def main(athletes_name):
     utility.SystemReminder().display_data_cleaning_start(athletes_name, spreadsheet_data_type)
     data_cleaning.main('spreadsheet', athletes_name, verbose=show_spreadsheet_cleaning_details)
     utility.SystemReminder().display_data_cleaning_end(athletes_name, spreadsheet_data_type)
+
     utility.SystemReminder().display_data_cleaning_start(athletes_name, additional_data_type)
-    fit_activity_types, split_type = ['cycling', 'running', 'swimming'], 'real-time'
+    fit_activity_types, split_type = ['cycling', 'running', 'swimming', 'training'], 'real-time'
     for activity_type in fit_activity_types:
         data_cleaning.main('additional', athletes_name,
                            activity_type=activity_type, split_type=split_type, verbose=show_additional_cleaning_details)
     utility.SystemReminder().display_data_cleaning_end(athletes_name, additional_data_type)
+
 
     # Feature Engineering
     show_feature_engineering_details = False
@@ -41,10 +43,12 @@ def main(athletes_name):
     data_merge.process(athletes_name, verbose=show_feature_engineering_details)
     utility.SystemReminder().display_feature_engineering_end(athletes_name)
 
+
     # Modeling
     Reminder().display_modeling_start(athletes_name, 'Assessing Training Load')
     data_modeling.process_train_load_modeling(athletes_name)
     Reminder().display_modeling_end(athletes_name, 'Assessing Training Load')
+
     Reminder().display_modeling_start(athletes_name, 'Predicting Performance')
     data_modeling.process_performance_modeling(athletes_name)
     Reminder().display_modeling_end(athletes_name, 'Predicting Performance')
