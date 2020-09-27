@@ -206,6 +206,24 @@ def get_activity_subcategories(activity_type):
         return pattern.split(parser_activity_types.get('CATEGORIES', 'strength_training'))
 
 
+
+def split_dataframe_by_activities(athlete_dataframe):
+    activities = get_activity_types('spreadsheet')
+    sub_dataframe_dict, filtered_categoties, model_min_records = dict(), [], 10
+    for activity in activities:
+        subcategories = get_activity_subcategories(activity)
+        sub_dataframe = athlete_dataframe.loc[athlete_dataframe['Activity Type'].isin(subcategories)
+        | athlete_dataframe['Activity Type'].str.lower().str.contains(activity)]  # In case a new activity not in config
+        if sub_dataframe.shape[0] > model_min_records:
+            sub_dataframe_dict[activity] = sub_dataframe
+            filtered_categoties.extend(sub_dataframe['Activity Type'].unique())
+    sub_dataframe_other_activities = \
+        athlete_dataframe.loc[~athlete_dataframe['Activity Type'].isin(filtered_categoties)]
+    if sub_dataframe_other_activities.shape[0] > model_min_records: sub_dataframe_dict['others'] = sub_dataframe_other_activities
+    return sub_dataframe_dict
+
+
+
 def get_column_groups_for_imputation(data_type):
     if data_type == 'spreadsheet':
         return {'knn': {},
@@ -241,7 +259,6 @@ def get_athletes_lact_thr(athletes_name) -> (float, float):
     jf_lact_thr = athletes_info_json[athletes_name.title()]["joe freil lactate threshold"]
     ac_lact_thr = athletes_info_json[athletes_name.title()]["andy coogan lactate threshold"]
     return (jf_lact_thr, ac_lact_thr)
-
 
 
 def save_model(athletes_name, activity, model_type, learner):

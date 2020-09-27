@@ -34,31 +34,13 @@ pd.set_option('display.max_row', 20)
 pd.set_option('display.max_columns', 20)
 
 
-def split_dataframe_by_activities(athlete_dataframe) -> {str: pd.DataFrame}:
-    activities = utility.get_activity_types('spreadsheet')
-    sub_dataframes, filtered_categoties, model_min_records = dict(), [], 10
-    for activity in activities:
-        subcategories = utility.get_activity_subcategories(activity)
-        sub_dataframe = athlete_dataframe.loc[athlete_dataframe['Activity Type'].isin(subcategories)
-        | athlete_dataframe['Activity Type'].str.lower().str.contains(activity)]  # In case a new activity not in config
-        if sub_dataframe.shape[0] > model_min_records:
-            sub_dataframes[activity] = sub_dataframe
-            filtered_categoties.extend(sub_dataframe['Activity Type'].unique())
-    sub_dataframe_other_activities = \
-        athlete_dataframe.loc[~athlete_dataframe['Activity Type'].isin(filtered_categoties)]
-    if sub_dataframe_other_activities.shape[0] > model_min_records: sub_dataframes['others'] = sub_dataframe_other_activities
-    return sub_dataframes
-
-
 class TrainLoadModelBuilder():
 
     def __init__(self, dataframe, activity_features):
         TSS = 'Training Stress Score®'
-        dataframe = dataframe.replace({"--": np.nan, "...": np.nan})
         features = [feature for feature in activity_features
                     if feature in dataframe.columns and feature != TSS
                     and not dataframe[feature].isnull().any()]
-
         self.num_features = len(features)
         self.X = dataframe[features]
         self.y = dataframe[TSS]
@@ -286,7 +268,7 @@ def process_train_load_modeling(athletes_name):
     loader = data_loader.DataLoader()
     data_set = loader.load_merged_data(athletes_name=athletes_name)
     data_set_modeling = data_set[data_set['Training Stress Score®'].notnull()]
-    sub_dataframe_dict = split_dataframe_by_activities(data_set_modeling)
+    sub_dataframe_dict = utility.split_dataframe_by_activities(data_set_modeling)
     # print([(k, v['Activity Type'].unique()) for k, v in sub_dataframe_dict.items()])
     for activity, sub_dataframe in sub_dataframe_dict.items():
         print('\nBuilding Model on {} activities...'.format(activity))
