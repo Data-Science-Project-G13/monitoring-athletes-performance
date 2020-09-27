@@ -11,7 +11,7 @@ athlete_info_json_path = utility.get_athlete_info_path()
 def create_directory_structures():
     """ Create all the directories and folders that are needed for the project
     """
-    pass
+    utility.create_all_folders()
 
 
 def convert_fit_files_to_csv():
@@ -103,26 +103,31 @@ def initialize_lactate_threshold(athletes_name: str):
     return _calculate_Joe_Freil_lactate_threshold(), _calculate_Andy_Coogan__lactate_threshold()
 
 
-def initialize_system(athletes_names):
+def initialize_system():
     """ Initialize the whole system
     """
     utility.SystemReminder().display_initialization_start()
     create_directory_structures()
     convert_fit_files_to_csv()
     create_config_files()
-    for athletes_name in athletes_names:
-        with open(athlete_info_json_path, 'r') as file:
-            athletes_info_json = json.load(file)
-        athletes_css = initialize_critical_swim_speed(athletes_name)
-        athletes_info_json[athletes_name.title()]["critical swim speed"] = athletes_css
-        jf_threshold, ac_threshold = initialize_lactate_threshold(athletes_name)
-        athletes_info_json[athletes_name.title()]["joe freil lactate threshold"] = jf_threshold
-        athletes_info_json[athletes_name.title()]["andy coogan lactate threshold"] = ac_threshold
-        with open(athlete_info_json_path, 'w') as file:
-            json.dump(athletes_info_json, file, indent=4)
     utility.SystemReminder().display_initialization_end()
+
+
+def initialize_features(athletes_name):
+    with open(athlete_info_json_path, 'r') as file:
+        athletes_info_json = json.load(file)
+    athletes_css = initialize_critical_swim_speed(athletes_name)
+    athletes_info_json[athletes_name.title()]["critical swim speed"] = athletes_css
+    jf_threshold, ac_threshold = initialize_lactate_threshold(athletes_name)
+    athletes_info_json[athletes_name.title()]["joe freil lactate threshold"] = jf_threshold
+    athletes_info_json[athletes_name.title()]["andy coogan lactate threshold"] = ac_threshold
+    with open(athlete_info_json_path, 'w') as file:
+        json.dump(athletes_info_json, file, indent=4)
+
 
 
 if __name__ == '__main__':
     athletes_names = ['Eduardo Oliveira', 'Xu Chen', 'Carly Hart']
-    initialize_system(athletes_names)
+    initialize_system()
+    initialize_features(athletes_names[0])
+
