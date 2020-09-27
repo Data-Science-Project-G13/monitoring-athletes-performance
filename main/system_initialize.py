@@ -17,6 +17,7 @@ def create_directory_structures():
 def convert_fit_files_to_csv():
     for internal_args in utility.get_fit_file_internal_args():
         process_all.main(internal_args=internal_args)
+        utility.SystemReminder().display_fit_file_converted(internal_args[1].split('=')[1][4:])
 
 
 def create_config_files():
@@ -82,7 +83,6 @@ def initialize_lactate_threshold(athletes_name: str):
         return average_heart_rate
 
     def _calculate_Andy_Coogan__lactate_threshold():
-        # TODO: @Spoorthi
         heart_rate_entry = []
         for file_name in [file_name for file_name in cleaned_additional_data_filenames if 'running' in file_name]:
             temporary_list = []
@@ -121,7 +121,6 @@ def initialize_system(athletes_names):
         with open(athlete_info_json_path, 'w') as file:
             json.dump(athletes_info_json, file, indent=4)
     utility.SystemReminder().display_initialization_end()
-
 
 
 if __name__ == '__main__':
