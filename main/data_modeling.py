@@ -4,14 +4,13 @@ import pandas as pd
 from tensorflow.keras import Sequential, layers
 from tensorflow.keras.utils import to_categorical
 from sklearn import svm
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, mean_absolute_error, mean_squared_error
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier
@@ -56,7 +55,7 @@ class TrainLoadModelBuilder():
 
         self.num_features = len(features)
         self.X = dataframe[features]
-        self.y = dataframe['Training Load Indicator']
+        self.y = dataframe[TSS]
 
     def _split_train_validation(self):
         X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size = 0.2, random_state = 25)
@@ -64,26 +63,31 @@ class TrainLoadModelBuilder():
             .format(X_train.shape, y_train.shape, X_test.shape, y_test.shape))
         return X_train, X_test, y_train, y_test
 
-    def _validate_model(self, X_test, y_test, learner):
+    def _validate_model_regression(self, X_test, y_test, learner):
+        y_preds = learner.predict(X_test)  # predict classes for y test
+        print('Predictions Overview: ', y_preds)
+        mae = mean_absolute_error(y_test, y_preds)
+        rmse = np.sqrt(mean_squared_error(y_test, y_preds))
+        return mae, rmse
+
+    def _display_performance_results_classification(self, model_name, accuracy, precision, recall, f1):
+        print('Classifier: {}'.format(model_name))
+        print('Accuracy: {}, Precision: {}, Recall: {}, F1 score: {}'
+              .format(round(accuracy, 2), round(precision, 2), round(recall, 2), round(f1, 2)))
+
+    def _validate_model_classification(self, X_test, y_test, learner):
         y_preds = learner.predict(X_test)  # predict classes for y test
         print('Predictions Overview: ', y_preds)
         accuracy = accuracy_score(y_test, y_preds)
         precision = precision_score(y_test, y_preds, average='macro', zero_division=0)
         recall = recall_score(y_test, y_preds, average='macro')
         f1 = f1_score(y_test, y_preds, average='macro')
-        # auc = roc_auc_score(y_test, y_pred_probs)
-        # y_score = classifier.decision_function(X_test)
-        # n_classes = 3
-        # precision, recall, average_precision = dict(), dict(), dict()
-        # for i in range(n_classes):
-        #     precision[i], recall[i], _ = precision_recall_curve(y_test[:, i], y_score[:, i])
-        #     average_precision[i] = average_precision_score(y_test[:, i], y_score[:, i])
         return accuracy, precision, recall, f1
 
-    def _display_performance_results(self, model_name, accuracy, precision, recall, f1):
-        print('Classifier: {}'.format(model_name))
-        print('Accuracy: {}, Precision: {}, Recall: {}, F1 score: {}'
-              .format(round(accuracy, 2), round(precision, 2), round(recall, 2), round(f1, 2)))
+    def _display_performance_results_regression(self, model_name, mae, rmse):
+        print('Regressor: {}'.format(model_name))
+        print('Mean Absolute Error: {}, Root Mean Squared Error: {}'
+              .format(round(mae, 3), round(rmse, 3)))
 
 
 class ModelLinearRegression(TrainLoadModelBuilder):
@@ -114,8 +118,8 @@ class ModelSVM(TrainLoadModelBuilder):
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
         classifier = self._build_model(X_train, y_train)
-        accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
-        self._display_performance_results('SVM', accuracy, precision, recall, f1)
+        mae, rmse = self._validate_model_regression(X_test, y_test, classifier)
+        self._display_performance_results_regression('SVM', mae, rmse)
 
 
 class ModelNeuralNetwork(TrainLoadModelBuilder):
@@ -150,16 +154,16 @@ class ModelRandomForest(TrainLoadModelBuilder):
         super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
-        rfc = RandomForestClassifier(max_depth=3, random_state=0)
+        rfc = RandomForestRegressor(max_depth=3, random_state=0)
         rfc.fit(X_train, y_train)
         return rfc
 
     def process_modeling(self):
         # TODO: @Lin
         X_train, X_test, y_train, y_test = self._split_train_validation()
-        classifier = self._build_model(X_train, y_train)
-        accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
-        self._display_performance_results('Random Forest', accuracy, precision, recall, f1)
+        regressor = self._build_model(X_train, y_train)
+        mae, rmse = self._validate_model_regression(X_test, y_test, regressor)
+        self._display_performance_results_regression('Random Forest', mae, rmse)
 
 
 class ModelXGBoost(TrainLoadModelBuilder):
@@ -176,8 +180,8 @@ class ModelXGBoost(TrainLoadModelBuilder):
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
         classifier = self._build_model(X_train, y_train)
-        accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
-        self._display_performance_results('XGBoost', accuracy, precision, recall, f1)
+        mae, rmse = self._validate_model_regression(X_test, y_test, classifier)
+        self._display_performance_results_regression('XGBoost', mae, rmse)
 
 
 class ModelStacking(TrainLoadModelBuilder):
@@ -230,8 +234,8 @@ class ModelStacking(TrainLoadModelBuilder):
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
         classifier = self._build_model(X_train, y_train)
-        accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
-        self._display_performance_results('XGBoost', accuracy, precision, recall, f1)
+        mae, rmse = self._validate_model_regression(X_test, y_test, classifier)
+        self._display_performance_results_regression('XGBoost', mae, rmse)
 
 
 class ModelAdaBoost(TrainLoadModelBuilder):
@@ -249,8 +253,8 @@ class ModelAdaBoost(TrainLoadModelBuilder):
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
         classifier = self._build_model(X_train, y_train)
-        accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
-        self._display_performance_results('AdaBoost', accuracy, precision, recall, f1)
+        mae, rmse = self._validate_model_regression(X_test, y_test, classifier)
+        self._display_performance_results_regression('AdaBoost', mae, rmse)
 
 
 class PerformanceModelBuilder():
