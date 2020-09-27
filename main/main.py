@@ -1,4 +1,4 @@
-"""Main Script of the Project
+""" Main Script of the Project
 
 This script allows the user to run the system.
 
@@ -46,7 +46,7 @@ def main(athletes_name: str,
 
 
     # Feature Engineering
-    system_initialize.initialize_features(athletes_name)
+    system_initialize.initialize_characteristics(athletes_name)
     if feature_engineering:
         show_feature_engineering_details = False
         utility.SystemReminder().display_feature_engineering_start(athletes_name)
