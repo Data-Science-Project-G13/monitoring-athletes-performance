@@ -38,7 +38,15 @@ parser_activity_types.read(activity_types_config)
 
 def create_all_folders():
     """Create all the folders that are needed for the system"""
-    pass
+    folders = {'{}/data/'.format(os.path.pardir),
+               '{}/data/cleaned_additional/'.format(os.path.pardir),
+               '{}/data/cleaned_spreadsheet/'.format(os.path.pardir),
+               '{}/log/'.format(os.path.pardir),
+               '{}/plots/'.format(os.path.pardir)}
+    for folder in folders:
+        print('creating {}'.format(folder))
+        if not os.path.exists(folder):
+            os.mkdir(folder)
 
 
 def get_fit_file_internal_args() -> [[]]:
