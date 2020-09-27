@@ -74,6 +74,16 @@ def get_all_additional_data_folder_names():
     return [parser_data_names.get('ADDITIONAL-DATA-FOLDERS', key) for key in list(parser_data_names['ADDITIONAL-DATA-FOLDERS'].keys())]
 
 
+def need_clean(athletes_name: str, data_type: str) -> bool:
+    if data_type == 'spreadsheet':
+        if '{}.csv'.format(athletes_name.title()) in os.listdir('{}/data/cleaned_spreadsheet'.format(os.path.pardir)):
+            return False
+    elif data_type == 'additional':
+        if '_'.join(athletes_name.lower().split()) in os.listdir('{}/data/cleaned_additional'.format(os.path.pardir)):
+            return False
+    return True
+
+
 def get_numerical_columns(data_type, column_type='all'):
     """Get all the numerical column names in data
 
@@ -209,29 +219,40 @@ def get_athletes_lact_thr(athletes_name) -> (float, float):
 
 class SystemReminder():
 
+    line = '='*25
+
     def display_initialization_start(self):
         print("Initializing the System...")
 
     def display_initialization_end(self):
         print("System Initialized.")
 
+    def display_athlete_process_start(self, athletes_name):
+        print("\n{} The Start of {} Athlete Analytics {}".format(self.line, athletes_name.title(), self.line))
+
+    def display_athlete_process_end(self, athletes_name):
+        print("{} The End of {} Athlete Analytics {}\n".format(self.line, athletes_name.title(), self.line))
+
+    def display_fit_file_converted(self, athletes_name):
+        print("{} fit files have converted to csv files.".format(athletes_name.title()))
+
     def display_data_cleaning_start(self, athletes_name, data_type):
-        print("Cleaning {} {} data...".format(athletes_name, data_type))
+        print("Cleaning {} {} data...".format(athletes_name.title(), data_type))
 
     def display_data_cleaning_end(self, athletes_name, data_type):
-        print("{} {} data done cleaning".format(athletes_name, data_type))
+        print("{} {} data done cleaning".format(athletes_name.title(), data_type))
 
     def display_feature_engineering_start(self, athletes_name):
-        print("Processing feature engineering on {} data...".format(athletes_name))
+        print("Processing feature engineering on {} data...".format(athletes_name.title()))
 
     def display_feature_engineering_end(self, athletes_name):
-        print("Feature engineering on {} data is done.".format(athletes_name))
+        print("Feature engineering on {} data is done.".format(athletes_name.title()))
 
     def display_modeling_start(self, athletes_name, model_type):
-        print("Building {} model on {} data...".format(model_type, athletes_name))
+        print("Building {} model on {} data...".format(model_type, athletes_name.title()))
 
     def display_modeling_end(self, athletes_name, model_type):
-        print("{} modeling on {} data is done.".format(model_type, athletes_name))
+        print("{} modeling on {} data is done.".format(model_type, athletes_name.title()))
 
 
 class FeatureManager():
