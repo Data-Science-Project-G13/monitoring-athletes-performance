@@ -69,18 +69,22 @@ class SpreadsheetDataCleaner():
         self.missing_val_logger = []
         self.outlier_dict_logger = {'Outlier Index': [], 'Column': [], 'Reason': []}
 
-    def _split_dataframe_by_activity(self):
-        dataframe_swim = self.dataframe_work_on.loc[
-            self.dataframe_work_on['Activity Type'].isin(['Pool Swimming', 'Open Water Swimming', 'Swimming'])]
-        dataframe_cycle = self.dataframe_work_on.loc[
-            self.dataframe_work_on['Activity Type'].isin(['Virtual Cycling', 'Indoor Cycling', 'Road Cycling', 'Cycling'])]
-        dataframe_run = self.dataframe_work_on.loc[
-            self.dataframe_work_on['Activity Type'].isin(['Running', 'Treadmill Running'])]
-        dataframe_st = self.dataframe_work_on.loc[
-            self.dataframe_work_on['Activity Type'].isin(['Strength Training'])]
-        dataframe_others = self.dataframe_work_on.loc[
-            self.dataframe_work_on['Activity Type'].isin(['Hiking', 'Multisport', 'Indoor Rowing'])]
-        return dataframe_swim, dataframe_cycle, dataframe_run, dataframe_st, dataframe_others
+    def _split_dataframe_by_activities(self, athlete_dataframe) -> {str: pd.DataFrame}:
+        activities = utility.get_activity_types('spreadsheet')
+        sub_dataframes, filtered_categoties, model_min_records = dict(), [], 10
+        for activity in activities:
+            subcategories = utility.get_activity_subcategories(activity)
+            sub_dataframe = athlete_dataframe.loc[
+                athlete_dataframe['Activity Type'].isin(subcategories)
+                | athlete_dataframe['Activity Type'].str.lower().str.contains(activity)]  # In case a new activity not in config
+            if sub_dataframe.shape[0] > model_min_records:
+                sub_dataframes[activity] = sub_dataframe
+                filtered_categoties.extend(sub_dataframe['Activity Type'].unique())
+        sub_dataframe_other_activities = \
+            athlete_dataframe.loc[~athlete_dataframe['Activity Type'].isin(filtered_categoties)]
+        if sub_dataframe_other_activities.shape[0] > model_min_records: sub_dataframes[
+            'others'] = sub_dataframe_other_activities
+        return sub_dataframes
 
     def _replace_dataframe_parts_with_imputed_subdatasets(self, imputed_subdatasets: dict):
         def _helper(types: [], general_type: str):
@@ -126,7 +130,6 @@ class SpreadsheetDataCleaner():
         #                          'Bottom Time', 'Min Temp', 'Surface Interval', 'Decompression', 'Best Lap Time',
         #                          'Max Temp']
         # # columns_need_imputation = [column for column in self.dataframe_work_on.columns if column not in columns_no_imputation]
-        # self.dataframe_work_on.drop(columns_no_imputation, axis=1, inplace=True)
 
     def _convert_strings_to_lower_case(self) :
         self.dataframe_work_on['Activity Type'] = self.dataframe_work_on['Activity Type'].str.lower()
@@ -386,7 +389,7 @@ class SpreadsheetDataCleaner():
         numerical_columns = self.get_numerical_columns()
         categorical_columns = self.get_categorical_columns()
         sub_df_imputed = {}
-        for sub_df_work_on in self._split_dataframe_by_activity():
+        for activity_type, sub_df_work_on in self._split_dataframe_by_activities(self.dataframe_work_on).items():
             if not sub_df_work_on.empty:
                 activity_type = sub_df_work_on.iloc[0]['Activity Type'].split()[-1].lower()
                 if activity_type not in {'running', 'swimming', 'cycling', 'training'}:

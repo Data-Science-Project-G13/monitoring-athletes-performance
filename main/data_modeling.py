@@ -4,14 +4,13 @@ import pandas as pd
 from tensorflow.keras import Sequential, layers
 from tensorflow.keras.utils import to_categorical
 from sklearn import svm
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, mean_absolute_error, mean_squared_error
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier
@@ -29,48 +28,75 @@ pd.set_option('display.max_row', 20)
 pd.set_option('display.max_columns', 20)
 
 
+def split_dataframe_by_activities(athlete_dataframe) -> {str: pd.DataFrame}:
+    activities = utility.get_activity_types('spreadsheet')
+    sub_dataframes, filtered_categoties, model_min_records = dict(), [], 10
+    for activity in activities:
+        subcategories = utility.get_activity_subcategories(activity)
+        sub_dataframe = athlete_dataframe.loc[athlete_dataframe['Activity Type'].isin(subcategories)
+        | athlete_dataframe['Activity Type'].str.lower().str.contains(activity)]  # In case a new activity not in config
+        if sub_dataframe.shape[0] > model_min_records:
+            sub_dataframes[activity] = sub_dataframe
+            filtered_categoties.extend(sub_dataframe['Activity Type'].unique())
+    sub_dataframe_other_activities = \
+        athlete_dataframe.loc[~athlete_dataframe['Activity Type'].isin(filtered_categoties)]
+    if sub_dataframe_other_activities.shape[0] > model_min_records: sub_dataframes['others'] = sub_dataframe_other_activities
+    return sub_dataframes
+
+
 class TrainLoadModelBuilder():
 
-    def __init__(self, dataframe):
-        general_features = ['Distance', 'Calories', 'Avg HR', 'Max HR',
-                    'Training Stress Score®', 'Num Uniq Acts Weekly', 'Duration', 'ROLL TSS SUM',
-                    'Activity Code 0', 'Activity Code 1', 'Activity Code 2', 'Activity Code 3', 'Activity Code 4',
-                    'Normalized Power® (NP®)', 'Max Avg Power (20 min)', 'Avg Power', 'Max Power']
-        features = [feature for feature in general_features if feature in dataframe.columns]
+    def __init__(self, dataframe, activity_features):
+        TSS = 'Training Stress Score®'
+        dataframe = dataframe.replace({"--": np.nan, "...": np.nan})
+        features = [feature for feature in activity_features
+                    if feature in dataframe.columns and feature != TSS
+                    and not dataframe[feature].isnull().any()]
+
         self.num_features = len(features)
         self.X = dataframe[features]
-        self.y = dataframe['Training Load Indicator']
+        self.y = dataframe[TSS]
 
     def _split_train_validation(self):
         X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size = 0.2, random_state = 25)
+        print('Shapes:  X_train: {}, y_train: {}, X_test: {}, y_test: {}'
+            .format(X_train.shape, y_train.shape, X_test.shape, y_test.shape))
         return X_train, X_test, y_train, y_test
 
-    def _validate_model(self, X_test, y_test, classifier):
-        y_preds = classifier.predict(X_test)  # predict classes for y test
-        print(y_preds)
-        accuracy = accuracy_score(y_test, y_preds)
-        precision = precision_score(y_test, y_preds, average='macro', zero_division=0)
-        recall = recall_score(y_test, y_preds, average='macro')
-        f1 = f1_score(y_test, y_preds, average='macro')
-        # auc = roc_auc_score(y_test, y_pred_probs)
-        # y_score = classifier.decision_function(X_test)
-        # n_classes = 3
-        # precision, recall, average_precision = dict(), dict(), dict()
-        # for i in range(n_classes):
-        #     precision[i], recall[i], _ = precision_recall_curve(y_test[:, i], y_score[:, i])
-        #     average_precision[i] = average_precision_score(y_test[:, i], y_score[:, i])
-        return accuracy, precision, recall, f1
+    def _validate_model_regression(self, X_test, y_test, learner):
+        y_preds = learner.predict(X_test)  # predict classes for y test
+        print('Predictions Overview: ', y_preds)
+        mae = mean_absolute_error(y_test, y_preds)
+        rmse = np.sqrt(mean_squared_error(y_test, y_preds))
+        return mae, rmse
 
-    def _display_performance_results(self, model_name, accuracy, precision, recall, f1):
+    def _display_performance_results_classification(self, model_name, accuracy, precision, recall, f1):
         print('Classifier: {}'.format(model_name))
         print('Accuracy: {}, Precision: {}, Recall: {}, F1 score: {}'
               .format(round(accuracy, 2), round(precision, 2), round(recall, 2), round(f1, 2)))
 
+    def _validate_model_classification(self, X_test, y_test, learner):
+        y_preds = learner.predict(X_test)  # predict classes for y test
+        print('Predictions Overview: ', y_preds)
+        accuracy = accuracy_score(y_test, y_preds)
+        precision = precision_score(y_test, y_preds, average='macro', zero_division=0)
+        recall = recall_score(y_test, y_preds, average='macro')
+        f1 = f1_score(y_test, y_preds, average='macro')
+        return accuracy, precision, recall, f1
+
+    def _display_performance_results_regression(self, model_name, mae, rmse):
+        print('Regressor: {}'.format(model_name))
+        print('Mean Absolute Error: {}, Root Mean Squared Error: {}'
+              .format(round(mae, 3), round(rmse, 3)))
+
+    def _save_model(self, learner):
+        pass
+
 
 class ModelLinearRegression(TrainLoadModelBuilder):
 
-    def __init__(self, dataframe):
-        super().__init__(dataframe)
+    def __init__(self, dataframe, activity_features):
+        super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
         pass
@@ -78,39 +104,31 @@ class ModelLinearRegression(TrainLoadModelBuilder):
     def process_modeling(self):
         # TODO: Spoorthi
         X_train, X_test, y_train, y_test = self._split_train_validation()
-        print('X-y train-test shapes', X_train.shape, y_train.shape, X_test.shape, y_test.shape)
         print(np.unique(y_train, return_counts=True))
 
 
 class ModelSVM(TrainLoadModelBuilder):
 
-    def __init__(self, dataframe):
-        super().__init__(dataframe)
+    def __init__(self, dataframe, activity_features):
+        super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
-        #classifier = svm.SVC(C=45,kernel='linear')
-        #classifier = svm.SVC(C=3, kernel='linear',class_weight='balanced',decision_function_shape='ovo')
-        param_grid = {'gamma': [1, 0.1, 0.01, 0.001, 0.0001],
-                      'kernel': ['linear']}
-        classifier = GridSearchCV(svm.SVC(C=5), param_grid, refit=True, verbose=3,cv=3)
-        #classifier = svm.SVC(C=5, kernel='linear')
+        classifier = svm.SVC(C=1.0, kernel='poly', degree=5)
+        # classifier = svm.SVC(class_weight='balanced')
         classifier.fit(X_train, y_train)
-        print("best para",classifier.best_params_)
-        print(classifier.best_estimator_)
         return classifier
 
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
-        print('X-y train-test shapes', X_train.shape, y_train.shape, X_test.shape, y_test.shape)
         classifier = self._build_model(X_train, y_train)
-        accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
-        self._display_performance_results('SVM', accuracy, precision, recall, f1)
+        mae, rmse = self._validate_model_regression(X_test, y_test, classifier)
+        self._display_performance_results_regression('SVM', mae, rmse)
 
 
 class ModelNeuralNetwork(TrainLoadModelBuilder):
 
-    def __init__(self, dataframe):
-        super().__init__(dataframe)
+    def __init__(self, dataframe, activity_features):
+        super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, X_test, y_train, y_test):
         neural_network = Sequential()
@@ -130,33 +148,31 @@ class ModelNeuralNetwork(TrainLoadModelBuilder):
 
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
-        print('X-y train-test shapes', X_train.shape, y_train.shape, X_test.shape, y_test.shape)
         self._build_model(X_train, X_test, y_train, y_test)
 
 
 class ModelRandomForest(TrainLoadModelBuilder):
 
-    def __init__(self, dataframe):
-        super().__init__(dataframe)
+    def __init__(self, dataframe, activity_features):
+        super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
-        rfc = RandomForestClassifier(max_depth=3, random_state=0)
+        rfc = RandomForestRegressor(max_depth=3, random_state=0)
         rfc.fit(X_train, y_train)
         return rfc
 
     def process_modeling(self):
         # TODO: @Lin
         X_train, X_test, y_train, y_test = self._split_train_validation()
-        print('X-y train-test shapes', X_train.shape, y_train.shape, X_test.shape, y_test.shape)
-        classifier = self._build_model(X_train, y_train)
-        accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
-        self._display_performance_results('Random Forest', accuracy, precision, recall, f1)
+        regressor = self._build_model(X_train, y_train)
+        mae, rmse = self._validate_model_regression(X_test, y_test, regressor)
+        self._display_performance_results_regression('Random Forest', mae, rmse)
 
 
 class ModelXGBoost(TrainLoadModelBuilder):
 
-    def __init__(self, dataframe):
-        super().__init__(dataframe)
+    def __init__(self, dataframe, activity_features):
+        super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
         # TODO: Sindhu
@@ -166,16 +182,15 @@ class ModelXGBoost(TrainLoadModelBuilder):
 
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
-        print('X-y train-test shapes', X_train.shape, y_train.shape, X_test.shape, y_test.shape)
         classifier = self._build_model(X_train, y_train)
-        accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
-        self._display_performance_results('XGBoost', accuracy, precision, recall, f1)
+        mae, rmse = self._validate_model_regression(X_test, y_test, classifier)
+        self._display_performance_results_regression('XGBoost', mae, rmse)
 
 
 class ModelStacking(TrainLoadModelBuilder):
 
-    def __init__(self, dataframe):
-        super().__init__(dataframe)
+    def __init__(self, dataframe, activity_features):
+        super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
         knn = KNeighborsClassifier(n_neighbors=1)
@@ -221,16 +236,15 @@ class ModelStacking(TrainLoadModelBuilder):
 
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
-        print('X-y train-test shapes', X_train.shape, y_train.shape, X_test.shape, y_test.shape)
         classifier = self._build_model(X_train, y_train)
-        accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
-        self._display_performance_results('XGBoost', accuracy, precision, recall, f1)
+        mae, rmse = self._validate_model_regression(X_test, y_test, classifier)
+        self._display_performance_results_regression('XGBoost', mae, rmse)
 
 
 class ModelAdaBoost(TrainLoadModelBuilder):
 
-    def __init__(self, dataframe):
-        super().__init__(dataframe)
+    def __init__(self, dataframe, activity_features):
+        super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
         # TODO: @Yuhan
@@ -241,10 +255,9 @@ class ModelAdaBoost(TrainLoadModelBuilder):
 
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
-        print('X-y train-test shapes', X_train.shape, y_train.shape, X_test.shape, y_test.shape)
         classifier = self._build_model(X_train, y_train)
-        accuracy, precision, recall, f1 = self._validate_model(X_test, y_test, classifier)
-        self._display_performance_results('AdaBoost', accuracy, precision, recall, f1)
+        mae, rmse = self._validate_model_regression(X_test, y_test, classifier)
+        self._display_performance_results_regression('AdaBoost', mae, rmse)
 
 
 class PerformanceModelBuilder():
@@ -257,19 +270,33 @@ def process_train_load_modeling(athletes_name):
     loader = data_loader.DataLoader()
     data_set = loader.load_merged_data(athletes_name=athletes_name)
     data_set_modeling = data_set[data_set['Training Stress Score®'].notnull()]
-    # TODO: @Spoorthi @Lin @Sindhu @Yuhan Below is how you test your model, the example is random forest.
-    train_load_builder = ModelRandomForest(data_set_modeling)
-    # train_load_builder = ModelLinearRegression(data_set_modeling)
-    # train_load_builder = ModelXGBoost(data_set_modeling)
-    # train_load_builder = ModelAdaBoost(data_set_modeling)
-    train_load_builder.process_modeling()
+    sub_dataframe_dict = split_dataframe_by_activities(data_set_modeling)
+    # print([(k, v['Activity Type'].unique()) for k, v in sub_dataframe_dict.items()])
+    for activity, sub_dataframe in sub_dataframe_dict.items():
+        print('\nBuilding Model on {} activities...'.format(activity))
+        general_features = utility.FeatureManager().get_common_features_among_activities()
+        activity_specific_features = utility.FeatureManager().get_activity_specific_features(activity)
+        features = general_features + activity_specific_features
+        print('Features: ', features)
+        # TODO: @Spoorthi @Lin @Sindhu @Yuhan
+        #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
+        train_load_builder = ModelRandomForest(sub_dataframe, features)
+        # train_load_builder = ModelLinearRegression(sub_dataframe)
+        # train_load_builder = ModelXGBoost(sub_dataframe)
+        # train_load_builder = ModelAdaBoost(sub_dataframe)
+        train_load_builder.process_modeling()
 
 
 def process_performance_modeling(athletes_name):
     pass
 
 
+def save_data_frame_for_pmc():
+    pass
+
+
 if __name__ == '__main__':
     athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
-    process_train_load_modeling(athletes_names[0])
-    process_performance_modeling(athletes_names[0])
+    process_train_load_modeling(athletes_names[2])
+    process_performance_modeling(athletes_names[2])
+

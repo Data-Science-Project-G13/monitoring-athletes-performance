@@ -164,6 +164,7 @@ class AdditionalDataFeatureExtractor():
         return tss
 
     def _extract_other_feature_1(self):
+        # TODO: Extract AVG SPEED, MAX SPEED from fit files if not in spreadsheet
         return None
 
     def _extract_other_feature_2(self):

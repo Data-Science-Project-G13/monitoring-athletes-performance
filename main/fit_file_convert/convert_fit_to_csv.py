@@ -144,7 +144,7 @@ def write_fitfile_to_csv(
         is_overwritten=False,
         fit_ignore_splits_and_laps=False
 ):
-    # TODO: Try-catch added by Tingli
+    # TODO: Note - Try-catch added by Tingli
     try:
         tz_name = ''
         local_tz = CST
@@ -188,7 +188,7 @@ def write_fitfile_to_csv(
                     if position_lat is not None and position_long is not None:
                         changed_tz = True
                         tz_name = tzwhere.tzNameAt(position_lat, position_long)
-                        # TODO: Tingli added this try catch
+                        # TODO: Note - Try-catch Added by Tingli
                         try:
                             local_tz = pytz.timezone(tz_name)
                             if tz_name != 'US/Central':
