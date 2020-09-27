@@ -1,3 +1,19 @@
+""" Merge spreadsheet data and fit data
+
+This script allows the user to merge the spreadsheet data and the fit data
+for an athlete.
+
+This script requires that `pandas` be installed
+within the Python environment you are running this script in.
+
+This file can also be imported as a module and contains the following
+functions:
+
+    * merge_spreadsheet_additional - merge spreadsheet data and fit data
+    * process - process merge and save
+
+"""
+
 # Packages
 import os
 import pandas as pd
