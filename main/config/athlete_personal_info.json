@@ -19,7 +19,7 @@
         "pre weight": 82,
         "post weight": 79,
         "injuries": "hamstring",
-        "critical swim speed": 77.94462693571091,
+        "critical swim speed": 1.2829620710415415,
         "joe freil lactate threshold": 150.64283224097056,
         "andy coogan lactate threshold": 150.52847174506434
     },
@@ -115,7 +115,7 @@
         "pre weight": null,
         "post weight": null,
         "injuries": null,
-        "critical swim speed": 90.81132751822201,
+        "critical swim speed": 1.1011842105263157,
         "joe freil lactate threshold": 98.04940859797604,
         "andy coogan lactate threshold": 95.7263293050734
     },
@@ -127,7 +127,7 @@
         "pre weight": null,
         "post weight": null,
         "injuries": null,
-        "critical swim speed": 74.05357538189062,
+        "critical swim speed": 1.350373692077728,
         "joe freil lactate threshold": 166.9107477589503,
         "andy coogan lactate threshold": 163.4790890831331
     }
