@@ -29,6 +29,7 @@ This file can be imported as a module and contains the following classes:
 import os
 import re
 import json
+import joblib
 from configparser import ConfigParser
 
 
@@ -240,6 +241,26 @@ def get_athletes_lact_thr(athletes_name) -> (float, float):
     jf_lact_thr = athletes_info_json[athletes_name.title()]["joe freil lactate threshold"]
     ac_lact_thr = athletes_info_json[athletes_name.title()]["andy coogan lactate threshold"]
     return (jf_lact_thr, ac_lact_thr)
+
+
+
+def save_model(athletes_name, activity, model_type, learner):
+    athlete_folder = '{}/models/{}'.format(os.path.pardir, '_'.join(athletes_name.split()))
+    if not os.path.exists(athlete_folder):
+        os.mkdir(athlete_folder)
+    model_folder = '{}/{}'.format(athlete_folder, activity)
+    if not os.path.exists(model_folder):
+        os.mkdir(model_folder)
+    model_filename = '{}/{}'.format(model_folder, model_type)
+    joblib.dump(learner, model_filename)
+
+
+def load_model(athletes_name, activity, model_type):
+    model_filename = '{}/models/{}/{}/{}'.format(os.path.pardir, '_'.join(athletes_name.split()), activity, model_type)
+    if not os.path.exists(model_filename):
+        raise Exception("No pre-trained {} model for {}'s {} activity".format(model_type, athletes_name, activity))
+    else:
+        return joblib.load(model_filename)
 
 
 class SystemReminder():

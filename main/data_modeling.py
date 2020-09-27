@@ -282,25 +282,6 @@ class PerformanceModelBuilder():
         pass
 
 
-def save_model(athletes_name, activity, model_type, learner):
-    athlete_folder = '{}/models/{}'.format(os.path.pardir, '_'.join(athletes_name.split()))
-    if not os.path.exists(athlete_folder):
-        os.mkdir(athlete_folder)
-    model_folder = '{}/{}'.format(athlete_folder, activity)
-    if not os.path.exists(model_folder):
-        os.mkdir(model_folder)
-    model_filename = '{}/{}'.format(model_folder, model_type)
-    joblib.dump(learner, model_filename)
-
-
-def load_model(athletes_name, activity, model_type):
-    model_filename = '{}/models/{}/{}/{}'.format(os.path.pardir, '_'.join(athletes_name.split()), activity, model_type)
-    if not os.path.exists(model_filename):
-        raise Exception("No pre-trained {} model for {}'s {} activity".format(model_type, athletes_name, activity))
-    else:
-        return joblib.load(model_filename)
-
-
 def process_train_load_modeling(athletes_name):
     loader = data_loader.DataLoader()
     data_set = loader.load_merged_data(athletes_name=athletes_name)
@@ -320,14 +301,10 @@ def process_train_load_modeling(athletes_name):
         # train_load_builder = ModelXGBoost(sub_dataframe)
         # train_load_builder = ModelAdaBoost(sub_dataframe)
         regressor = train_load_builder.process_modeling()
-        save_model(athletes_name, activity, 'random_forest', regressor)
+        utility.save_model(athletes_name, activity, 'random_forest', regressor)
 
 
 def process_performance_modeling(athletes_name):
-    pass
-
-
-def save_data_frame_for_pmc():
     pass
 
 
