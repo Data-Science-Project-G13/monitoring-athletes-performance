@@ -287,7 +287,7 @@ def process_train_load_modeling(athletes_name):
         # TODO: @Spoorthi @Lin @Sindhu @Yuhan
         #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
         train_load_builder = ModelRandomForest(sub_dataframe, features)
-        #train_load_builder = ModelLinearRegression(sub_dataframe,features)
+        ##train_load_builder = ModelLinearRegression(sub_dataframe,features)
         # train_load_builder = ModelXGBoost(sub_dataframe)
         # train_load_builder = ModelAdaBoost(sub_dataframe)
         train_load_builder.process_modeling()
