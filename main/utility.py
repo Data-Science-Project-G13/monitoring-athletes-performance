@@ -268,25 +268,25 @@ class SystemReminder():
         print("{} fit files have converted to csv files.".format(athletes_name.title()))
 
     def display_data_cleaning_start(self, athletes_name, data_type):
-        print("Cleaning {} {} data...".format(athletes_name.title(), data_type))
+        print("\nCleaning {} {} data...".format(athletes_name.title(), data_type))
 
     def display_data_cleaning_end(self, athletes_name, data_type):
         print("{} {} data done cleaning".format(athletes_name.title(), data_type))
 
     def display_feature_engineering_start(self, athletes_name):
-        print("Processing feature engineering on {} data...".format(athletes_name.title()))
+        print("\nProcessing feature engineering on {} data...".format(athletes_name.title()))
 
     def display_feature_engineering_end(self, athletes_name):
         print("Feature engineering on {} data is done.".format(athletes_name.title()))
 
     def display_modeling_start(self, athletes_name, model_type):
-        print("Building {} model on {} data...".format(model_type, athletes_name.title()))
+        print("\nBuilding {} model on {} data...".format(model_type, athletes_name.title()))
 
     def display_modeling_end(self, athletes_name, model_type):
         print("{} modeling on {} data is done.".format(model_type, athletes_name.title()))
 
     def display_pmc_generation_start(self, athletes_name):
-        print("Generating {}'s PMC...".format(athletes_name.title()))
+        print("\nGenerating {}'s PMC...".format(athletes_name.title()))
 
     def display_pmc_generation_end(self, athletes_name):
         print("{}'s PMC generated.".format(athletes_name.title()))
