@@ -1,4 +1,5 @@
 # Packages
+import os
 import numpy as np
 import pandas as pd
 import joblib
@@ -116,6 +117,7 @@ class ModelLinearRegression(TrainLoadModelBuilder):
         regressor = self._build_model(X_train, y_train)
         mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
         self._display_performance_results_regression('Linear Regression', mae, rmse,rsquared)
+        return regressor
 
 
 class ModelSVM(TrainLoadModelBuilder):
@@ -177,6 +179,7 @@ class ModelRandomForest(TrainLoadModelBuilder):
         regressor = self._build_model(X_train, y_train)
         mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
         self._display_performance_results_regression('Random Forest', mae, rmse,rsquared)
+        return regressor
 
 
 class ModelXGBoost(TrainLoadModelBuilder):
@@ -192,9 +195,10 @@ class ModelXGBoost(TrainLoadModelBuilder):
 
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
-        classifier = self._build_model(X_train, y_train)
-        mae, rmse,rsquared = self._validate_model_regression(X_test, y_test, classifier)
+        regressor = self._build_model(X_train, y_train)
+        mae, rmse,rsquared = self._validate_model_regression(X_test, y_test, regressor)
         self._display_performance_results_regression('XGBoost', mae, rmse,rsquared)
+        return regressor
 
 
 class ModelStacking(TrainLoadModelBuilder):
@@ -246,9 +250,10 @@ class ModelStacking(TrainLoadModelBuilder):
 
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
-        classifier = self._build_model(X_train, y_train)
-        mae, rmse,rsquared = self._validate_model_regression(X_test, y_test, classifier)
+        regressor = self._build_model(X_train, y_train)
+        mae, rmse,rsquared = self._validate_model_regression(X_test, y_test, regressor)
         self._display_performance_results_regression('XGBoost', mae, rmse,rsquared)
+        return regressor
 
 
 class ModelAdaBoost(TrainLoadModelBuilder):
@@ -265,9 +270,10 @@ class ModelAdaBoost(TrainLoadModelBuilder):
 
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
-        classifier = self._build_model(X_train, y_train)
-        mae, rmse,rsquared = self._validate_model_regression(X_test, y_test, classifier)
+        regressor = self._build_model(X_train, y_train)
+        mae, rmse,rsquared = self._validate_model_regression(X_test, y_test, regressor)
         self._display_performance_results_regression('AdaBoost', mae, rmse,rsquared)
+        return regressor
 
 
 class PerformanceModelBuilder():
@@ -276,14 +282,20 @@ class PerformanceModelBuilder():
         pass
 
 
-def save_model(learner, model_filename):
-    # save the model to disk
-    filename = 'finalized_model.sav'
+def save_model(athletes_name, activity, model_type, learner):
+    model_folder = '{}/models/{}/{}'.format(os.path.pardir, athletes_name, activity)
+    if not os.path.exists(model_folder):
+        os.mkdir(model_folder)
+    model_filename = '{}/{}'.format(model_folder, model_type)
     joblib.dump(learner, model_filename)
 
 
-def load_model(model_filename):
-    return joblib.load(model_filename)
+def load_model(athletes_name, activity, model_type):
+    model_filename = '{}/models/{}/{}/{}'.format(os.path.pardir, athletes_name, activity, model_type)
+    if not os.path.exists(model_filename):
+        raise Exception("No pre-trained {} model for {}'s {} activity".format(model_type, athletes_name, activity))
+    else:
+        return joblib.load(model_filename)
 
 
 def process_train_load_modeling(athletes_name):
@@ -301,10 +313,11 @@ def process_train_load_modeling(athletes_name):
         # TODO: @Spoorthi @Lin @Sindhu @Yuhan
         #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
         train_load_builder = ModelRandomForest(sub_dataframe, features)
-        #train_load_builder = ModelLinearRegression(sub_dataframe,features)
+        # train_load_builder = ModelLinearRegression(sub_dataframe,features)
         # train_load_builder = ModelXGBoost(sub_dataframe)
         # train_load_builder = ModelAdaBoost(sub_dataframe)
-        train_load_builder.process_modeling()
+        regressor = train_load_builder.process_modeling()
+        save_model(athletes_name, activity, 'random_forest', regressor)
 
 
 def process_performance_modeling(athletes_name):
