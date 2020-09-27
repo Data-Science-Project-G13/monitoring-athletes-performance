@@ -1,14 +1,16 @@
-"""Athletes Data Loader
+"""System Utility
 
-This script contains common functions that support the project.
+This file contains utility functions and classes for the system
 
-This script requires that `pandas` be installed.
+This file can be imported as a module and contains the following functions:
 
-This file can be imported as a module and contains the following
-functions:
+    * create_all_folders - creates all folders that are necessary for the structure
+    * get_fit_file_internal_args - get the arguments for converting fit files internally
 
-    * get_all_spreadsheet_data_file_names - return a list of spreadsheet data file names
-    * get_all_additional_data_folder_names - return a list of additional data folder names
+    * need_clean - returns a boolean that indicates whether the athlete's data needs cleaning
+
+    * get_all_spreadsheet_data_file_names - returns a list of spreadsheet data file names
+    * get_all_additional_data_folder_names - returns a list of additional data folder names
 
     * get_spreadsheet_numerical - returns a list of numerical variables in spreadsheet data
     * get_spreadsheet_categorical - returns a list of categorical variables in spreadsheet data
@@ -17,6 +19,10 @@ functions:
 
     * get_spreadsheet_activity_types - returns a list of activity types in spreadsheet data
     * get_additional_activity_types - returns a list of activity types in additional data
+
+This file can be imported as a module and contains the following classes:
+    * SystemReminder - displays reminders while running the system
+    * FeatureManager - manages the features
 
 """
 
@@ -82,7 +88,7 @@ def get_all_additional_data_folder_names():
     return [parser_data_names.get('ADDITIONAL-DATA-FOLDERS', key) for key in list(parser_data_names['ADDITIONAL-DATA-FOLDERS'].keys())]
 
 
-def need_clean(athletes_name: str, data_type: str, do_cleaning: bool) -> bool:
+def need_cleaning(athletes_name: str, data_type: str, do_cleaning: bool) -> bool:
     if data_type == 'spreadsheet':
         if '{}.csv'.format(athletes_name.title()) in os.listdir('{}/data/cleaned_spreadsheet'.format(os.path.pardir))\
                 and not do_cleaning:
