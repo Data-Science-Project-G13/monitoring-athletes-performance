@@ -1,3 +1,19 @@
+"""System Initialize
+
+This script allows the user to initialize the analysis system.
+
+This file can also be imported as a module and contains the following
+functions:
+
+    * create_directory_structures
+    * convert_fit_files_to_csv
+    * initialize_critical_swim_speed
+    * initialize_lactate_threshold
+    * initialize_system
+    * initialize_features
+"""
+
+
 # Packages
 import json
 import pandas as pd

@@ -73,6 +73,7 @@ class DataLoader():
             print('Invalid function call. Given type \'additional\'.')
             return None
 
+
     def load_additional_data(self, athletes_name, activity_type='', split_type=''):
         """Load the additional data for an athlete
 
@@ -103,6 +104,7 @@ class DataLoader():
             else:
                 return None
 
+
     def load_cleaned_spreadsheet_data(self, dir_name=None, athletes_name=None):
         """Load the cleaned spreadsheet data for an athlete
 
@@ -125,6 +127,7 @@ class DataLoader():
         if self.data_type == 'additional':
             print('Invalid function call. Given type \'additional\'.')
             return None
+
 
     def load_cleaned_additional_data(self, athletes_name, activity_type='', split_type=''):
         if self.data_type == 'spreadsheet':
