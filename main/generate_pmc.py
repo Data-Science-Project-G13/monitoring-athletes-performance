@@ -2,7 +2,8 @@
 import os
 import pandas as pd
 # Self-defined modules
-import data_feature_engineering
+import utility
+from data_loader import DataLoader
 
 
 def _add_fitness_fatigue(spreadsheet):
@@ -26,9 +27,32 @@ def _label_data_record(spreadsheet):
     spreadsheet['Training Load Indicator'] = pd.Series(indicators, index=spreadsheet.index)
 
 
-def process_pmc_generation():
-    pass
+def get_tss_estimated_data(athletes_name):
+    original_merged_data = DataLoader().load_merged_data(athletes_name=athletes_name)
+    null_tss_data = original_merged_data[~original_merged_data['Training Stress Score®'].notnull()]
+    sub_dataframe_dict = utility.split_dataframe_by_activities(original_merged_data)
+
+    for activity, sub_dataframe in sub_dataframe_dict.items():
+        sub_dataframe_for_modeling = sub_dataframe[sub_dataframe['Training Stress Score®'].notnull()]
+        best_model_type = 'random_forest'
+        regressor = utility.load_model(athletes_name, activity, best_model_type)
+        TSS = 'Training Stress Score®'
+        general_features = utility.FeatureManager().get_common_features_among_activities()
+        activity_specific_features = utility.FeatureManager().get_activity_specific_features(activity)
+
+        features = [feature for feature in general_features + activity_specific_features
+                    if feature in sub_dataframe_for_modeling.columns and feature != TSS
+                    and not sub_dataframe[feature].isnull().any()]
+
+        X = sub_dataframe[features]
+        y = sub_dataframe[TSS]  # fill out only null cells and keep those not null
+        y_pred = regressor.predict(X)
+
+
+def process_pmc_generation(athletes_name):
+    data = get_tss_estimated_data(athletes_name)
 
 
 if __name__ == '__main__':
-    process_pmc_generation()
+    athletes_name = 'xu chen'
+    process_pmc_generation(athletes_name)

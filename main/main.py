@@ -79,7 +79,7 @@ def main(athletes_name: str,
 
 if __name__ == '__main__':
     athletes_names = ['Eduardo Oliveira', 'Xu Chen', 'Carly Hart']
-    do_initialize, do_cleaning, do_feature_engineering, do_modeling, do_pmc_generating = False, True, True, True, True
+    do_initialize, do_cleaning, do_feature_engineering, do_modeling, do_pmc_generating = True, False, True, True, False
     if do_initialize:
         system_initialize.initialize_system()
     for athletes_name in athletes_names:

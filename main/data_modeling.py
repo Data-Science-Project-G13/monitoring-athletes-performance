@@ -39,8 +39,9 @@ class TrainLoadModelBuilder():
     def __init__(self, dataframe, activity_features):
         TSS = 'Training Stress Score®'
         features = [feature for feature in activity_features
-                    if feature in dataframe.columns and feature != TSS
+                    if feature != TSS
                     and not dataframe[feature].isnull().any()]
+        print('Features used for modeling: ', features)
         self.num_features = len(features)
         self.X = dataframe[features]
         self.y = dataframe[TSS]
@@ -59,6 +60,11 @@ class TrainLoadModelBuilder():
         rsquared=r2_score(y_test, y_preds)
         return mae, rmse,rsquared
 
+    def _display_performance_results_regression(self, model_name, mae, rmse, rsquared):
+        print('Regressor: {}'.format(model_name))
+        print('Mean Absolute Error: {}, Root Mean Squared Error: {}, R-squared: {}'
+              .format(round(mae, 3), round(rmse, 3), round(rsquared, 3)))
+
     def _display_performance_results_classification(self, model_name, accuracy, precision, recall, f1):
         print('Classifier: {}'.format(model_name))
         print('Accuracy: {}, Precision: {}, Recall: {}, F1 score: {}'
@@ -66,18 +72,11 @@ class TrainLoadModelBuilder():
 
     def _validate_model_classification(self, X_test, y_test, learner):
         y_preds = learner.predict(X_test)  # predict classes for y test
-        print('Predictions Overview: ', y_preds)
         accuracy = accuracy_score(y_test, y_preds)
         precision = precision_score(y_test, y_preds, average='macro', zero_division=0)
         recall = recall_score(y_test, y_preds, average='macro')
         f1 = f1_score(y_test, y_preds, average='macro')
         return accuracy, precision, recall, f1
-
-    def _display_performance_results_regression(self, model_name, mae, rmse, rsquared):
-        print('Regressor: {}'.format(model_name))
-        print('Mean Absolute Error: {}, Root Mean Squared Error: {}, R-squared: {}'
-              .format(round(mae, 3), round(rmse, 3), round(rsquared, 3)))
-
 
 
 class ModelLinearRegression(TrainLoadModelBuilder):
@@ -151,7 +150,7 @@ class ModelRandomForest(TrainLoadModelBuilder):
         super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
-        rfc = RandomForestRegressor(max_depth=3, random_state=0)
+        rfc = RandomForestRegressor(max_depth=2, random_state=0)
         rfc.fit(X_train, y_train)
         return rfc
 
@@ -271,20 +270,21 @@ def process_train_load_modeling(athletes_name):
     # print([(k, v['Activity Type'].unique()) for k, v in sub_dataframe_dict.items()])
     for activity, sub_dataframe in sub_dataframe_dict.items():
         print('\nBuilding Model on {} activities...'.format(activity))
-        sub_dataframe_for_modeling = data_set[data_set['Training Stress Score®'].notnull()]
-        general_features = utility.FeatureManager().get_common_features_among_activities()
-        activity_specific_features = utility.FeatureManager().get_activity_specific_features(activity)
-        features = [feature for feature in general_features + activity_specific_features
-                    if feature in sub_dataframe.columns and not sub_dataframe[feature].isnull().any()]   # Handle columns with null
-        print('Features: ', features)
-        # TODO: @Spoorthi @Lin @Sindhu @Yuhan
-        #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
-        train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
-        # train_load_builder = ModelLinearRegression(sub_dataframe,features)
-        # train_load_builder = ModelXGBoost(sub_dataframe)
-        # train_load_builder = ModelAdaBoost(sub_dataframe)
-        regressor = train_load_builder.process_modeling()
-        utility.save_model(athletes_name, activity, 'random_forest', regressor)
+        sub_dataframe_for_modeling = sub_dataframe[sub_dataframe['Training Stress Score®'].notnull()]
+        if sub_dataframe_for_modeling.shape[0] > 10:
+            general_features = utility.FeatureManager().get_common_features_among_activities()
+            activity_specific_features = utility.FeatureManager().get_activity_specific_features(activity)
+            features = [feature for feature in general_features + activity_specific_features
+                        if feature in sub_dataframe.columns
+                        and not sub_dataframe[feature].isnull().any()]   # Handle columns with null
+            # TODO: @Spoorthi @Lin @Sindhu @Yuhan
+            #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
+            train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
+            # train_load_builder = ModelLinearRegression(sub_dataframe,features)
+            # train_load_builder = ModelXGBoost(sub_dataframe)
+            # train_load_builder = ModelAdaBoost(sub_dataframe)
+            regressor = train_load_builder.process_modeling()
+            utility.save_model(athletes_name, activity, 'random_forest', regressor)
 
 
 def process_performance_modeling(athletes_name):

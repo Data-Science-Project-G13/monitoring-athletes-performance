@@ -342,8 +342,8 @@ class FeatureManager():
         try:
             return pattern.split(parser_activity_types.get('FEATURES', activity_type))
         except:
-            print('No specific features for the given activity, return common features instead.')
-            return self.get_common_features_among_activities()
+            print('No specific features for the given activity.')
+            return []
 
 
 if __name__ == '__main__':
