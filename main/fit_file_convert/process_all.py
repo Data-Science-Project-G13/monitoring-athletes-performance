@@ -7,9 +7,9 @@ except:
     import import_and_process_garmin_fit, calculate_workout_variables, censor_and_package
 
 
-def main(internal_inputs=None):
+def main(internal_args=None):
     # TODO: Note - Options Added by Tingli
-    options = parse_options(internal_inputs)
+    options = parse_options(internal_args)
     censor_search_directories = []
     
     if options['gpx_source_dir'] != '':
@@ -49,7 +49,7 @@ def main(internal_inputs=None):
 
 
 
-def parse_options(internal_inputs: []):
+def parse_options(internal_args: []):
     parser = argparse.ArgumentParser(description='Run FIT/GPX Pipeline')
     parser.add_argument('--subject-name', dest='subject_name', type=str, required=True,
                         help='name of subject'
@@ -161,8 +161,8 @@ def parse_options(internal_inputs: []):
                         help='Skips FIT conversion if used'
     )
 
-    if internal_inputs:
-        args = parser.parse_args(internal_inputs)
+    if internal_args:
+        args = parser.parse_args(internal_args)
     else:
         args = parser.parse_args()
     
