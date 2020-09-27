@@ -70,7 +70,8 @@ def main(athletes_name: str,
 
     # Generate PMC
     if pmc_generating:
-        pass
+        reminder.display_pmc_generation_start(athletes_name)
+        reminder.display_pmc_generation_end(athletes_name)
 
     reminder.display_athlete_process_end(athletes_name)
 

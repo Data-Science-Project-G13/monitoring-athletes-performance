@@ -286,6 +286,12 @@ class SystemReminder():
     def display_modeling_end(self, athletes_name, model_type):
         print("{} modeling on {} data is done.".format(model_type, athletes_name.title()))
 
+    def display_pmc_generation_start(self, athletes_name):
+        print("Generating {}'s PMC...".format(athletes_name.title()))
+
+    def display_pmc_generation_end(self, athletes_name):
+        print("{}'s PMC generated.".format(athletes_name.title()))
+
 
 class FeatureManager():
 
