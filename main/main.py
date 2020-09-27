@@ -52,6 +52,7 @@ def main(athletes_name: str,
         data_merge.process(athletes_name, verbose=show_feature_engineering_details)
         utility.SystemReminder().display_feature_engineering_end(athletes_name)
 
+
     # Modeling
     if modeling:
         Reminder().display_modeling_start(athletes_name, 'Assessing Training Load')
@@ -62,6 +63,7 @@ def main(athletes_name: str,
         data_modeling.process_performance_modeling(athletes_name)
         Reminder().display_modeling_end(athletes_name, 'Predicting Performance')
 
+    # Generate PMC
     if pmc_generating:
         pass
 
@@ -70,11 +72,11 @@ def main(athletes_name: str,
 
 if __name__ == '__main__':
     athletes_names = ['Eduardo Oliveira', 'Xu Chen', 'Carly Hart']
-    initialize_system, cleaning, feature_engineering, modeling, pmc_generating = False, False, True, True, True
-    if initialize_system:
+    do_initialize, do_cleaning, do_feature_engineering, do_modeling, do_pmc_generating = False, False, True, True, True
+    if do_initialize:
         system_initialize.initialize_system(athletes_names)
     for athletes_name in athletes_names:
-        main(athletes_name, cleaning, feature_engineering, modeling, pmc_generating)
+        main(athletes_name, do_cleaning, do_feature_engineering, do_modeling, do_pmc_generating)
 
 
 
