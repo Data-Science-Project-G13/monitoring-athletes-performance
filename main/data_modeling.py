@@ -89,6 +89,9 @@ class TrainLoadModelBuilder():
         print('Mean Absolute Error: {}, Root Mean Squared Error: {}'
               .format(round(mae, 3), round(rmse, 3)))
 
+    def _save_model(self, learner):
+        pass
+
 
 class ModelLinearRegression(TrainLoadModelBuilder):
 
@@ -285,6 +288,10 @@ def process_train_load_modeling(athletes_name):
 
 
 def process_performance_modeling(athletes_name):
+    pass
+
+
+def save_data_frame_for_pmc():
     pass
 
 

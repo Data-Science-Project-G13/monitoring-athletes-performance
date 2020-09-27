@@ -4,9 +4,11 @@ import pandas as pd
 # Self-defined modules
 import data_feature_engineering
 
+
 def _add_fitness_fatigue(spreadsheet):
     spreadsheet['ATL'] = spreadsheet.rolling('7d', min_periods=1, on='Date')['Training Stress Score®'].mean()
     spreadsheet['CTL'] = spreadsheet.rolling('42d', min_periods=1, on='Date')['Training Stress Score®'].mean()
+
 
 def _label_data_record(spreadsheet):
     """Label the data for modeling
@@ -22,3 +24,11 @@ def _label_data_record(spreadsheet):
         else:
             indicators.append(1)
     spreadsheet['Training Load Indicator'] = pd.Series(indicators, index=spreadsheet.index)
+
+
+def process_pmc_generation():
+    pass
+
+
+if __name__ == '__main__':
+    process_pmc_generation()
