@@ -74,12 +74,14 @@ def get_all_additional_data_folder_names():
     return [parser_data_names.get('ADDITIONAL-DATA-FOLDERS', key) for key in list(parser_data_names['ADDITIONAL-DATA-FOLDERS'].keys())]
 
 
-def need_clean(athletes_name: str, data_type: str) -> bool:
+def need_clean(athletes_name: str, data_type: str, do_cleaning: bool) -> bool:
     if data_type == 'spreadsheet':
-        if '{}.csv'.format(athletes_name.title()) in os.listdir('{}/data/cleaned_spreadsheet'.format(os.path.pardir)):
+        if '{}.csv'.format(athletes_name.title()) in os.listdir('{}/data/cleaned_spreadsheet'.format(os.path.pardir))\
+                and not do_cleaning:
             return False
     elif data_type == 'additional':
-        if '_'.join(athletes_name.lower().split()) in os.listdir('{}/data/cleaned_additional'.format(os.path.pardir)):
+        if '_'.join(athletes_name.lower().split()) in os.listdir('{}/data/cleaned_additional'.format(os.path.pardir)) \
+                and not do_cleaning:
             return False
     return True
 

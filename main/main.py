@@ -32,11 +32,11 @@ def main(athletes_name: str,
     if cleaning:
         spreadsheet_data_type, additional_data_type = 'spreadsheet', 'additional'
         show_spreadsheet_cleaning_details, show_additional_cleaning_details = False, False  # Change to True if would like to check details
-        if utility.need_clean(athletes_name, spreadsheet_data_type):
+        if utility.need_clean(athletes_name, spreadsheet_data_type, cleaning):
             utility.SystemReminder().display_data_cleaning_start(athletes_name, spreadsheet_data_type)
             data_cleaning.main('spreadsheet', athletes_name, verbose=show_spreadsheet_cleaning_details)
         utility.SystemReminder().display_data_cleaning_end(athletes_name, spreadsheet_data_type)
-        if utility.need_clean(athletes_name, additional_data_type):
+        if utility.need_clean(athletes_name, additional_data_type, cleaning):
             utility.SystemReminder().display_data_cleaning_start(athletes_name, additional_data_type)
             fit_activity_types, split_type = ['cycling', 'running', 'swimming', 'training'], 'real-time'
             for activity_type in fit_activity_types:
