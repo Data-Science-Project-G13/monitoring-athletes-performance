@@ -14,7 +14,6 @@ import data_cleaning
 import data_merge
 import data_modeling
 from utility import SystemReminder as Reminder
-from fit_file_convert import process_all
 
 
 def main(athletes_name):
@@ -56,20 +55,10 @@ def main(athletes_name):
 
 
 if __name__ == '__main__':
-    # athletes_names = ['Eduardo Oliveira', 'Xu Chen', 'Carly Hart']
-    # system_initialize.initialize_system(athletes_names)
-    # for athletes_name in athletes_names:
-    #     main(athletes_name)
-    internal_inputs = ['--subject-dir=../data',
-                       '--subject-name=csv_test',
-                       '--fit-source=../data/fit_test']
+    athletes_names = ['Eduardo Oliveira', 'Xu Chen', 'Carly Hart']
+    system_initialize.initialize_system(athletes_names)
+    for athletes_name in athletes_names:
+        main(athletes_name)
 
-    process_all.main(internal_inputs=internal_inputs)
-
-    # import argparse
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument('--subject-dir')
-    # args = parser.parse_args(internal_inputs)
-    # print(vars(args))
 
 

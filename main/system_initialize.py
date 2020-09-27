@@ -4,6 +4,7 @@ import pandas as pd
 from data_loader import DataLoader
 # Self-defined modules
 import utility
+from fit_file_convert import process_all
 athlete_info_json_path = utility.get_athlete_info_path()
 
 
@@ -11,6 +12,12 @@ def create_directory_structures():
     """ Create all the directories and folders that are needed for the project
     """
     pass
+
+
+def convert_fit_files_to_csv():
+    for internal_args in utility.get_fit_file_internal_args():
+        process_all.main(internal_args=internal_args)
+
 
 def create_config_files():
     """ Create all files, config and json, that are needed for the project
@@ -101,6 +108,7 @@ def initialize_system(athletes_names):
     """
     utility.SystemReminder().display_initialization_start()
     create_directory_structures()
+    convert_fit_files_to_csv()
     create_config_files()
     for athletes_name in athletes_names:
         with open(athlete_info_json_path, 'r') as file:
