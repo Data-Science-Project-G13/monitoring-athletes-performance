@@ -283,7 +283,10 @@ class PerformanceModelBuilder():
 
 
 def save_model(athletes_name, activity, model_type, learner):
-    model_folder = '{}/models/{}/{}'.format(os.path.pardir, athletes_name, activity)
+    athlete_folder = '{}/models/{}'.format(os.path.pardir, '_'.join(athletes_name.split()))
+    if not os.path.exists(athlete_folder):
+        os.mkdir(athlete_folder)
+    model_folder = '{}/{}'.format(athlete_folder, activity)
     if not os.path.exists(model_folder):
         os.mkdir(model_folder)
     model_filename = '{}/{}'.format(model_folder, model_type)
@@ -291,7 +294,7 @@ def save_model(athletes_name, activity, model_type, learner):
 
 
 def load_model(athletes_name, activity, model_type):
-    model_filename = '{}/models/{}/{}/{}'.format(os.path.pardir, athletes_name, activity, model_type)
+    model_filename = '{}/models/{}/{}/{}'.format(os.path.pardir, '_'.join(athletes_name.split()), activity, model_type)
     if not os.path.exists(model_filename):
         raise Exception("No pre-trained {} model for {}'s {} activity".format(model_type, athletes_name, activity))
     else:
