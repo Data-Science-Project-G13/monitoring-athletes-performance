@@ -69,6 +69,15 @@ def get_fit_file_internal_args() -> [[]]:
     return internal_args_all_athletes
 
 
+def check_data_existence(athletes_name):
+    spreadsheet_exists, additional_exists = False, False
+    if os.path.exists('{}/data/{}.csv'.format(os.path.pardir, athletes_name.title())):
+        spreadsheet_exists = True
+    if os.path.exists('{}/data/fit_{}'.format(os.path.pardir, '_'.join(athletes_name.split()))):
+        additional_exists = True
+    return spreadsheet_exists, additional_exists
+
+
 def get_all_spreadsheet_data_file_names():
     """Get all the spreadsheet data file names
 
@@ -249,6 +258,12 @@ class SystemReminder():
 
     def display_athlete_process_end(self, athletes_name):
         print("{} The End of {} Athlete Analytics {}\n".format(self.line, athletes_name.title(), self.line))
+
+    def raise_athete_spreadsheet_doesnt_exist(self, athletes_name):
+        raise Exception("Couldn't Find Athlete {}'s Spreadsheet Data.".format(athletes_name.title()))
+
+    def display_athete_additional_doesnt_exist(self, athletes_name):
+        print("Couldn't Find Athlete {}'s Fit File Data Folder.".format(athletes_name.title()))
 
     def display_fit_file_converted(self, athletes_name):
         print("{} fit files have converted to csv files.".format(athletes_name.title()))
