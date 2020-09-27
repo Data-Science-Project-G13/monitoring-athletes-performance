@@ -1,6 +1,7 @@
 # Packages
 import numpy as np
 import pandas as pd
+import joblib
 from tensorflow.keras import Sequential, layers
 from tensorflow.keras.utils import to_categorical
 from sklearn import svm
@@ -92,10 +93,8 @@ class TrainLoadModelBuilder():
     def _display_performance_results_regression(self, model_name, mae, rmse, rsquared):
         print('Regressor: {}'.format(model_name))
         print('Mean Absolute Error: {}, Root Mean Squared Error: {}, Rsquared: {}'
-              .format(round(mae, 3), round(rmse, 3), round(rsquared, 3) ))
+              .format(round(mae, 3), round(rmse, 3), round(rsquared, 3)))
 
-    def _save_model(self, learner):
-        pass
 
 
 class ModelLinearRegression(TrainLoadModelBuilder):
@@ -275,6 +274,16 @@ class PerformanceModelBuilder():
 
     def __init__(self):
         pass
+
+
+def save_model(learner, model_filename):
+    # save the model to disk
+    filename = 'finalized_model.sav'
+    joblib.dump(learner, model_filename)
+
+
+def load_model(model_filename):
+    return joblib.load(model_filename)
 
 
 def process_train_load_modeling(athletes_name):
