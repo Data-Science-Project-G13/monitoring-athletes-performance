@@ -2,7 +2,10 @@ import os
 import shutil
 import re
 
-import convert_fit_to_csv
+try:
+    from fit_file_convert import convert_fit_to_csv
+except:
+    import convert_fit_to_csv
 
 #ACTIVITY_DIRECTORY = '/media/max/GARMIN/Garmin/ACTIVITY/'
 

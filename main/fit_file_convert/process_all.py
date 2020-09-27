@@ -1,13 +1,15 @@
 import os
-
 import argparse
 
-#import gpx_to_csv
-import import_and_process_garmin_fit, calculate_workout_variables
-import censor_and_package
+try:
+    from fit_file_convert import import_and_process_garmin_fit, calculate_workout_variables, censor_and_package
+except:
+    import import_and_process_garmin_fit, calculate_workout_variables, censor_and_package
 
-def main():
-    options = parse_options()
+
+def main(internal_inputs=None):
+    # TODO: Note - Options Added by Tingli
+    options = parse_options(internal_inputs)
     censor_search_directories = []
     
     if options['gpx_source_dir'] != '':
@@ -47,7 +49,7 @@ def main():
 
 
 
-def parse_options():
+def parse_options(internal_inputs: []):
     parser = argparse.ArgumentParser(description='Run FIT/GPX Pipeline')
     parser.add_argument('--subject-name', dest='subject_name', type=str, required=True,
                         help='name of subject'
@@ -69,8 +71,9 @@ def parse_options():
     )
 
     #TODO
+    # TODO: Note - Default changed to True by Tingli
     parser.add_argument('--erase-copied-fit-files', dest='erase_copied_fit_files', required=False,
-                        action='store_true',
+                        action='store_true', default=True,
                         help='If True, will delete any copied FIT files (not the originals, though)'
     )
 
@@ -98,7 +101,7 @@ def parse_options():
                         help='Will overwrite any previously created CSVs from fit data'
     )
 
-    # TODO: Default changed by Tingli to True
+    # TODO: Note - Default changed to True by Tingli
     parser.add_argument('--fit-ignore-splits-and-laps', dest='fit_ignore_splits_and_laps',
                         action='store_true', default=True, required=False,
                         help='Will not write split/lap data if specified'
@@ -158,7 +161,10 @@ def parse_options():
                         help='Skips FIT conversion if used'
     )
 
-    args = parser.parse_args()
+    if internal_inputs:
+        args = parser.parse_args(internal_inputs)
+    else:
+        args = parser.parse_args()
     
     options = vars(args)
     name = options['subject_name'].lower().replace(' ','_')
