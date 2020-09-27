@@ -13,6 +13,8 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import r2_score
+from sklearn.linear_model import LinearRegression
 from xgboost import XGBClassifier
 from mlxtend.classifier import StackingCVClassifier
 from warnings import filterwarnings
@@ -68,7 +70,8 @@ class TrainLoadModelBuilder():
         print('Predictions Overview: ', y_preds)
         mae = mean_absolute_error(y_test, y_preds)
         rmse = np.sqrt(mean_squared_error(y_test, y_preds))
-        return mae, rmse
+        rsquared=r2_score(y_test, y_preds)
+        return mae, rmse,rsquared
 
     def _display_performance_results_classification(self, model_name, accuracy, precision, recall, f1):
         print('Classifier: {}'.format(model_name))
@@ -84,10 +87,10 @@ class TrainLoadModelBuilder():
         f1 = f1_score(y_test, y_preds, average='macro')
         return accuracy, precision, recall, f1
 
-    def _display_performance_results_regression(self, model_name, mae, rmse):
+    def _display_performance_results_regression(self, model_name, mae, rmse, rsquared):
         print('Regressor: {}'.format(model_name))
-        print('Mean Absolute Error: {}, Root Mean Squared Error: {}'
-              .format(round(mae, 3), round(rmse, 3)))
+        print('Mean Absolute Error: {}, Root Mean Squared Error: {}, Rsquared: {}'
+              .format(round(mae, 3), round(rmse, 3), round(rsquared, 3) ))
 
     def _save_model(self, learner):
         pass
@@ -99,12 +102,16 @@ class ModelLinearRegression(TrainLoadModelBuilder):
         super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
-        pass
+        regressor=LinearRegression()
+        regressor.fit(X_train, y_train)
+        return regressor
 
     def process_modeling(self):
         # TODO: Spoorthi
         X_train, X_test, y_train, y_test = self._split_train_validation()
-        print(np.unique(y_train, return_counts=True))
+        regressor = self._build_model(X_train, y_train)
+        mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
+        self._display_performance_results_regression('Linear Regression', mae, rmse,rsquared)
 
 
 class ModelSVM(TrainLoadModelBuilder):
@@ -113,16 +120,15 @@ class ModelSVM(TrainLoadModelBuilder):
         super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
-        classifier = svm.SVC(C=1.0, kernel='poly', degree=5)
-        # classifier = svm.SVC(class_weight='balanced')
+        classifier = svm.SVC(C=5, kernel='linear')
         classifier.fit(X_train, y_train)
         return classifier
 
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
         classifier = self._build_model(X_train, y_train)
-        mae, rmse = self._validate_model_regression(X_test, y_test, classifier)
-        self._display_performance_results_regression('SVM', mae, rmse)
+        mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, classifier)
+        self._display_performance_results_regression('SVM', mae, rmse, rsquared)
 
 
 class ModelNeuralNetwork(TrainLoadModelBuilder):
@@ -165,8 +171,8 @@ class ModelRandomForest(TrainLoadModelBuilder):
         # TODO: @Lin
         X_train, X_test, y_train, y_test = self._split_train_validation()
         regressor = self._build_model(X_train, y_train)
-        mae, rmse = self._validate_model_regression(X_test, y_test, regressor)
-        self._display_performance_results_regression('Random Forest', mae, rmse)
+        mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
+        self._display_performance_results_regression('Random Forest', mae, rmse,rsquared)
 
 
 class ModelXGBoost(TrainLoadModelBuilder):
@@ -183,8 +189,8 @@ class ModelXGBoost(TrainLoadModelBuilder):
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
         classifier = self._build_model(X_train, y_train)
-        mae, rmse = self._validate_model_regression(X_test, y_test, classifier)
-        self._display_performance_results_regression('XGBoost', mae, rmse)
+        mae, rmse,rsquared = self._validate_model_regression(X_test, y_test, classifier)
+        self._display_performance_results_regression('XGBoost', mae, rmse,rsquared)
 
 
 class ModelStacking(TrainLoadModelBuilder):
@@ -237,8 +243,8 @@ class ModelStacking(TrainLoadModelBuilder):
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
         classifier = self._build_model(X_train, y_train)
-        mae, rmse = self._validate_model_regression(X_test, y_test, classifier)
-        self._display_performance_results_regression('XGBoost', mae, rmse)
+        mae, rmse,rsquared = self._validate_model_regression(X_test, y_test, classifier)
+        self._display_performance_results_regression('XGBoost', mae, rmse,rsquared)
 
 
 class ModelAdaBoost(TrainLoadModelBuilder):
@@ -256,8 +262,8 @@ class ModelAdaBoost(TrainLoadModelBuilder):
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
         classifier = self._build_model(X_train, y_train)
-        mae, rmse = self._validate_model_regression(X_test, y_test, classifier)
-        self._display_performance_results_regression('AdaBoost', mae, rmse)
+        mae, rmse,rsquared = self._validate_model_regression(X_test, y_test, classifier)
+        self._display_performance_results_regression('AdaBoost', mae, rmse,rsquared)
 
 
 class PerformanceModelBuilder():
@@ -281,7 +287,7 @@ def process_train_load_modeling(athletes_name):
         # TODO: @Spoorthi @Lin @Sindhu @Yuhan
         #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
         train_load_builder = ModelRandomForest(sub_dataframe, features)
-        # train_load_builder = ModelLinearRegression(sub_dataframe)
+        #train_load_builder = ModelLinearRegression(sub_dataframe,features)
         # train_load_builder = ModelXGBoost(sub_dataframe)
         # train_load_builder = ModelAdaBoost(sub_dataframe)
         train_load_builder.process_modeling()
@@ -297,6 +303,6 @@ def save_data_frame_for_pmc():
 
 if __name__ == '__main__':
     athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
-    process_train_load_modeling(athletes_names[2])
-    process_performance_modeling(athletes_names[2])
+    process_train_load_modeling(athletes_names[1])
+    process_performance_modeling(athletes_names[1])
 
