@@ -51,7 +51,6 @@ def create_all_folders():
                '{}/models/'.format(os.path.pardir),
                '{}/plots/'.format(os.path.pardir)}
     for folder in folders:
-        print('creating {}'.format(folder))
         if not os.path.exists(folder):
             os.mkdir(folder)
 
