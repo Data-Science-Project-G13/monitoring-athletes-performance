@@ -48,6 +48,7 @@ def create_all_folders():
                '{}/data/cleaned_additional/'.format(os.path.pardir),
                '{}/data/cleaned_spreadsheet/'.format(os.path.pardir),
                '{}/log/'.format(os.path.pardir),
+               '{}/models/'.format(os.path.pardir),
                '{}/plots/'.format(os.path.pardir)}
     for folder in folders:
         print('creating {}'.format(folder))
