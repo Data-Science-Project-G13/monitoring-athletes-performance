@@ -88,9 +88,15 @@ class ModelSVM(TrainLoadModelBuilder):
         super().__init__(dataframe)
 
     def _build_model(self, X_train, y_train):
-        classifier = svm.SVC(C=1.0, kernel='poly', degree=5)
-        # classifier = svm.SVC(class_weight='balanced')
+        #classifier = svm.SVC(C=45,kernel='linear')
+        #classifier = svm.SVC(C=3, kernel='linear',class_weight='balanced',decision_function_shape='ovo')
+        param_grid = {'gamma': [1, 0.1, 0.01, 0.001, 0.0001],
+                      'kernel': ['linear']}
+        classifier = GridSearchCV(svm.SVC(C=5), param_grid, refit=True, verbose=3,cv=3)
+        #classifier = svm.SVC(C=5, kernel='linear')
         classifier.fit(X_train, y_train)
+        print("best para",classifier.best_params_)
+        print(classifier.best_estimator_)
         return classifier
 
     def process_modeling(self):
@@ -265,5 +271,5 @@ def process_performance_modeling(athletes_name):
 
 if __name__ == '__main__':
     athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
-    process_train_load_modeling(athletes_names[1])
-    process_performance_modeling(athletes_names[1])
+    process_train_load_modeling(athletes_names[0])
+    process_performance_modeling(athletes_names[0])
