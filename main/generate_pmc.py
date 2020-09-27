@@ -1,3 +1,9 @@
+# Packages
+import os
+import pandas as pd
+# Self-defined modules
+import data_feature_engineering
+
 def _add_fitness_fatigue(spreadsheet):
     spreadsheet['ATL'] = spreadsheet.rolling('7d', min_periods=1, on='Date')['Training Stress Score®'].mean()
     spreadsheet['CTL'] = spreadsheet.rolling('42d', min_periods=1, on='Date')['Training Stress Score®'].mean()
