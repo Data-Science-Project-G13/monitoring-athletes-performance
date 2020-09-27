@@ -41,6 +41,19 @@ def create_all_folders():
     pass
 
 
+def get_fit_file_internal_args() -> [[]]:
+    internal_args_all_athletes = []
+    file_folders = os.listdir('{}/data'.format(os.path.pardir))
+    for folder_name in file_folders:
+        if folder_name.startswith('fit_'):
+            if 'csv_{}'.format(folder_name[4:]) not in file_folders:
+                internal_args = ['--subject-dir=../data',
+                                 '--subject-name={}'.format('csv_{}'.format(folder_name[4:])),
+                                 '--fit-source=../data/{}'.format(folder_name)]
+                internal_args_all_athletes.append(internal_args)
+    return internal_args_all_athletes
+
+
 def get_all_spreadsheet_data_file_names():
     """Get all the spreadsheet data file names
 
@@ -244,5 +257,6 @@ if __name__ == '__main__':
     print(get_athlete_css('eduardo oliveira'))
     print(get_activity_subcategories('swimming'))
     print(FeatureManager().get_all_features_for_modeling())
+    print(get_fit_file_internal_args())
 
 
