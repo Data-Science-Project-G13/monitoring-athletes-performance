@@ -129,7 +129,7 @@ def initialize_system():
     utility.SystemReminder().display_initialization_end()
 
 
-def initialize_features(athletes_name):
+def initialize_characteristics(athletes_name):
     with open(athlete_info_json_path, 'r') as file:
         athletes_info_json = json.load(file)
     athletes_css = initialize_critical_swim_speed(athletes_name)
@@ -145,5 +145,5 @@ def initialize_features(athletes_name):
 if __name__ == '__main__':
     athletes_names = ['Eduardo Oliveira', 'Xu Chen', 'Carly Hart']
     initialize_system()
-    initialize_features(athletes_names[0])
+    initialize_characteristics(athletes_names[0])
 
