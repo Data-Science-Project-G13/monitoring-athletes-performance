@@ -17,6 +17,8 @@ from sklearn.metrics import r2_score
 from sklearn.linear_model import LinearRegression
 from xgboost import XGBClassifier
 from mlxtend.classifier import StackingCVClassifier
+from sklearn.linear_model import Ridge
+from sklearn.linear_model import Lasso
 from warnings import filterwarnings
 filterwarnings('ignore')
 
@@ -102,7 +104,10 @@ class ModelLinearRegression(TrainLoadModelBuilder):
         super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
-        regressor=LinearRegression()
+        print(list(X_train))
+        #regressor=LinearRegression()
+        #regressor = Ridge(alpha=5, normalize=True)
+        regressor=Lasso(alpha=0.05, normalize=True)
         regressor.fit(X_train, y_train)
         return regressor
 
@@ -287,7 +292,7 @@ def process_train_load_modeling(athletes_name):
         # TODO: @Spoorthi @Lin @Sindhu @Yuhan
         #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
         train_load_builder = ModelRandomForest(sub_dataframe, features)
-        ##train_load_builder = ModelLinearRegression(sub_dataframe,features)
+        #train_load_builder = ModelLinearRegression(sub_dataframe,features)
         # train_load_builder = ModelXGBoost(sub_dataframe)
         # train_load_builder = ModelAdaBoost(sub_dataframe)
         train_load_builder.process_modeling()
@@ -303,6 +308,6 @@ def save_data_frame_for_pmc():
 
 if __name__ == '__main__':
     athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
-    process_train_load_modeling(athletes_names[1])
-    process_performance_modeling(athletes_names[1])
+    process_train_load_modeling(athletes_names[0])
+    process_performance_modeling(athletes_names[0])
 
