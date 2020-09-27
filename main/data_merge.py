@@ -17,6 +17,7 @@ functions:
 # Packages
 import os
 import pandas as pd
+import numpy as np
 # Self-defined modules
 import data_feature_engineering
 
@@ -59,6 +60,7 @@ def merge_spreadsheet_additional(athletes_name):
                 spreadsheet.at[index, 'Training Stress Score®'] = None
     spreadsheet['Date'] = pd.to_datetime(spreadsheet['Date'])
     _add_rolling_tss(spreadsheet)
+    spreadsheet = spreadsheet.replace({"--": np.nan, "...": np.nan})
     return spreadsheet
 
 
