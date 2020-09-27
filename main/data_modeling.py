@@ -75,7 +75,7 @@ class TrainLoadModelBuilder():
 
     def _display_performance_results_regression(self, model_name, mae, rmse, rsquared):
         print('Regressor: {}'.format(model_name))
-        print('Mean Absolute Error: {}, Root Mean Squared Error: {}, Rsquared: {}'
+        print('Mean Absolute Error: {}, Root Mean Squared Error: {}, R-squared: {}'
               .format(round(mae, 3), round(rmse, 3), round(rsquared, 3)))
 
 
@@ -267,18 +267,19 @@ class PerformanceModelBuilder():
 def process_train_load_modeling(athletes_name):
     loader = data_loader.DataLoader()
     data_set = loader.load_merged_data(athletes_name=athletes_name)
-    data_set_modeling = data_set[data_set['Training Stress Score®'].notnull()]
-    sub_dataframe_dict = utility.split_dataframe_by_activities(data_set_modeling)
+    sub_dataframe_dict = utility.split_dataframe_by_activities(data_set)
     # print([(k, v['Activity Type'].unique()) for k, v in sub_dataframe_dict.items()])
     for activity, sub_dataframe in sub_dataframe_dict.items():
         print('\nBuilding Model on {} activities...'.format(activity))
+        sub_dataframe_for_modeling = data_set[data_set['Training Stress Score®'].notnull()]
         general_features = utility.FeatureManager().get_common_features_among_activities()
         activity_specific_features = utility.FeatureManager().get_activity_specific_features(activity)
-        features = general_features + activity_specific_features
+        features = [feature for feature in general_features + activity_specific_features
+                    if feature in sub_dataframe.columns and not sub_dataframe[feature].isnull().any()]   # Handle columns with null
         print('Features: ', features)
         # TODO: @Spoorthi @Lin @Sindhu @Yuhan
         #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
-        train_load_builder = ModelRandomForest(sub_dataframe, features)
+        train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
         # train_load_builder = ModelLinearRegression(sub_dataframe,features)
         # train_load_builder = ModelXGBoost(sub_dataframe)
         # train_load_builder = ModelAdaBoost(sub_dataframe)
