@@ -31,7 +31,7 @@ def main(athletes_name: str,
     # Data Cleaning
     if cleaning:
         spreadsheet_data_type, additional_data_type = 'spreadsheet', 'additional'
-        show_spreadsheet_cleaning_details, show_additional_cleaning_details = False, False  # Change to True if would like to check details
+        show_spreadsheet_cleaning_details, show_additional_cleaning_details = True, True  # Change to True if would like to check details
         if utility.need_clean(athletes_name, spreadsheet_data_type, cleaning):
             utility.SystemReminder().display_data_cleaning_start(athletes_name, spreadsheet_data_type)
             data_cleaning.main('spreadsheet', athletes_name, verbose=show_spreadsheet_cleaning_details)
@@ -46,6 +46,7 @@ def main(athletes_name: str,
 
 
     # Feature Engineering
+    system_initialize.initialize_features(athletes_name)
     if feature_engineering:
         show_feature_engineering_details = False
         utility.SystemReminder().display_feature_engineering_start(athletes_name)
@@ -63,6 +64,7 @@ def main(athletes_name: str,
         data_modeling.process_performance_modeling(athletes_name)
         Reminder().display_modeling_end(athletes_name, 'Predicting Performance')
 
+
     # Generate PMC
     if pmc_generating:
         pass
@@ -70,11 +72,12 @@ def main(athletes_name: str,
     Reminder().display_athlete_process_end(athletes_name)
 
 
+
 if __name__ == '__main__':
     athletes_names = ['Eduardo Oliveira', 'Xu Chen', 'Carly Hart']
-    do_initialize, do_cleaning, do_feature_engineering, do_modeling, do_pmc_generating = False, False, True, True, True
+    do_initialize, do_cleaning, do_feature_engineering, do_modeling, do_pmc_generating = True, True, True, True, True
     if do_initialize:
-        system_initialize.initialize_system(athletes_names)
+        system_initialize.initialize_system()
     for athletes_name in athletes_names:
         main(athletes_name, do_cleaning, do_feature_engineering, do_modeling, do_pmc_generating)
 
