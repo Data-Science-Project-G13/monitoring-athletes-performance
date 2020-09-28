@@ -17,10 +17,13 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import r2_score
 from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import cross_val_score, cross_val_predict
 from xgboost import XGBClassifier
 from mlxtend.classifier import StackingCVClassifier
 from sklearn.linear_model import Ridge
 from sklearn.linear_model import Lasso
+from sklearn.preprocessing import StandardScaler
+from mlxtend.feature_selection import SequentialFeatureSelector as SFS
 from warnings import filterwarnings
 filterwarnings('ignore')
 
@@ -85,18 +88,34 @@ class ModelLinearRegression(TrainLoadModelBuilder):
         super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
-        print(list(X_train))
+        #print(list(X_train))
+        #print(X_train.isnull().values.any())
+        #print(np.isnan(X_train.values.any()))
+        #print(X_train)
         #regressor=LinearRegression()
-        #regressor = Ridge(alpha=5, normalize=True)
-        regressor=Lasso(alpha=0.05, normalize=True)
+        regressor = Ridge(alpha=0.04, normalize=True)
+        #print(min(y_train),max(y_train))
+        #regressor=Lasso(alpha=0.04, normalize=True)
+
         regressor.fit(X_train, y_train)
+        scores = cross_val_score(regressor, X_train, y_train, cv=3)
+        print ("Cross - validated scores:",scores)
         return regressor
 
     def process_modeling(self):
         # TODO: Spoorthi
         X_train, X_test, y_train, y_test = self._split_train_validation()
-        regressor = self._build_model(X_train, y_train)
-        mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
+        sfs = SFS(Lasso(alpha=0.04, normalize=True),
+                  k_features=(3,6),
+                  forward=True,
+                  floating=False,
+                  scoring='r2',
+                  cv=3)
+        sfs1 = sfs.fit(X_train, y_train)
+        feat_cols = list(sfs1.k_feature_names_)
+        print(feat_cols)
+        regressor = self._build_model(X_train[feat_cols], y_train)
+        mae, rmse, rsquared = self._validate_model_regression(X_test[feat_cols], y_test, regressor)
         self._display_performance_results_regression('Linear Regression', mae, rmse,rsquared)
         return regressor
 
@@ -280,7 +299,7 @@ def process_train_load_modeling(athletes_name):
             # TODO: @Spoorthi @Lin @Sindhu @Yuhan
             #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
             train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
-            # train_load_builder = ModelLinearRegression(sub_dataframe,features)
+            #train_load_builder = ModelLinearRegression(sub_dataframe_for_modeling,features)
             # train_load_builder = ModelXGBoost(sub_dataframe)
             # train_load_builder = ModelAdaBoost(sub_dataframe)
             regressor = train_load_builder.process_modeling()
