@@ -149,7 +149,8 @@ class AdditionalDataFeatureExtractor():
             Pace = Duration / (Distance / 100)
             TSS = (CSS / Pace) ** 3 * (Duration / 3600) * 100
             # print(TSS)
-            return TSS
+            #return TSS
+            return float(0)
         else:
             return float(0)
 
