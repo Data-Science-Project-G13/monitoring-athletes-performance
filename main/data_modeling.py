@@ -307,7 +307,7 @@ def process_train_load_modeling(athletes_name):
     loader = data_loader.DataLoader()
     data_set = loader.load_merged_data(athletes_name=athletes_name)
     sub_dataframe_dict = utility.split_dataframe_by_activities(data_set)
-    # print([(k, v['Activity Type'].unique()) for k, v in sub_dataframe_dict.items()])
+    best_model_dict = {}
     for activity, sub_dataframe in sub_dataframe_dict.items():
         utility.SystemReminder().display_activity_modeling_start(activity)
         sub_dataframe_for_modeling = sub_dataframe[sub_dataframe['Training Stress Score®'].notnull()]
@@ -324,10 +324,15 @@ def process_train_load_modeling(athletes_name):
             # train_load_builder = ModelXGBoost(sub_dataframe_for_modeling,features)
             # train_load_builder = ModelAdaBoost(sub_dataframe)
             regressor = train_load_builder.process_modeling()
-            utility.save_model(athletes_name, activity, 'random_forest', regressor)
+
+            best_model_for_activity = 'random_forest'
+            utility.save_model(athletes_name, activity, best_model_for_activity, regressor)
             utility.SystemReminder().display_activity_modeling_end(activity, True)
+            best_model_dict[activity] = best_model_for_activity
         else:
             utility.SystemReminder().display_activity_modeling_end(activity, False)
+    print(best_model_dict)
+    utility.update_trainload_model_types(athletes_name, best_model_dict)
 
 
 def process_performance_modeling(athletes_name):
@@ -336,6 +341,7 @@ def process_performance_modeling(athletes_name):
 
 if __name__ == '__main__':
     athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
-    process_train_load_modeling(athletes_names[2])
-    process_performance_modeling(athletes_names[2])
+    for athletes_name in athletes_names:
+        process_train_load_modeling(athletes_name)
+        process_performance_modeling(athletes_name)
 
