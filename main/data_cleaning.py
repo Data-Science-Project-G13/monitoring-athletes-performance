@@ -29,7 +29,7 @@ from sklearn.neighbors import LocalOutlierFactor
 import utility
 from data_loader import DataLoader
 # Settings
-warnings.filterwarnings('ignore')
+# warnings.filterwarnings('ignore')
 plt.style.use('ggplot')
 matplotlib.rcParams['figure.figsize'] = (12, 8)
 pd.options.mode.chained_assignment = None
