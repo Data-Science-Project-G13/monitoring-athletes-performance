@@ -319,8 +319,8 @@ def process_train_load_modeling(athletes_name):
                         and not sub_dataframe[feature].isnull().any()]   # Handle columns with null
             # TODO: @Spoorthi @Lin @Sindhu @Yuhan
             #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
-            #train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
-            train_load_builder = ModelLinearRegression(sub_dataframe_for_modeling,features)
+            train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
+            # train_load_builder = ModelLinearRegression(sub_dataframe_for_modeling,features)
             # train_load_builder = ModelXGBoost(sub_dataframe_for_modeling,features)
             # train_load_builder = ModelAdaBoost(sub_dataframe)
             regressor = train_load_builder.process_modeling()
