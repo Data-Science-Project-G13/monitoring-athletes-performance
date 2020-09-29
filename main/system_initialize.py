@@ -95,9 +95,11 @@ def initialize_json():
                     "joe freil lactate threshold": None,
                     "andy coogan lactate threshold": None,
                     "training load best models": {"running": None, "swimming": None, "cycling": None,
-                                                 "strength training": None, "others": None},
+                                                 "strength_training": None, "others": None},
                     "performance best models": {"running": None, "swimming": None, "cycling": None}
                 }
+            athletes_info_json[athletes_name.title()]["training load best models"] = {"running": None, "swimming": None, "cycling": None,
+                                                 "strength_training": None, "others": None}
     with open(athlete_info_json_path, 'w') as file:
         json.dump(athletes_info_json, file, indent=4)
 
@@ -205,5 +207,4 @@ def initialize_characteristics(athletes_name):
 if __name__ == '__main__':
     athletes_names = ['Eduardo Oliveira', 'Xu Chen', 'Carly Hart']
     initialize_system()
-    initialize_characteristics(athletes_names[0])
 
