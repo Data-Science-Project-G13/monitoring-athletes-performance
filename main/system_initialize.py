@@ -15,6 +15,7 @@ functions:
 
 
 # Packages
+import os
 import json
 import pandas as pd
 from data_loader import DataLoader
@@ -36,10 +37,43 @@ def convert_fit_files_to_csv():
         utility.SystemReminder().display_fit_file_converted(internal_args[1].split('=')[1][4:])
 
 
-def create_config_files():
+def initialize_configurations():
     """ Create all files, config and json, that are needed for the project
     """
+    initialize_json()
+    initialize_config()
+
+
+def initialize_config():
     pass
+
+
+def initialize_json():
+    athletes_names = [file_name[:-4] for file_name in os.listdir('{}/data'.format(os.pardir)) if file_name.endswith('.csv') ]
+    if not os.path.exists(athlete_info_json_path):
+        with open(athlete_info_json_path, 'w') as file:
+            json.dump({}, file, indent=4)
+    with open(athlete_info_json_path, 'r') as file:
+        athletes_info_json = json.load(file)
+        for athletes_name in athletes_names:
+            if athletes_name.title() not in athletes_info_json:
+                athletes_info_json[athletes_name.title()] = {
+                    "athlete type": None,
+                    "gender": None,
+                    "age": None,
+                    "height": None,
+                    "pre weight": None,
+                    "post weight": None,
+                    "injuries": None,
+                    "critical swim speed": None,
+                    "joe freil lactate threshold": None,
+                    "andy coogan lactate threshold": None,
+                    "training load best models": {"running": None, "swimming": None, "cycling": None,
+                                                 "strength training": None, "others": None},
+                    "performance best models": {"running": None, "swimming": None, "cycling": None}
+                }
+    with open(athlete_info_json_path, 'w') as file:
+        json.dump(athletes_info_json, file, indent=4)
 
 
 def initialize_critical_swim_speed(athletes_name: str):
@@ -125,7 +159,7 @@ def initialize_system():
     utility.SystemReminder().display_initialization_start()
     create_directory_structures()
     convert_fit_files_to_csv()
-    create_config_files()
+    initialize_configurations()
     utility.SystemReminder().display_initialization_end()
 
 
@@ -144,6 +178,7 @@ def initialize_characteristics(athletes_name):
 
 if __name__ == '__main__':
     athletes_names = ['Eduardo Oliveira', 'Xu Chen', 'Carly Hart']
-    initialize_system()
-    initialize_characteristics(athletes_names[0])
+    # initialize_system()
+    # initialize_characteristics(athletes_names[0])
+    initialize_configurations()
 
