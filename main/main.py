@@ -14,6 +14,7 @@ import system_initialize
 import data_cleaning
 import data_merge
 import data_modeling
+import generate_pmc
 from utility import SystemReminder as Reminder
 
 
@@ -71,6 +72,7 @@ def main(athletes_name: str,
     # Generate PMC
     if pmc_generating:
         reminder.display_pmc_generation_start(athletes_name)
+        generate_pmc.process_pmc_generation(athletes_name)
         reminder.display_pmc_generation_end(athletes_name)
 
     reminder.display_athlete_process_end(athletes_name)
@@ -79,7 +81,7 @@ def main(athletes_name: str,
 
 if __name__ == '__main__':
     athletes_names = ['Eduardo Oliveira', 'Xu Chen', 'Carly Hart']
-    do_initialize, do_cleaning, do_feature_engineering, do_modeling, do_pmc_generating = True, False, True, True, False
+    do_initialize, do_cleaning, do_feature_engineering, do_modeling, do_pmc_generating = False, False, True, True, False
     if do_initialize:
         system_initialize.initialize_system()
     for athletes_name in athletes_names:
