@@ -1,5 +1,6 @@
 # Packages
 import os
+import numpy as np
 import pandas as pd
 # Self-defined modules
 import utility
@@ -45,8 +46,10 @@ def get_tss_estimated_data(athletes_name):
                     and not sub_dataframe[feature].isnull().any()]
 
         X = sub_dataframe[features]
-        y = sub_dataframe[TSS]  # fill out only null cells and keep those not null
+        y = list(sub_dataframe[TSS])  # fill out only null cells and keep those not null
         y_pred = regressor.predict(X)
+        y_final = [y[i] if y[i] is np.nan else y_pred[i] for i in range(len(y))]
+        original_merged_data.loc[sub_dataframe.index, TSS] = y_final
 
 
 def process_pmc_generation(athletes_name):
