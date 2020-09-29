@@ -19,6 +19,7 @@ import os
 import json
 import pandas as pd
 from data_loader import DataLoader
+from configparser import ConfigParser
 # Self-defined modules
 import utility
 from fit_file_convert import process_all
@@ -45,11 +46,36 @@ def initialize_configurations():
 
 
 def initialize_config():
-    pass
+    athletes_with_csv = [file_name[:-4] for file_name in os.listdir('{}/data'.format(os.pardir))
+                         if file_name.endswith('.csv')]
+    athletes_with_fit = [' '.join(file_name.split('_')[1:]) for file_name in os.listdir('{}/data'.format(os.pardir))
+                         if file_name.startswith('fit_')]
+    config_path = utility.data_names_config
+    parser = ConfigParser()
+    if not os.path.exists(config_path):
+        for section in ['DEFAULT', 'SPREADSHEET-DATA-SETS', 'ADDITIONAL-DATA-FOLDERS',
+                        'CLEANED-SPREADSHEET-DATA-SETS', 'CLEANED-ADDITIONAL-DATA-SETS']:
+            parser[section] = {}
+    else:
+        parser.read(config_path)
+
+    for athletes_name in athletes_with_csv:
+        if athletes_name.title() not in parser['SPREADSHEET-DATA-SETS'].keys():
+            parser['SPREADSHEET-DATA-SETS'][athletes_name] = '{}.csv'.format(athletes_name.title())
+        if athletes_name.title() not in parser['CLEANED-SPREADSHEET-DATA-SETS'].keys():
+            parser['CLEANED-SPREADSHEET-DATA-SETS'][athletes_name] = 'cleaned_spreadsheet/{}.csv'.format(athletes_name.title())
+    for athletes_name in athletes_with_fit:
+        if athletes_name.title() not in parser['ADDITIONAL-DATA-FOLDERS'].keys():
+            parser['ADDITIONAL-DATA-FOLDERS'][athletes_name] = 'csv_{}'.format('_'.join(athletes_name.split(' ')))
+        if athletes_name.title() not in parser['CLEANED-ADDITIONAL-DATA-SETS'].keys():
+            parser['CLEANED-ADDITIONAL-DATA-SETS'][athletes_name] = 'cleaned_additional/{}'.format('_'.join(athletes_name.split(' ')))
+    with open(config_path, 'w') as config_file:
+        parser.write(config_file)
 
 
 def initialize_json():
-    athletes_names = [file_name[:-4] for file_name in os.listdir('{}/data'.format(os.pardir)) if file_name.endswith('.csv') ]
+    athletes_names = [file_name[:-4] for file_name in os.listdir('{}/data'.format(os.pardir))
+                      if file_name.endswith('.csv') ]
     if not os.path.exists(athlete_info_json_path):
         with open(athlete_info_json_path, 'w') as file:
             json.dump({}, file, indent=4)
@@ -178,7 +204,6 @@ def initialize_characteristics(athletes_name):
 
 if __name__ == '__main__':
     athletes_names = ['Eduardo Oliveira', 'Xu Chen', 'Carly Hart']
-    # initialize_system()
-    # initialize_characteristics(athletes_names[0])
-    initialize_configurations()
+    initialize_system()
+    initialize_characteristics(athletes_names[0])
 
