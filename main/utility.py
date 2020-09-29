@@ -36,6 +36,7 @@ from configparser import ConfigParser
 data_names_config = '{}/main/config/data_file_names.cfg'.format(os.path.pardir)
 column_data_types_config = '{}/main/config/column_data_types.cfg'.format(os.path.pardir)
 activity_types_config = '{}/main/config/activity_types.cfg'.format(os.path.pardir)
+athlete_personal_info_json = '{}/main/config/athlete_personal_info.json'.format(os.path.pardir)
 pattern = re.compile("^\s+|\s*,\s*|\s+$")
 parser_data_names, parser_column_types, parser_activity_types = ConfigParser(), ConfigParser(), ConfigParser()
 parser_data_names.read(data_names_config)
@@ -278,6 +279,12 @@ def load_model(athletes_name, activity, model_type):
         raise Exception("No pre-trained {} model for {}'s {} activity".format(model_type, athletes_name, activity))
     else:
         return joblib.load(model_filename)
+
+
+def get_train_load_model_types(athletes_name):
+    with open(athlete_personal_info_json) as json_file:
+        json_file = json.load(json_file)
+    return json_file[athletes_name.title()]["training load best models"]
 
 
 class SystemReminder():
