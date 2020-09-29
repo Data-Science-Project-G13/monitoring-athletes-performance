@@ -9,7 +9,19 @@
         "injuries": "shin, foot",
         "critical swim speed": null,
         "joe freil lactate threshold": null,
-        "andy coogan lactate threshold": null
+        "andy coogan lactate threshold": null,
+        "performance best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null
+        },
+        "training load best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null,
+            "strength training": null,
+            "others": null
+        }
     },
     "Eduardo Oliveira": {
         "athlete type": "intermediate",
@@ -21,7 +33,19 @@
         "injuries": "hamstring",
         "critical swim speed": 1.2829620710415415,
         "joe freil lactate threshold": 150.64283224097056,
-        "andy coogan lactate threshold": 150.52847174506434
+        "andy coogan lactate threshold": 150.52847174506434,
+        "performance best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null
+        },
+        "training load best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null,
+            "strength training": null,
+            "others": null
+        }
     },
     "Juliet Forsyth": {
         "athlete type": "advance",
@@ -33,7 +57,19 @@
         "injuries": "foot",
         "critical swim speed": null,
         "joe freil lactate threshold": null,
-        "andy coogan lactate threshold": null
+        "andy coogan lactate threshold": null,
+        "performance best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null
+        },
+        "training load best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null,
+            "strength training": null,
+            "others": null
+        }
     },
     "Narelle Hayes": {
         "athlete type": "novice",
@@ -45,7 +81,19 @@
         "injuries": null,
         "critical swim speed": null,
         "joe freil lactate threshold": null,
-        "andy coogan lactate threshold": null
+        "andy coogan lactate threshold": null,
+        "performance best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null
+        },
+        "training load best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null,
+            "strength training": null,
+            "others": null
+        }
     },
     "Ollie Allan": {
         "athlete type": "advance",
@@ -57,7 +105,19 @@
         "injuries": "achilles",
         "critical swim speed": null,
         "joe freil lactate threshold": null,
-        "andy coogan lactate threshold": null
+        "andy coogan lactate threshold": null,
+        "performance best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null
+        },
+        "training load best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null,
+            "strength training": null,
+            "others": null
+        }
     },
     "Rach Madden": {
         "athlete type": "high intermediate",
@@ -69,7 +129,19 @@
         "injuries": "none",
         "critical swim speed": null,
         "joe freil lactate threshold": null,
-        "andy coogan lactate threshold": null
+        "andy coogan lactate threshold": null,
+        "performance best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null
+        },
+        "training load best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null,
+            "strength training": null,
+            "others": null
+        }
     },
     "Sam Woodland": {
         "athlete type": "advance world champion",
@@ -81,7 +153,19 @@
         "injuries": "MTPJ inflammation",
         "critical swim speed": null,
         "joe freil lactate threshold": null,
-        "andy coogan lactate threshold": null
+        "andy coogan lactate threshold": null,
+        "performance best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null
+        },
+        "training load best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null,
+            "strength training": null,
+            "others": null
+        }
     },
     "Simon R Gronow": {
         "athlete type": "novice",
@@ -93,7 +177,19 @@
         "injuries": "none",
         "critical swim speed": null,
         "joe freil lactate threshold": null,
-        "andy coogan lactate threshold": null
+        "andy coogan lactate threshold": null,
+        "performance best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null
+        },
+        "training load best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null,
+            "strength training": null,
+            "others": null
+        }
     },
     "Sophie Perry": {
         "athlete type": "advance",
@@ -105,7 +201,19 @@
         "injuries": "achilles",
         "critical swim speed": null,
         "joe freil lactate threshold": null,
-        "andy coogan lactate threshold": null
+        "andy coogan lactate threshold": null,
+        "performance best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null
+        },
+        "training load best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null,
+            "strength training": null,
+            "others": null
+        }
     },
     "Xu Chen": {
         "athlete type": null,
@@ -117,7 +225,19 @@
         "injuries": null,
         "critical swim speed": 1.1011842105263157,
         "joe freil lactate threshold": 98.04940859797604,
-        "andy coogan lactate threshold": 95.7263293050734
+        "andy coogan lactate threshold": 95.7263293050734,
+        "performance best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null
+        },
+        "training load best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null,
+            "strength training": null,
+            "others": null
+        }
     },
     "Carly Hart": {
         "athlete type": null,
@@ -129,6 +249,18 @@
         "injuries": null,
         "critical swim speed": 1.350373692077728,
         "joe freil lactate threshold": 166.9107477589503,
-        "andy coogan lactate threshold": 163.4790890831331
+        "andy coogan lactate threshold": 163.4790890831331,
+        "performance best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null
+        },
+        "training load best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null,
+            "strength training": null,
+            "others": null
+        }
     }
 }
