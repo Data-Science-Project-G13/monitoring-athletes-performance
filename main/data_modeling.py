@@ -192,6 +192,7 @@ class ModelRandomForest(TrainLoadModelBuilder):
     def process_modeling(self):
         # TODO: @Lin
         X_train, X_test, y_train, y_test = self._split_train_validation()
+        print(y_train)
         regressor = self._build_model(X_train, y_train)
         mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
         self._display_performance_results_regression('Random Forest', mae, rmse,rsquared)
@@ -308,7 +309,7 @@ def process_train_load_modeling(athletes_name):
     sub_dataframe_dict = utility.split_dataframe_by_activities(data_set)
     # print([(k, v['Activity Type'].unique()) for k, v in sub_dataframe_dict.items()])
     for activity, sub_dataframe in sub_dataframe_dict.items():
-        print('\nBuilding Model on {} activities...'.format(activity))
+        utility.SystemReminder().display_activity_modeling_start(activity)
         sub_dataframe_for_modeling = sub_dataframe[sub_dataframe['Training Stress Score®'].notnull()]
         if sub_dataframe_for_modeling.shape[0] > 10:
             general_features = utility.FeatureManager().get_common_features_among_activities()
@@ -324,6 +325,9 @@ def process_train_load_modeling(athletes_name):
             # train_load_builder = ModelAdaBoost(sub_dataframe)
             regressor = train_load_builder.process_modeling()
             utility.save_model(athletes_name, activity, 'random_forest', regressor)
+            utility.SystemReminder().display_activity_modeling_end(activity, True)
+        else:
+            utility.SystemReminder().display_activity_modeling_end(activity, False)
 
 
 def process_performance_modeling(athletes_name):
