@@ -319,19 +319,24 @@ def process_train_load_modeling(athletes_name):
                         and not sub_dataframe[feature].isnull().any()]   # Handle columns with null
             # TODO: @Spoorthi @Lin @Sindhu @Yuhan
             #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
-            train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
-            # train_load_builder = ModelLinearRegression(sub_dataframe_for_modeling,features)
+            # train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
+            train_load_builder = ModelLinearRegression(sub_dataframe_for_modeling,features)
             # train_load_builder = ModelXGBoost(sub_dataframe_for_modeling,features)
-            # train_load_builder = ModelAdaBoost(sub_dataframe)
+            # train_load_builder = ModelAdaBoost(sub_dataframe_for_modeling, features)
             regressor = train_load_builder.process_modeling()
-
-            best_model_for_activity = 'random_forest'
-            utility.save_model(athletes_name, activity, best_model_for_activity, regressor)
             utility.SystemReminder().display_activity_modeling_end(activity, True)
-            best_model_dict[activity] = best_model_for_activity
+
+            def select_best_model():
+                # TODO: Hard code for now. Finish after everyone done their modeling
+                min_rmse = float('inf')
+                train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
+                regressors = [train_load_builder.process_modeling()]
+                best_model_for_activity = 'random_forest'
+                utility.save_model(athletes_name, activity, best_model_for_activity, regressors[0])
+                best_model_dict[activity] = best_model_for_activity
+            select_best_model()
         else:
             utility.SystemReminder().display_activity_modeling_end(activity, False)
-    print(best_model_dict)
     utility.update_trainload_model_types(athletes_name, best_model_dict)
 
 
