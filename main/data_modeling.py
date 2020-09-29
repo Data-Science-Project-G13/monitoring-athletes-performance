@@ -13,6 +13,7 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
+from sklearn.feature_selection import RFE
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import r2_score
@@ -93,19 +94,28 @@ class ModelLinearRegression(TrainLoadModelBuilder):
         #print(X_train.isnull().values.any())
         #print(np.isnan(X_train.values.any()))
         #print(X_train)
-        #regressor=LinearRegression()
-        regressor = Ridge(alpha=0.04, normalize=True)
+        regressor=LinearRegression()
+        ###This works
+        #regressor = Ridge(alpha=0.04, normalize=True)
+        ####
         #print(min(y_train),max(y_train))
         #regressor=Lasso(alpha=0.04, normalize=True)
-
         regressor.fit(X_train, y_train)
-        scores = cross_val_score(regressor, X_train, y_train, cv=3)
-        print ("Cross - validated scores:",scores)
+        #scores = cross_val_score(regressor, X_train, y_train, cv=3)
+        #print("Cross - validated scores:", scores)
+        #################################
+        # lm = LinearRegression()
+        # lm.fit(X_train, y_train)
+        # rfe = RFE(lm, n_features_to_select=4)
+        # rfe = rfe.fit(X_train, y_train)
+        ##############################
         return regressor
+        #return rfe
 
     def process_modeling(self):
         # TODO: Spoorthi
         X_train, X_test, y_train, y_test = self._split_train_validation()
+        ##########
         sfs = SFS(Lasso(alpha=0.04, normalize=True),
                   k_features=(3,6),
                   forward=True,
@@ -117,7 +127,12 @@ class ModelLinearRegression(TrainLoadModelBuilder):
         print(feat_cols)
         regressor = self._build_model(X_train[feat_cols], y_train)
         mae, rmse, rsquared = self._validate_model_regression(X_test[feat_cols], y_test, regressor)
+        ##########
+        # regressor = self._build_model(X_train, y_train)
+        # mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
+        ##########
         self._display_performance_results_regression('Linear Regression', mae, rmse,rsquared)
+
         return regressor
 
 
@@ -303,8 +318,8 @@ def process_train_load_modeling(athletes_name):
                         and not sub_dataframe[feature].isnull().any()]   # Handle columns with null
             # TODO: @Spoorthi @Lin @Sindhu @Yuhan
             #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
-            train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
-            #train_load_builder = ModelLinearRegression(sub_dataframe_for_modeling,features)
+            #train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
+            train_load_builder = ModelLinearRegression(sub_dataframe_for_modeling,features)
             # train_load_builder = ModelXGBoost(sub_dataframe_for_modeling,features)
             # train_load_builder = ModelAdaBoost(sub_dataframe)
             regressor = train_load_builder.process_modeling()
@@ -317,6 +332,6 @@ def process_performance_modeling(athletes_name):
 
 if __name__ == '__main__':
     athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
-    process_train_load_modeling(athletes_names[0])
-    process_performance_modeling(athletes_names[0])
+    process_train_load_modeling(athletes_names[2])
+    process_performance_modeling(athletes_names[2])
 
