@@ -13,12 +13,13 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import r2_score
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import cross_val_score, cross_val_predict
 from xgboost import XGBClassifier
+import xgboost as xgb
 from mlxtend.classifier import StackingCVClassifier
 from sklearn.linear_model import Ridge
 from sklearn.linear_model import Lasso
@@ -189,9 +190,13 @@ class ModelXGBoost(TrainLoadModelBuilder):
 
     def _build_model(self, X_train, y_train):
         # TODO: Sindhu
-        xgb = XGBClassifier(alpha=15, colsample_bytree=0.1, learning_rate=1, max_depth=5, reg_lambda=10.0)
-        xgb.fit(X_train, y_train)
-        return xgb
+        xgb_reg = xgb.XGBRegressor(learning_rate=0.01,colsample_bytree = 0.4,subsample = 0.2,n_estimators=1000,reg_alpha = 0.3,
+                                     max_depth=3,min_child_weight=3,gamma=0,objective ='reg:squarederror')
+        xgb_reg.fit(X_train, y_train)
+        # scores = cross_val_score(xgb_reg, X_train, y_train, cv=4)
+        # print("Cross - validated scores:", scores)
+        return xgb_reg
+
 
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
@@ -300,7 +305,7 @@ def process_train_load_modeling(athletes_name):
             #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
             train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
             #train_load_builder = ModelLinearRegression(sub_dataframe_for_modeling,features)
-            # train_load_builder = ModelXGBoost(sub_dataframe)
+            # train_load_builder = ModelXGBoost(sub_dataframe_for_modeling,features)
             # train_load_builder = ModelAdaBoost(sub_dataframe)
             regressor = train_load_builder.process_modeling()
             utility.save_model(athletes_name, activity, 'random_forest', regressor)
