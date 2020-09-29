@@ -287,10 +287,11 @@ def get_train_load_model_types(athletes_name):
     return json_obj[athletes_name.title()]["training load best models"]
 
 
-def update_trainload_model_types(athletes_name, activity_type, model_type):
+def update_trainload_model_types(athletes_name: str, model_type_dict: dict):
     with open(athlete_personal_info_json) as json_file:
         json_obj = json.load(json_file)
-    json_obj[athletes_name.title()]["training load best models"][activity_type] = model_type
+    for activity, model_type in model_type_dict.items():
+        json_obj[athletes_name.title()]["training load best models"][activity] = model_type
     with open(athlete_personal_info_json, 'w') as json_file:
         json.dump(json_obj, json_file, indent=4)
 
