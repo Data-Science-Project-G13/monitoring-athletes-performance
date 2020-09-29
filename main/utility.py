@@ -283,8 +283,16 @@ def load_model(athletes_name, activity, model_type):
 
 def get_train_load_model_types(athletes_name):
     with open(athlete_personal_info_json) as json_file:
-        json_file = json.load(json_file)
-    return json_file[athletes_name.title()]["training load best models"]
+        json_obj = json.load(json_file)
+    return json_obj[athletes_name.title()]["training load best models"]
+
+
+def update_trainload_model_types(athletes_name, activity_type, model_type):
+    with open(athlete_personal_info_json) as json_file:
+        json_obj = json.load(json_file)
+    json_obj[athletes_name.title()]["training load best models"][activity_type] = model_type
+    with open(athlete_personal_info_json, 'w') as json_file:
+        json.dump(json_obj, json_file, indent=4)
 
 
 class SystemReminder():
