@@ -94,12 +94,12 @@ class ModelLinearRegression(TrainLoadModelBuilder):
         #print(X_train.isnull().values.any())
         #print(np.isnan(X_train.values.any()))
         #print(X_train)
-        regressor=LinearRegression()
+        #regressor=LinearRegression()
         ###This works
         #regressor = Ridge(alpha=0.04, normalize=True)
         ####
         #print(min(y_train),max(y_train))
-        #regressor=Lasso(alpha=0.04, normalize=True)
+        regressor=Lasso(alpha=0.04, normalize=True)
         regressor.fit(X_train, y_train)
         #scores = cross_val_score(regressor, X_train, y_train, cv=3)
         #print("Cross - validated scores:", scores)
@@ -116,20 +116,20 @@ class ModelLinearRegression(TrainLoadModelBuilder):
         # TODO: Spoorthi
         X_train, X_test, y_train, y_test = self._split_train_validation()
         ##########
-        sfs = SFS(Lasso(alpha=0.04, normalize=True),
-                  k_features=(3,6),
-                  forward=True,
-                  floating=False,
-                  scoring='r2',
-                  cv=3)
-        sfs1 = sfs.fit(X_train, y_train)
-        feat_cols = list(sfs1.k_feature_names_)
-        print(feat_cols)
-        regressor = self._build_model(X_train[feat_cols], y_train)
-        mae, rmse, rsquared = self._validate_model_regression(X_test[feat_cols], y_test, regressor)
+        # sfs = SFS(Lasso(alpha=0.04, normalize=True),
+        #           k_features=(3,6),
+        #           forward=True,
+        #           floating=False,
+        #           scoring='r2',
+        #           cv=3)
+        # sfs1 = sfs.fit(X_train, y_train)
+        # feat_cols = list(sfs1.k_feature_names_)
+        # print(feat_cols)
+        # regressor = self._build_model(X_train[feat_cols], y_train)
+        # mae, rmse, rsquared = self._validate_model_regression(X_test[feat_cols], y_test, regressor)
         ##########
-        # regressor = self._build_model(X_train, y_train)
-        # mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
+        regressor = self._build_model(X_train, y_train)
+        mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
         ##########
         self._display_performance_results_regression('Linear Regression', mae, rmse,rsquared)
 
