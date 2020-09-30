@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 import joblib
+from sklearn.tree import DecisionTreeRegressor
 from tensorflow.keras import Sequential, layers
 from tensorflow.keras.utils import to_categorical
 from sklearn import svm
@@ -94,12 +95,12 @@ class ModelLinearRegression(TrainLoadModelBuilder):
         #print(X_train.isnull().values.any())
         #print(np.isnan(X_train.values.any()))
         #print(X_train)
-        #regressor=LinearRegression()
+        regressor=LinearRegression()
         ###This works
         #regressor = Ridge(alpha=0.04, normalize=True)
         ####
         #print(min(y_train),max(y_train))
-        regressor=Lasso(alpha=0.04, normalize=True)
+        #regressor=Lasso(alpha=0.04, normalize=True)
         regressor.fit(X_train, y_train)
         #scores = cross_val_score(regressor, X_train, y_train, cv=3)
         #print("Cross - validated scores:", scores)
@@ -116,20 +117,20 @@ class ModelLinearRegression(TrainLoadModelBuilder):
         # TODO: Spoorthi
         X_train, X_test, y_train, y_test = self._split_train_validation()
         ##########
-        # sfs = SFS(Lasso(alpha=0.04, normalize=True),
-        #           k_features=(3,6),
-        #           forward=True,
-        #           floating=False,
-        #           scoring='r2',
-        #           cv=3)
-        # sfs1 = sfs.fit(X_train, y_train)
-        # feat_cols = list(sfs1.k_feature_names_)
-        # print(feat_cols)
-        # regressor = self._build_model(X_train[feat_cols], y_train)
-        # mae, rmse, rsquared = self._validate_model_regression(X_test[feat_cols], y_test, regressor)
+        sfs = SFS(Lasso(alpha=0.04, normalize=True),
+                  k_features=(3,6),
+                  forward=True,
+                  floating=False,
+                  scoring='r2',
+                  cv=3)
+        sfs1 = sfs.fit(X_train, y_train)
+        feat_cols = list(sfs1.k_feature_names_)
+        print(feat_cols)
+        regressor = self._build_model(X_train[feat_cols], y_train)
+        mae, rmse, rsquared = self._validate_model_regression(X_test[feat_cols], y_test, regressor)
         ##########
-        regressor = self._build_model(X_train, y_train)
-        mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
+        # regressor = self._build_model(X_train, y_train)
+        # mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
         ##########
         self._display_performance_results_regression('Linear Regression', mae, rmse,rsquared)
 
@@ -185,17 +186,20 @@ class ModelRandomForest(TrainLoadModelBuilder):
         super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
-        rfc = RandomForestRegressor(max_depth=2, random_state=0)
+#       rfc = RandomForestRegressor(max_depth=2, random_state=0)
+        rfc = DecisionTreeRegressor(max_depth=5, min_weight_fraction_leaf= 1e-5, min_impurity_decrease = 1, min_samples_split=2)
+#       rfc = RandomForestRegressor(max_depth=10,max_features=10,n_estimators=50,random_state=0)
         rfc.fit(X_train, y_train)
         return rfc
 
     def process_modeling(self):
         # TODO: @Lin
         X_train, X_test, y_train, y_test = self._split_train_validation()
-        print(y_train)
         regressor = self._build_model(X_train, y_train)
         mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
-        self._display_performance_results_regression('Random Forest', mae, rmse,rsquared)
+#       self._display_performance_results_regression('Random Forest', mae, rmse,rsquared)
+        self._display_performance_results_regression('Decision Tree', mae, rmse,rsquared)
+
         return regressor
 
 
@@ -307,7 +311,7 @@ def process_train_load_modeling(athletes_name):
     loader = data_loader.DataLoader()
     data_set = loader.load_merged_data(athletes_name=athletes_name)
     sub_dataframe_dict = utility.split_dataframe_by_activities(data_set)
-    best_model_dict = {}
+    # print([(k, v['Activity Type'].unique()) for k, v in sub_dataframe_dict.items()])
     for activity, sub_dataframe in sub_dataframe_dict.items():
         utility.SystemReminder().display_activity_modeling_start(activity)
         sub_dataframe_for_modeling = sub_dataframe[sub_dataframe['Training Stress Score®'].notnull()]
@@ -319,25 +323,15 @@ def process_train_load_modeling(athletes_name):
                         and not sub_dataframe[feature].isnull().any()]   # Handle columns with null
             # TODO: @Spoorthi @Lin @Sindhu @Yuhan
             #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
-            # train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
-            train_load_builder = ModelLinearRegression(sub_dataframe_for_modeling,features)
-            # train_load_builder = ModelXGBoost(sub_dataframe_for_modeling,features)
-            # train_load_builder = ModelAdaBoost(sub_dataframe_for_modeling, features)
+            train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
+            #train_load_builder = ModelLinearRegression(sub_dataframe_for_modeling,features)
+            #train_load_builder = ModelXGBoost(sub_dataframe_for_modeling,features)
+            # train_load_builder = ModelAdaBoost(sub_dataframe)
             regressor = train_load_builder.process_modeling()
+            utility.save_model(athletes_name, activity, 'random_forest', regressor)
             utility.SystemReminder().display_activity_modeling_end(activity, True)
-
-            def select_best_model():
-                # TODO: Hard code for now. Finish after everyone done their modeling
-                min_rmse = float('inf')
-                train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
-                regressors = [train_load_builder.process_modeling()]
-                best_model_for_activity = 'random_forest'
-                utility.save_model(athletes_name, activity, best_model_for_activity, regressors[0])
-                best_model_dict[activity] = best_model_for_activity
-            select_best_model()
         else:
             utility.SystemReminder().display_activity_modeling_end(activity, False)
-    utility.update_trainload_model_types(athletes_name, best_model_dict)
 
 
 def process_performance_modeling(athletes_name):
@@ -346,7 +340,6 @@ def process_performance_modeling(athletes_name):
 
 if __name__ == '__main__':
     athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
-    for athletes_name in athletes_names:
-        process_train_load_modeling(athletes_name)
-        process_performance_modeling(athletes_name)
+    process_train_load_modeling(athletes_names[2])
+    process_performance_modeling(athletes_names[2])
 
