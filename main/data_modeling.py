@@ -305,7 +305,12 @@ class ModelAdaBoost(TrainLoadModelBuilder):
 
     def _build_model(self, X_train, y_train):
         # TODO: @Yuhan
-        AB = AdaBoostClassifier(base_estimator=None, n_estimators=50, learning_rate=1.0,
+        # the focus of parameter tuning are n_estimators and learning_rate
+        # the testing ranges of n_estimators and learning_rate are [50,2000] and [0.3, 1]
+        # in the testing resluts of 3 athletes's dataset, n_estimators = 500 is always best
+        # learning_rate = 0.3 works best for xu and carly
+        # learning_rate = 1 works best for eduardo
+        AB = AdaBoostClassifier(base_estimator=None, n_estimators=500, learning_rate=1.0,
                                 algorithm='SAMME.R',  random_state=None)
         AB.fit(X_train, y_train)
         return AB
