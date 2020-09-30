@@ -147,8 +147,8 @@ class SpreadsheetDataCleaner():
         columns = ['Max Speed', 'Avg Speed', 'Max Pace', 'Avg Pace']
         for column in columns:
             try:
-                self.dataframe_work_on.loc[self.dataframe_work_on['Max Speed'].str.contains(":", na=False),
-                                           'Max Speed'] = np.nan
+                self.dataframe_work_on.loc[self.dataframe_work_on[column].str.contains(":", na=False),
+                                           column] = np.nan
             except:
                 pass
 
