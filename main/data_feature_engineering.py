@@ -61,6 +61,12 @@ class SpreadsheetDataFeatureExtractor():
             .apply(lambda arr: pd.Series(arr).nunique())
         # print(list(self.dataframe['Num Activities']))
 
+    def _add_trimp_exponential(self):
+        # TODO: if gender == 'male': y = 1.92 else: y = 1.67
+        #       hrr = (avg_hr - hr_rest) / (max_hr - hr_rest)
+        #       trimp = time_duration*hrr*0.64*math.exp(y*hrr)
+        pass
+
     def process_feature_engineering(self):
         """
         Process Feature Engineering on a spreadsheet data
