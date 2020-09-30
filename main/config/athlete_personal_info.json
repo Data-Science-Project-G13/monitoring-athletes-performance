@@ -40,9 +40,9 @@
             "cycling": null
         },
         "training load best models": {
-            "running": "random_forest",
+            "running": null,
             "swimming": null,
-            "cycling": "random_forest",
+            "cycling": null,
             "strength_training": null,
             "others": null
         }
@@ -112,11 +112,11 @@
             "cycling": null
         },
         "training load best models": {
-            "running": null,
-            "swimming": null,
-            "cycling": null,
+            "running": "random_forest",
+            "swimming": "random_forest",
+            "cycling": "random_forest",
             "strength_training": null,
-            "others": null
+            "others": "random_forest"
         }
     },
     "Rach Madden": {
@@ -232,9 +232,9 @@
             "cycling": null
         },
         "training load best models": {
-            "running": "random_forest",
+            "running": null,
             "swimming": null,
-            "cycling": "random_forest",
+            "cycling": null,
             "strength_training": null,
             "others": null
         }
