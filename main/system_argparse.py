@@ -30,6 +30,5 @@ def parse_options(internal_args: []):
 
 
 if __name__ == '__main__':
-    # print(parse_options([]))
-    # python system_argparse.py --athletes-names xuchen eddie --initialize-system=False
+    # print(parse_options([]))  # For testing the way of using command-line/Terminal
     print(parse_options(["--initialize-system=False", '--clean-data=False', "--athletes-names=xu_chen eduardo_oliveira carly_hart"]))
