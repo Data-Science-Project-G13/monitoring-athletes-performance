@@ -62,6 +62,12 @@ if __name__ == '__main__':
     main(internal_args)
 ```
 
+### System Sketch Map and Output Preview
+ <p align="center"> 
+    <img src="presentations/system_sketch_map.png" alt="system sketch map" width="200">
+    <img src="presentations/pmc_for_presentation.jpg" alt="pmc preview" width="400">
+ </p>
+ 
 
 ### System Structure
 ```angular2
@@ -117,11 +123,6 @@ monitoring-athletes-performance
    └── README.md
 ```
 
-### System Sketch Map and Output Preview
- <p align="center"> 
-    <img src="images/system_sketch_map.png" alt="system sketch map" width="200">
-    <img src="images/pmc_for_presentation.jpg" alt="pmc preview" width="400">
- </p>
 
 ### Additional Help
 ```
