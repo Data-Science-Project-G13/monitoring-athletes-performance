@@ -25,8 +25,13 @@ class SpreadsheetDataFeatureExtractor():
 
     def _add_activity_duration(self):
         def time_to_seconds(hh_mm_ss):
-            hh, mm, ss = map(float, hh_mm_ss.split(':'))
-            return hh*60*60 + mm*60 + ss
+            result, multi = 0, 1
+            hh_mm_ss_list = list(map(float, hh_mm_ss.split(':')))
+            for i in range(len(hh_mm_ss_list)-1, -1, -1):
+                result += multi * hh_mm_ss_list[i]
+                multi *= 60
+            print(result)
+            return result
         self.dataframe['Duration'] = self.dataframe['Time'].apply(lambda x: time_to_seconds(x))
 
     def _add_activity_encode(self):
