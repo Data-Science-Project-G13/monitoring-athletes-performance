@@ -311,7 +311,7 @@ def process_train_load_modeling(athletes_name):
     loader = data_loader.DataLoader()
     data_set = loader.load_merged_data(athletes_name=athletes_name)
     sub_dataframe_dict = utility.split_dataframe_by_activities(data_set)
-    # print([(k, v['Activity Type'].unique()) for k, v in sub_dataframe_dict.items()])
+    best_model_dict = {}
     for activity, sub_dataframe in sub_dataframe_dict.items():
         utility.SystemReminder().display_activity_modeling_start(activity)
         sub_dataframe_for_modeling = sub_dataframe[sub_dataframe['Training Stress Score®'].notnull()]
@@ -323,15 +323,27 @@ def process_train_load_modeling(athletes_name):
                         and not sub_dataframe[feature].isnull().any()]   # Handle columns with null
             # TODO: @Spoorthi @Lin @Sindhu @Yuhan
             #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
-            train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
-            #train_load_builder = ModelLinearRegression(sub_dataframe_for_modeling,features)
-            #train_load_builder = ModelXGBoost(sub_dataframe_for_modeling,features)
-            # train_load_builder = ModelAdaBoost(sub_dataframe)
+            # train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
+            train_load_builder = ModelLinearRegression(sub_dataframe_for_modeling, features)
+            # train_load_builder = ModelXGBoost(sub_dataframe_for_modeling,features)
+            # train_load_builder = ModelAdaBoost(sub_dataframe_for_modeling, features)
             regressor = train_load_builder.process_modeling()
-            utility.save_model(athletes_name, activity, 'random_forest', regressor)
             utility.SystemReminder().display_activity_modeling_end(activity, True)
+
+            def select_best_model():
+                # TODO: Hard code for now. Finish after everyone done their modeling
+                min_rmse = float('inf')
+                train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
+                regressors = [train_load_builder.process_modeling()]
+                best_model_for_activity = 'random_forest'
+                utility.save_model(athletes_name, activity, best_model_for_activity, regressors[0])
+                best_model_dict[activity] = best_model_for_activity
+
+            select_best_model()
+
         else:
             utility.SystemReminder().display_activity_modeling_end(activity, False)
+    utility.update_trainload_model_types(athletes_name, best_model_dict)
 
 
 def process_performance_modeling(athletes_name):
@@ -340,6 +352,7 @@ def process_performance_modeling(athletes_name):
 
 if __name__ == '__main__':
     athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
-    process_train_load_modeling(athletes_names[2])
-    process_performance_modeling(athletes_names[2])
+    for athletes_name in athletes_names:
+        process_train_load_modeling(athletes_name)
+        process_performance_modeling(athletes_name)
 
