@@ -24,7 +24,7 @@ def main(internal_args=None):
     if options['do_initialize']:
         system_initialize.initialize_system()
     for athletes_name in options['athletes_names']:
-        run_system(athletes_name=athletes_name.replace('_', ' '),
+        run_system(athletes_name=athletes_name.lower().replace('_', ' '),
                    cleaning=options['do_cleaning'],
                    feature_engineering=options['do_feature_engineering'],
                    modeling=options['do_feature_engineering'],
