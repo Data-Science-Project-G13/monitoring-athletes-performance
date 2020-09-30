@@ -7,22 +7,32 @@ functions:
 
     * main - the main function of the system
 """
+
 # Self-defined modules
-import os
 import utility
 import system_initialize
 import data_cleaning
 import data_merge
 import data_modeling
 import generate_pmc
+import system_argparse
 from utility import SystemReminder as Reminder
 
 
-def main(athletes_name: str,
-         cleaning: bool=True,
-         feature_engineering: bool=True,
-         modeling: bool=True,
-         pmc_generating: bool=True):
+def main(internal_args=None):
+    options = system_argparse.parse_options(internal_args)
+    if options['do_initialize']:
+        system_initialize.initialize_system()
+    for athletes_name in options['athletes_names']:
+        run_system(athletes_name=athletes_name.replace('_', ' '),
+                   cleaning=options['do_cleaning'],
+                   feature_engineering=options['do_feature_engineering'],
+                   modeling=options['do_feature_engineering'],
+                   pmc_generating=options['do_pmc_generating'])
+
+
+def run_system(athletes_name: str, cleaning: bool=True, feature_engineering: bool=True,
+               modeling: bool=True, pmc_generating: bool=True):
     """ Run the system
     Process: Data cleaning, Feature Engineering, Modeling.
     """
@@ -47,12 +57,13 @@ def main(athletes_name: str,
             reminder.display_data_cleaning_start(athletes_name, additional_data_type)
             fit_activity_types, split_type = ['cycling', 'running', 'swimming', 'training'], 'real-time'
             for activity_type in fit_activity_types:
-                data_cleaning.main('additional', athletes_name,
-                                   activity_type=activity_type, split_type=split_type, verbose=show_additional_cleaning_details)
+                data_cleaning.main('additional', athletes_name, activity_type=activity_type,
+                                   split_type=split_type, verbose=show_additional_cleaning_details)
         reminder.display_data_cleaning_end(athletes_name, additional_data_type)
 
     # Feature Engineering
-    system_initialize.initialize_characteristics(athletes_name)
+    if additional_exists:
+        system_initialize.initialize_characteristics(athletes_name)
     if feature_engineering:
         show_feature_engineering_details = False
         reminder.display_feature_engineering_start(athletes_name)
@@ -72,20 +83,16 @@ def main(athletes_name: str,
     # Generate PMC
     if pmc_generating:
         reminder.display_pmc_generation_start(athletes_name)
-        generate_pmc.process_pmc_generation(athletes_name)
+        generate_pmc.process_pmc_generation(athletes_name, save_pmc_figure=False)
         reminder.display_pmc_generation_end(athletes_name)
 
     reminder.display_athlete_process_end(athletes_name)
 
 
-
 if __name__ == '__main__':
-    athletes_names = ['Eduardo Oliveira', 'Xu Chen', 'Carly Hart']
-    do_initialize, do_cleaning, do_feature_engineering, do_modeling, do_pmc_generating = True, True, True, True, False
-    if do_initialize:
-        system_initialize.initialize_system()
-    for athletes_name in athletes_names:
-        main(athletes_name, do_cleaning, do_feature_engineering, do_modeling, do_pmc_generating)
-
-
+    athletes_names = ['eduardo_oliveira', 'xu_chen', 'carly_hart']
+    internal_args = ['--athletes-names={}'.format(' '.join(athletes_names)),
+                     '--initialize-system=True', '--clean-data=True', '--process-feature-engineering=True',
+                     '--build-model=True', '--generate-pmc=True']
+    main(internal_args)
 
