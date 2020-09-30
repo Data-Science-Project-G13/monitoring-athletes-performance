@@ -312,7 +312,8 @@ class ModelAdaBoost(TrainLoadModelBuilder):
         # learning_rate = 1 works best for eduardo
         AB = AdaBoostClassifier(base_estimator=None, n_estimators=500, learning_rate=1.0,
                                 algorithm='SAMME.R',  random_state=None)
-        AB.fit(X_train, y_train)
+        AB.fit(X_train, y_train.astype('int'))
+        # added.astype('int')) in case of "Unknown label type: 'continuous'" happens
         return AB
 
     def process_modeling(self):
