@@ -14,9 +14,7 @@ merged with Garmin data to:
 ### Prerequisites
 
 #### Python Version
-    ```
-    Python 3.6 is preferred
-    ```
+`Python 3.6` is preferred
 
 #### Envoirment Setup
 1. Open the project `monitoring-athletes-performance` with IDE.
@@ -64,6 +62,66 @@ if __name__ == '__main__':
     main(internal_args)
 ```
 
+
+### System Structure
+```angular2
+monitoring-athletes-performance
+   ├── main
+   │   ├── main.py
+   |   ├── system_initialize.py
+   │   ├── data_loader.py
+   |   ├── data_cleaning.py
+   |   ├── data_feature_engineering.py
+   |   ├── data_merge.py
+   |   ├── data_modeling.py
+   |   ├── requirements.txt
+   │   |── config
+   │   |   ├── data_file_names.cfg
+   │   |   ├── activity_types.cfg
+   │   |   ├── column_data_types.cfg
+   │   |   └── athlete_personal_info.json
+   │   └── fit_file_convert
+   │       ├── convert_fit_to_csv.py
+   │       └── process_all.py
+   ├── data
+   │   ├── Eduardo Oliveira.csv
+   │   ├── Xu Chen.csv
+   │   ├── Carly Hart.csv
+   |   ├── fit_eduardo_oliveira
+   |   ├── fit_xu_chen
+   |   ├── fit_carly_hart
+   │   |── csv_eduardo_oliveira
+   │   |   ├── fit_csv
+   │   |   └── fit_files
+   │   |── csv_xu_chen
+   │   |   ├── fit_csv
+   │   |   └── fit_files
+   │   |── csv_carly_hart
+   │   |   ├── fit_csv
+   │   |   └── fit_files
+   │   |── cleaned_spreadsheet
+   │   |   ├── Carly Hart.csv
+   │   |   ├── Eduardo Oliveira.csv
+   │   |   └── Xu Chen.csv
+   │   |── cleaned_additional
+   │   |   ├── carly_hart
+   │   |   ├── eduardo_oliveira
+   │   |   └── xu_chen
+   │   └── merged_dataframes
+   |
+   ├── log
+   ├── models
+   ├── plots
+   |
+   ├── LICENSE
+   └── README.md
+```
+
+### System Sketch Map and Output Preview
+ <p align="center"> 
+    <img src="images/system_sketch_map.png" alt="system sketch map" width="200">
+    <img src="images/pmc_for_presentation.jpg" alt="pmc preview" width="400">
+ </p>
 
 ### Additional Help
 ```
