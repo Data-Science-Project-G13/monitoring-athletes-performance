@@ -28,6 +28,7 @@ from sklearn.linear_model import Lasso
 from sklearn.preprocessing import StandardScaler
 from mlxtend.feature_selection import SequentialFeatureSelector as SFS
 from warnings import filterwarnings
+import numpy as np
 filterwarnings('ignore')
 
 # Self-defined modules
@@ -306,15 +307,19 @@ class ModelAdaBoost(TrainLoadModelBuilder):
     def _build_model(self, X_train, y_train):
         # TODO: @Yuhan
         # the focus of parameter tuning are n_estimators and learning_rate
-        # the testing ranges of n_estimators and learning_rate are [50,2000] and [0.3, 1]
-        # in the testing resluts of 3 athletes's dataset, n_estimators = 500 is always best
-        # learning_rate = 0.3 works best for xu and carly
-        # learning_rate = 1 works best for eduardo
-        AB = AdaBoostClassifier(base_estimator=None, n_estimators=500, learning_rate=1.0,
-                                algorithm='SAMME.R',  random_state=None)
-        AB.fit(X_train, y_train.astype('int'))
+        param_grid = [
+            {'base_estimator': [None], 'n_estimators':np.linspace(100,2000,20)},
+            {'learning_rate': np.linspace(0.1,1,10), 'algorithm': ['SAMME.R'], 'random_state': [None]},
+        ]
+
+        # AB = AdaBoostClassifier(base_estimator=None, n_estimators=500, learning_rate=1.0,
+        #                         algorithm='SAMME.R',  random_state=None)
+        AB = AdaBoostClassifier()
+        grid_search = GridSearchCV(AB, param_grid, cv=2,
+                                   scoring='neg_mean_squared_error')
+        grid_search.fit(X_train, y_train.astype('int'))
         # added.astype('int')) in case of "Unknown label type: 'continuous'" happens
-        return AB
+        return grid_search.best_estimator_
 
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
@@ -347,9 +352,9 @@ def process_train_load_modeling(athletes_name):
             # TODO: @Spoorthi @Lin @Sindhu @Yuhan
             #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
             # train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
-            train_load_builder = ModelLinearRegression(sub_dataframe_for_modeling, features)
+            # train_load_builder = ModelLinearRegression(sub_dataframe_for_modeling, features)
             # train_load_builder = ModelXGBoost(sub_dataframe_for_modeling,features)
-            # train_load_builder = ModelAdaBoost(sub_dataframe_for_modeling, features)
+            train_load_builder = ModelAdaBoost(sub_dataframe_for_modeling, features)
             regressor = train_load_builder.process_modeling()
             utility.SystemReminder().display_activity_modeling_end(activity, True)
 
