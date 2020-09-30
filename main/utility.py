@@ -105,6 +105,8 @@ def need_cleaning(athletes_name: str, data_type: str, do_cleaning: bool) -> bool
                 and not do_cleaning:
             return False
     elif data_type == 'additional':
+        if 'fit_{}'.format('_'.join(athletes_name.lower().split())) not in os.listdir('{}/data'.format(os.path.pardir)):
+            return False
         if '_'.join(athletes_name.lower().split()) in os.listdir('{}/data/cleaned_additional'.format(os.path.pardir)) \
                 and not do_cleaning:
             return False
