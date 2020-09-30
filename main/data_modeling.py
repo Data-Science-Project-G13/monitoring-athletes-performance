@@ -203,6 +203,23 @@ class ModelRandomForest(TrainLoadModelBuilder):
         return regressor
 
 
+class TestModel(TrainLoadModelBuilder):
+
+    def __init__(self, dataframe, activity_features):
+        super().__init__(dataframe, activity_features)
+
+    def _build_model(self, X_train, y_train):
+        rfc = RandomForestRegressor(max_depth=2, random_state=0)
+        rfc.fit(X_train, y_train)
+        return rfc
+
+    def process_modeling(self):
+        X_train, X_test, y_train, y_test = self._split_train_validation()
+        regressor = self._build_model(X_train, y_train)
+        mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
+        return regressor
+
+
 class ModelXGBoost(TrainLoadModelBuilder):
 
     def __init__(self, dataframe, activity_features):
@@ -333,7 +350,7 @@ def process_train_load_modeling(athletes_name):
             def select_best_model():
                 # TODO: Hard code for now. Finish after everyone done their modeling
                 min_rmse = float('inf')
-                train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
+                train_load_builder = TestModel(sub_dataframe_for_modeling, features)
                 regressors = [train_load_builder.process_modeling()]
                 best_model_for_activity = 'random_forest'
                 utility.save_model(athletes_name, activity, best_model_for_activity, regressors[0])
@@ -353,6 +370,7 @@ def process_performance_modeling(athletes_name):
 if __name__ == '__main__':
     athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
     for athletes_name in athletes_names:
+        print('\n\n\n{} {} {} '.format('='*25, athletes_name.title(), '='*25))
         process_train_load_modeling(athletes_name)
         process_performance_modeling(athletes_name)
 
