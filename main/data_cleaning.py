@@ -144,13 +144,16 @@ class SpreadsheetDataCleaner():
     def _format_missing_val_with_nan(self) :
         # TODO: Missing value situations in config and in functions to handle
         self.dataframe_work_on = self.dataframe_work_on.replace({"--" : np.nan, "..." : np.nan})
-        self.dataframe_work_on.loc[self.dataframe_work_on['Max Speed'].str.contains(":", na=False), 'Max Speed'] = np.nan
-        self.dataframe_work_on.loc[self.dataframe_work_on['Avg Speed'].str.contains(":", na=False), 'Avg Speed'] = np.nan
-
+        columns = ['Max Speed', 'Avg Speed', 'Max Pace', 'Avg Pace']
+        for column in columns:
+            try:
+                self.dataframe_work_on.loc[self.dataframe_work_on['Max Speed'].str.contains(":", na=False),
+                                           'Max Speed'] = np.nan
+            except:
+                pass
 
     def _convert_columns_to_numeric(self) :
         self.dataframe_work_on[self.columns_to_numeric] = self.dataframe_work_on[self.columns_to_numeric].apply(pd.to_numeric)
-
 
     def _format_datetime(self):
         self.dataframe_work_on['Date_extracted'] = pd.to_datetime(self.dataframe_work_on["Date"]).dt.normalize()
@@ -366,7 +369,7 @@ class SpreadsheetDataCleaner():
         y_pred = clf.fit_predict(X)
         indices=np.where(y_pred == -1)
         y_pred = np.unique(y_pred, return_counts=True)
-        return print("Total number of outliers are denoted by -1",y_pred,"The outliers are at indices",indices)
+        return print("Total number of outliers are denoted by -1", y_pred, "The outliers are at indices", indices)
 
     def process_data_cleaning(self) :
         """
