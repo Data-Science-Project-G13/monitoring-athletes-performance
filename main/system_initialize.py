@@ -33,9 +33,11 @@ def create_directory_structures():
 
 
 def convert_fit_files_to_csv():
-    for internal_args in utility.get_fit_file_internal_args():
-        process_all.main(internal_args=internal_args)
-        utility.SystemReminder().display_fit_file_converted(internal_args[1].split('=')[1][4:])
+    internal_args_list = utility.get_fit_file_internal_args()
+    if internal_args_list:
+        for internal_args in internal_args_list:
+            process_all.main(internal_args=internal_args)
+            utility.SystemReminder().display_fit_file_converted(internal_args[1].split('=')[1][4:])
 
 
 def initialize_configurations():
