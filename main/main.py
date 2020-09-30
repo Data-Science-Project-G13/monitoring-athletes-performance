@@ -92,7 +92,7 @@ def run_system(athletes_name: str, cleaning: bool=True, feature_engineering: boo
 if __name__ == '__main__':
     athletes_names = ['eduardo_oliveira', 'xu_chen', 'carly_hart']
     internal_args = ['--athletes-names={}'.format(' '.join(athletes_names)),
-                     '--initialize-system=True', '--clean-data=True', '--process-feature-engineering=True',
-                     '--build-model=True', '--generate-pmc=True']
+                     '--initialize-system=False', '--clean-data=False', '--process-feature-engineering=False',
+                     '--build-model=False', '--generate-pmc=True']
     main(internal_args)
 
