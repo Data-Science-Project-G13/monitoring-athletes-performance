@@ -188,18 +188,30 @@ class ModelRandomForest(TrainLoadModelBuilder):
 
     def _build_model(self, X_train, y_train):
 #       rfc = RandomForestRegressor(max_depth=2, random_state=0)
-        rfc = DecisionTreeRegressor(max_depth=5, min_weight_fraction_leaf= 1e-5, min_impurity_decrease = 1, min_samples_split=2)
+        param_grid = {
+            'bootstrap': [True],
+            'max_depth': [4, 5, 6, 8, 10, 11],
+            'max_features': ['auto', 'sqrt', 'log2'],
+            'min_samples_leaf': [2,3],
+            'min_samples_split': [2,3,4,5],
+            'n_estimators': [100,150,200,400,500]}
+        rf = RandomForestRegressor()
+#       rfc = DecisionTreeRegressor(max_depth=5, min_weight_fraction_leaf= 1e-5, min_impurity_decrease = 1, min_samples_split=2)
+        grid_search = GridSearchCV(estimator = rf, param_grid = param_grid,
+                          cv = 3, n_jobs = -1, verbose=0)
 #       rfc = RandomForestRegressor(max_depth=10,max_features=10,n_estimators=50,random_state=0)
-        rfc.fit(X_train, y_train)
-        return rfc
+        grid_search.fit(X_train, y_train)
+        best_grid = grid_search.best_estimator_
+        print(best_grid)
+        return best_grid
 
     def process_modeling(self):
         # TODO: @Lin
         X_train, X_test, y_train, y_test = self._split_train_validation()
         regressor = self._build_model(X_train, y_train)
         mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
-#       self._display_performance_results_regression('Random Forest', mae, rmse,rsquared)
-        self._display_performance_results_regression('Decision Tree', mae, rmse,rsquared)
+        self._display_performance_results_regression('Random Forest', mae, rmse,rsquared)
+#       self._display_performance_results_regression('Decision Tree', mae, rmse,rsquared)
 
         return regressor
 
@@ -351,10 +363,10 @@ def process_train_load_modeling(athletes_name):
                         and not sub_dataframe[feature].isnull().any()]   # Handle columns with null
             # TODO: @Spoorthi @Lin @Sindhu @Yuhan
             #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
-            # train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
+            train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
             # train_load_builder = ModelLinearRegression(sub_dataframe_for_modeling, features)
             # train_load_builder = ModelXGBoost(sub_dataframe_for_modeling,features)
-            train_load_builder = ModelAdaBoost(sub_dataframe_for_modeling, features)
+            #train_load_builder = ModelAdaBoost(sub_dataframe_for_modeling, features)
             regressor = train_load_builder.process_modeling()
             utility.SystemReminder().display_activity_modeling_end(activity, True)
 
