@@ -5,6 +5,7 @@ import pandas as pd
 import joblib
 from sklearn.tree import DecisionTreeRegressor
 from tensorflow.keras import Sequential, layers
+from tensorflow.keras.losses import mean_squared_error
 from tensorflow.keras.utils import to_categorical
 from sklearn import svm
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
@@ -161,25 +162,31 @@ class ModelNeuralNetwork(TrainLoadModelBuilder):
         super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, X_test, y_train, y_test):
-        neural_network = Sequential()
+        X_train, y_train, X_test, y_test = np.array(X_train), np.array(y_train), np.array(X_test), np.array(y_test)
+        print(X_train)
+        X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
+        X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
         verbose, epochs, batch_size = 0, 30, 4
-        neural_network.add(layers.Dense(265, input_shape=(self.num_features,), activation='relu'))
+        neural_network = Sequential()
+        neural_network.add(layers.Bidirectional(layers.LSTM(units = 32, input_shape = (X_train.shape[1], 1), return_sequences=True)))
+        neural_network.add(layers.Dense(256, activation='relu'))
+        neural_network.add(layers.Dropout(0.2))
         neural_network.add(layers.BatchNormalization())
         neural_network.add(layers.Dense(64, activation='relu'))
-        neural_network.add(layers.Dense(1, activation='sigmoid'))
-        neural_network.compile(loss='binary_crossentropy', optimizer='sgd', metrics=['accuracy'])
+        neural_network.add(layers.Dense(1, kernel_initializer='normal', activation='linear'))
+        neural_network.compile(loss='mean_absolute_error', optimizer='adam', metrics=['mean_absolute_error'])
         neural_network.fit(X_train, y_train,  validation_data=(X_test, y_test),
                            epochs=epochs, batch_size=batch_size, shuffle=True)
-        # TODO: Add Grid Search
-        train_acc = neural_network.evaluate(X_train, y_train, verbose=0)[1]
-        test_acc = neural_network.evaluate(X_test, y_test, verbose=0)[1]
-        print('Training Set Accuracy: {}, Test Set Accuracy: {}'.format(train_acc, test_acc))
-        return neural_network
+        print('Prediction Overview: ', np.reshape(neural_network.predict(X_test), (X_test.shape[0], X_test.shape[1])))
+        train_mae = neural_network.evaluate(X_train, y_train, verbose=0)[1]
+        test_mae = neural_network.evaluate(X_test, y_test, verbose=0)[1]
+        print('Training Set MAE: {}, Test Set MAE: {}'.format(train_mae, test_mae))
+        return test_mae, neural_network
 
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
-        neural_network = self._build_model(X_train, X_test, y_train, y_test)
-        return 0, neural_network
+        mae, neural_network = self._build_model(X_train, X_test, y_train, y_test)
+        return mae, neural_network
 
 
 class ModelRandomForest(TrainLoadModelBuilder):
@@ -364,17 +371,17 @@ def process_train_load_modeling(athletes_name):
                         and not sub_dataframe[feature].isnull().any()]   # Handle columns with null
 
             def select_best_model():
-                min_rmse, best_model_type, best_regressor = float('inf'), '', None
-                for model_class in [ModelRandomForest, ModelXGBoost]:
+                min_mae, best_model_type, best_regressor = float('inf'), '', None
+                for model_class in [ModelRandomForest, ModelXGBoost, ModelAdaBoost]:
                     model_type = model_class.__name__[5:]
                     print('\nBuilding {}...'.format(model_type))
                     builder = model_class(sub_dataframe_for_modeling, features)
-                    rmse, regressor = builder.process_modeling()
-                    if rmse < min_rmse:
-                        min_rmse = rmse
+                    mae, regressor = builder.process_modeling()
+                    if mae < min_mae:
+                        min_mae = mae
                         best_model_type = model_type
                         best_regressor = regressor
-                print('Best model with mean square root error: {}'.format(min_rmse))
+                print('Best model with mean absolute error: {}'.format(min_mae))
                 if best_regressor is not None:
                     utility.save_model(athletes_name, activity, best_model_type, best_regressor)
                     best_model_dict[activity] = best_model_type
