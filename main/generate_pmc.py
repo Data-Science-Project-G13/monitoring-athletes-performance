@@ -91,8 +91,9 @@ def get_tss_estimated_data(athletes_name):
     for activity, sub_dataframe in sub_dataframe_dict.items():
         best_model_type_for_activity = model_types[activity]
         if best_model_type_for_activity:
+            print(best_model_type_for_activity)
             sub_dataframe_for_modeling = sub_dataframe[sub_dataframe[TSS].notnull()]
-            regressor = utility.load_model(athletes_name, activity, 'random_forest')
+            regressor = utility.load_model(athletes_name, activity, best_model_type_for_activity)
             general_features = utility.FeatureManager().get_common_features_among_activities()
             activity_specific_features = utility.FeatureManager().get_activity_specific_features(activity)
             features = [feature for feature in general_features + activity_specific_features
@@ -103,7 +104,7 @@ def get_tss_estimated_data(athletes_name):
             y_final = [y[i] if y[i] is np.nan else y_pred[i] for i in range(len(y))]
             original_merged_data.loc[sub_dataframe.index, TSS] = y_final
         else:
-            print('No model for {}'.format(activity))
+            print("No model for {}'s {} activity".format(athletes_name, activity))
     return original_merged_data
 
 
