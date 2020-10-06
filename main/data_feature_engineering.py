@@ -30,7 +30,6 @@ class SpreadsheetDataFeatureExtractor():
             for i in range(len(hh_mm_ss_list)-1, -1, -1):
                 result += multi * hh_mm_ss_list[i]
                 multi *= 60
-            print(result)
             return result
         self.dataframe['Duration'] = self.dataframe['Time'].apply(lambda x: time_to_seconds(x))
 
