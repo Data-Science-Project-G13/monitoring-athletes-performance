@@ -135,7 +135,7 @@ class ModelLinearRegression(TrainLoadModelBuilder):
         ##########
         self._display_performance_results_regression('Linear Regression', mae, rmse,rsquared)
 
-        return regressor
+        return rmse, regressor
 
 
 class ModelSVM(TrainLoadModelBuilder):
@@ -178,7 +178,8 @@ class ModelNeuralNetwork(TrainLoadModelBuilder):
 
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
-        self._build_model(X_train, X_test, y_train, y_test)
+        neural_network = self._build_model(X_train, X_test, y_train, y_test)
+        return 0, neural_network
 
 
 class ModelRandomForest(TrainLoadModelBuilder):
@@ -190,11 +191,11 @@ class ModelRandomForest(TrainLoadModelBuilder):
 #       rfc = RandomForestRegressor(max_depth=2, random_state=0)
         param_grid = {
             'bootstrap': [True],
-            'max_depth': [4, 5, 6, 8, 10, 11],
-            'max_features': ['auto', 'sqrt', 'log2'],
-            'min_samples_leaf': [2,3],
-            'min_samples_split': [2,3,4,5],
-            'n_estimators': [100,150,200,400,500]}
+            'max_depth': [6, 8, 10],
+            'max_features': ['sqrt', 'log2'],
+            'min_samples_leaf': [2, 3, 5],
+            'min_samples_split': [2, 3],
+            'n_estimators': [100, 200, 500]}
         rf = RandomForestRegressor()
 #       rfc = DecisionTreeRegressor(max_depth=5, min_weight_fraction_leaf= 1e-5, min_impurity_decrease = 1, min_samples_split=2)
         grid_search = GridSearchCV(estimator = rf, param_grid = param_grid,
@@ -213,7 +214,7 @@ class ModelRandomForest(TrainLoadModelBuilder):
         self._display_performance_results_regression('Random Forest', mae, rmse,rsquared)
 #       self._display_performance_results_regression('Decision Tree', mae, rmse,rsquared)
 
-        return regressor
+        return rmse, regressor
 
 
 class TestModel(TrainLoadModelBuilder):
@@ -230,7 +231,7 @@ class TestModel(TrainLoadModelBuilder):
         X_train, X_test, y_train, y_test = self._split_train_validation()
         regressor = self._build_model(X_train, y_train)
         mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
-        return regressor
+        return rmse, regressor
 
 
 class ModelXGBoost(TrainLoadModelBuilder):
@@ -253,7 +254,7 @@ class ModelXGBoost(TrainLoadModelBuilder):
         regressor = self._build_model(X_train, y_train)
         mae, rmse,rsquared = self._validate_model_regression(X_test, y_test, regressor)
         self._display_performance_results_regression('XGBoost', mae, rmse,rsquared)
-        return regressor
+        return rmse, regressor
 
 
 class ModelStacking(TrainLoadModelBuilder):
@@ -338,7 +339,7 @@ class ModelAdaBoost(TrainLoadModelBuilder):
         regressor = self._build_model(X_train, y_train)
         mae, rmse,rsquared = self._validate_model_regression(X_test, y_test, regressor)
         self._display_performance_results_regression('AdaBoost', mae, rmse,rsquared)
-        return regressor
+        return rmse, regressor
 
 
 class PerformanceModelBuilder():
@@ -361,25 +362,25 @@ def process_train_load_modeling(athletes_name):
             features = [feature for feature in general_features + activity_specific_features
                         if feature in sub_dataframe.columns
                         and not sub_dataframe[feature].isnull().any()]   # Handle columns with null
-            # TODO: @Spoorthi @Lin @Sindhu @Yuhan
-            #  Below is how you test your model for one activity sub-dataframe, the example is random forest.
-            train_load_builder = ModelRandomForest(sub_dataframe_for_modeling, features)
-            # train_load_builder = ModelLinearRegression(sub_dataframe_for_modeling, features)
-            # train_load_builder = ModelXGBoost(sub_dataframe_for_modeling,features)
-            #train_load_builder = ModelAdaBoost(sub_dataframe_for_modeling, features)
-            regressor = train_load_builder.process_modeling()
-            utility.SystemReminder().display_activity_modeling_end(activity, True)
 
             def select_best_model():
-                # TODO: Hard code for now. Finish after everyone done their modeling
-                min_rmse = float('inf')
-                train_load_builder = TestModel(sub_dataframe_for_modeling, features)
-                regressors = [train_load_builder.process_modeling()]
-                best_model_for_activity = 'random_forest'
-                utility.save_model(athletes_name, activity, best_model_for_activity, regressors[0])
-                best_model_dict[activity] = best_model_for_activity
+                min_rmse, best_model_type, best_regressor = float('inf'), '', None
+                for model_class in [ModelRandomForest, ModelXGBoost]:
+                    model_type = model_class.__name__[5:]
+                    print('\nBuilding {}...'.format(model_type))
+                    builder = model_class(sub_dataframe_for_modeling, features)
+                    rmse, regressor = builder.process_modeling()
+                    if rmse < min_rmse:
+                        min_rmse = rmse
+                        best_model_type = model_type
+                        best_regressor = regressor
+                print('Best model with mean square root error: {}'.format(min_rmse))
+                if best_regressor is not None:
+                    utility.save_model(athletes_name, activity, best_model_type, best_regressor)
+                    best_model_dict[activity] = best_model_type
 
             select_best_model()
+            utility.SystemReminder().display_activity_modeling_end(activity, True)
 
         else:
             utility.SystemReminder().display_activity_modeling_end(activity, False)
