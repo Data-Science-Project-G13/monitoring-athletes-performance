@@ -62,7 +62,7 @@ class TrainLoadModelBuilder():
 
     def _validate_model_regression(self, X_test, y_test, learner):
         y_preds = learner.predict(X_test)  # predict classes for y test
-        print('Predictions Overview: ', y_preds)
+        # print('Predictions Overview: ', y_preds)
         mae = mean_absolute_error(y_test, y_preds)
         rmse = np.sqrt(mean_squared_error(y_test, y_preds))
         rsquared=r2_score(y_test, y_preds)
@@ -116,7 +116,6 @@ class ModelLinearRegression(TrainLoadModelBuilder):
         #return rfe
 
     def process_modeling(self):
-        # TODO: Spoorthi
         X_train, X_test, y_train, y_test = self._split_train_validation()
         ##########
         sfs = SFS(Lasso(alpha=0.04, normalize=True),
@@ -195,7 +194,6 @@ class ModelRandomForest(TrainLoadModelBuilder):
         super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
-#       rfc = RandomForestRegressor(max_depth=2, random_state=0)
         param_grid = {
             'bootstrap': [True],
             'max_depth': [6, 8, 10],
@@ -206,15 +204,13 @@ class ModelRandomForest(TrainLoadModelBuilder):
         rf = RandomForestRegressor()
 #       rfc = DecisionTreeRegressor(max_depth=5, min_weight_fraction_leaf= 1e-5, min_impurity_decrease = 1, min_samples_split=2)
         grid_search = GridSearchCV(estimator = rf, param_grid = param_grid,
-                          cv = 3, n_jobs = -1, verbose=0)
+                                   cv = 3, n_jobs = -1, verbose=0)
 #       rfc = RandomForestRegressor(max_depth=10,max_features=10,n_estimators=50,random_state=0)
         grid_search.fit(X_train, y_train)
         best_grid = grid_search.best_estimator_
-        print(best_grid)
         return best_grid
 
     def process_modeling(self):
-        # TODO: @Lin
         X_train, X_test, y_train, y_test = self._split_train_validation()
         regressor = self._build_model(X_train, y_train)
         mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
@@ -247,7 +243,6 @@ class ModelXGBoost(TrainLoadModelBuilder):
         super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
-        # TODO: Sindhu
         xgb_reg = xgb.XGBRegressor(learning_rate=0.01,colsample_bytree = 0.4,subsample = 0.2,n_estimators=1000,reg_alpha = 0.3,
                                      max_depth=3,min_child_weight=3,gamma=0,objective ='reg:squarederror')
         xgb_reg.fit(X_train, y_train)
@@ -325,7 +320,6 @@ class ModelAdaBoost(TrainLoadModelBuilder):
         super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
-        # TODO: @Yuhan
         # the focus of parameter tuning are n_estimators and learning_rate
         param_grid = [
             {'base_estimator': [None], 'n_estimators':np.linspace(100,2000,20)},
@@ -377,7 +371,7 @@ def process_train_load_modeling(athletes_name):
                     print('\nBuilding {}...'.format(model_type))
                     builder = model_class(sub_dataframe_for_modeling, features)
                     mae, regressor = builder.process_modeling()
-                    utility.save_model(athletes_name, activity, best_model_type, best_regressor)
+                    utility.save_model(athletes_name, activity, model_type, regressor)
                     if mae < min_mae:
                         min_mae, best_model_type, best_regressor = mae, model_type, regressor
                 print('Best model with mean absolute error: {}'.format(min_mae))
