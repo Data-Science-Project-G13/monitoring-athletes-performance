@@ -27,7 +27,7 @@ def main(internal_args=None):
         run_system(athletes_name=athletes_name.lower().replace('_', ' '),
                    cleaning=options['do_cleaning'],
                    feature_engineering=options['do_feature_engineering'],
-                   modeling=options['do_feature_engineering'],
+                   modeling=options['do_modeling'],
                    pmc_generating=options['do_pmc_generating'])
 
 
@@ -76,9 +76,9 @@ def run_system(athletes_name: str, cleaning: bool=True, feature_engineering: boo
         data_modeling.process_train_load_modeling(athletes_name)
         reminder.display_modeling_end(athletes_name, 'Assessing Training Load')
 
-        reminder.display_modeling_start(athletes_name, 'Predicting Performance')
-        data_modeling.process_performance_modeling(athletes_name)
-        reminder.display_modeling_end(athletes_name, 'Predicting Performance')
+        # reminder.display_modeling_start(athletes_name, 'Predicting Performance')
+        # data_modeling.process_performance_modeling(athletes_name)
+        # reminder.display_modeling_end(athletes_name, 'Predicting Performance')
 
     # Generate PMC
     if pmc_generating:
@@ -90,9 +90,13 @@ def run_system(athletes_name: str, cleaning: bool=True, feature_engineering: boo
 
 
 if __name__ == '__main__':
-    athletes_names = ['eduardo_oliveira', 'xu_chen', 'carly_hart']
-    internal_args = ['--athletes-names={}'.format(' '.join(athletes_names)),
-                     '--initialize-system=False', '--clean-data=False', '--process-feature-engineering=False',
-                     '--build-model=False', '--generate-pmc=True']
-    main(internal_args)
+    # For Users
+    main()
+
+    # For Developers. Uncomment the following lines if you would like test the system.
+    # athletes_names = ['eduardo_oliveira', 'xu_chen', 'carly_hart']
+    # internal_args = ['--athletes-names={}'.format(' '.join(athletes_names)),
+    #                  '--initialize-system=False', '--clean-data=False', '--process-feature-engineering=False',
+    #                  '--build-model=True', '--generate-pmc=True']
+    # main(internal_args)
 
