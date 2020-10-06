@@ -97,23 +97,6 @@ class SpreadsheetDataCleaner():
         _helper(['Strength Training'], 'training')
         _helper(['Hiking', 'Multisport', 'Indoor Rowing'], 'others')
 
-        # self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
-        #     isin(['Pool Swimming', 'Open Water Swimming', 'Swimming'])] = imputed_subdatasets['swimming']
-        # self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
-        #     isin(['Virtual Cycling', 'Indoor Cycling', 'Road Cycling', 'Cycling'])] = imputed_subdatasets['cycling']
-        # self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
-        #     isin(['Running', 'Treadmill Running'])] = imputed_subdatasets['running']
-        # self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
-        #     isin(['Strength Training'])] = imputed_subdatasets['training']
-        # self.dataframe_work_on.loc[self.dataframe_work_on['Activity Type'].
-        #     isin(['Hiking', 'Multisport', 'Indoor Rowing'])] = imputed_subdatasets['others']
-
-    # def _concat_dataframe_by_activity(self):
-    #     self.dataframe_work_on = pd.concat(
-    #         [self.dataframe_swim, self.dataframe_cycle, self.dataframe_run,self.dataframe_st, self.dataframe_others])
-    #     del self.dataframe_swim, self.dataframe_cycle, self.dataframe_run,self.dataframe_st, self.dataframe_others
-    #     self.dataframe_work_on = self.dataframe_work_on.sort_index(inplace=True)
-
     def _drop_columns(self) :
 
         columns_need_imputation_general = ['Activity Type', 'Date', 'Title', 'Distance', 'Calories', 'Time', 'Avg HR', 'Max HR',
@@ -124,25 +107,16 @@ class SpreadsheetDataCleaner():
         columns_need_imputation_athlete = [column for column in self.dataframe_work_on.columns if column in columns_need_imputation_general]
         self.dataframe_work_on = self.dataframe_work_on[columns_need_imputation_athlete]
 
-        # columns_no_imputation = ['Favorite', 'Aerobic TE', 'Avg Run Cadence', 'Max Run Cadence', 'Avg Stride Length',
-        #                          'Avg Vertical Ratio', 'Avg Vertical Oscillation', 'Avg Ground Contact Time',
-        #                          'Avg GCT Balance', 'L/R Balance', 'Grit', 'Flow', 'Total Reps', 'Total Sets',
-        #                          'Bottom Time', 'Min Temp', 'Surface Interval', 'Decompression', 'Best Lap Time',
-        #                          'Max Temp']
-        # # columns_need_imputation = [column for column in self.dataframe_work_on.columns if column not in columns_no_imputation]
-
     def _convert_strings_to_lower_case(self) :
         self.dataframe_work_on['Activity Type'] = self.dataframe_work_on['Activity Type'].str.lower()
         self.dataframe_work_on['Title'] = self.dataframe_work_on['Title'].str.lower()
 
     def _handle_commas(self) :
         columns_remove_comma = self.dataframe_work_on.columns
-        # TODO: Might not simply replace the comma with an empty string
         for column in columns_remove_comma :
             self.dataframe_work_on[column] = self.dataframe_work_on[column].astype(str).str.replace(',', '')
 
     def _format_missing_val_with_nan(self) :
-        # TODO: Missing value situations in config and in functions to handle
         self.dataframe_work_on = self.dataframe_work_on.replace({"--" : np.nan, "..." : np.nan})
         columns = ['Max Speed', 'Avg Speed', 'Max Pace', 'Avg Pace']
         for column in columns:
@@ -214,15 +188,9 @@ class SpreadsheetDataCleaner():
     def _apply_mean_imputation(self, sub_df_work_on, columns):
         not_null_cols = [col for col in columns if col in sub_df_work_on.columns]
         not_null_cols = [col for col in not_null_cols if not sub_df_work_on[col].isnull().all()]
-        # print(sub_df_work_on[not_null_cols])
         for column in not_null_cols:
             sub_df_work_on[column].fillna(sub_df_work_on[column].mean(), inplace=True)
         return sub_df_work_on
-        # new_data = sub_df_work_on.copy()
-        # imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
-        # new_data = pd.DataFrame(imputer.fit_transform(new_data[not_null_cols]), columns=[not_null_cols])
-        # sub_df_work_on[not_null_cols] = new_data[not_null_cols]
-        # print(sub_df_work_on[not_null_cols])
 
     def _apply_mice_imputation(self, sub_df_work_on, columns):
         not_null_cols = [col for col in columns if not sub_df_work_on[col].isnull().all()]
