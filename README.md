@@ -44,7 +44,7 @@ merged with Garmin data to:
 Open the system built-in command-line tools or Terminal in a Python IDE, you can go to the main folder of the project,
 and run the following command. 
 ```angular2
-python system_argparse.py --athletes-names xu_chen eduardo_oliveira --initialize-system=False --generate-pmc=True
+python main.py --athletes-names xu_chen eduardo_oliveira --initialize-system=False --generate-pmc=True
 ```
 The example above means you don't want to initialize the system (say it's your second time running this system),
 but you do want Performance Management Charts for Xu Chen and Eduardo Oliveira (say you have updated the fit files).
