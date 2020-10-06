@@ -339,7 +339,7 @@ class SystemReminder():
         print("\nBuilding {} model on {} data...".format(model_type, athletes_name.title()))
 
     def display_modeling_end(self, athletes_name, model_type):
-        print("\n{} modeling on {} data is done. {}".format(model_type, athletes_name.title(), '-'*10))
+        print("\n{} modeling on {} data is done.".format(model_type, athletes_name.title()))
 
     def display_activity_modeling_start(self, activity):
         print("\nBuilding Model on activity '{}'...".format(activity))
