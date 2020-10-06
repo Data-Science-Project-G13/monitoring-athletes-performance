@@ -309,10 +309,10 @@ class SystemReminder():
         print("System Initialized.")
 
     def display_athlete_process_start(self, athletes_name):
-        print("\n{} The Start of {} Athlete Analytics {}".format(self.line, athletes_name.title(), self.line))
+        print("\n{} The Start of {} Athlete Analysis {}".format(self.line, athletes_name.title(), self.line))
 
     def display_athlete_process_end(self, athletes_name):
-        print("{} The End of {} Athlete Analytics {}\n".format(self.line, athletes_name.title(), self.line))
+        print("{} The End of {} Athlete Analysis {}\n".format(self.line, athletes_name.title(), self.line))
 
     def raise_athete_spreadsheet_doesnt_exist(self, athletes_name):
         raise Exception("Couldn't Find Athlete {}'s Spreadsheet Data.".format(athletes_name.title()))
