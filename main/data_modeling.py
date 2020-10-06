@@ -202,7 +202,7 @@ class ModelRandomForest(TrainLoadModelBuilder):
             'max_features': ['sqrt', 'log2'],
             'min_samples_leaf': [2, 3, 5],
             'min_samples_split': [2, 3],
-            'n_estimators': [100, 200, 500]}
+            'n_estimators': [100, 500]}
         rf = RandomForestRegressor()
 #       rfc = DecisionTreeRegressor(max_depth=5, min_weight_fraction_leaf= 1e-5, min_impurity_decrease = 1, min_samples_split=2)
         grid_search = GridSearchCV(estimator = rf, param_grid = param_grid,
@@ -377,13 +377,11 @@ def process_train_load_modeling(athletes_name):
                     print('\nBuilding {}...'.format(model_type))
                     builder = model_class(sub_dataframe_for_modeling, features)
                     mae, regressor = builder.process_modeling()
+                    utility.save_model(athletes_name, activity, best_model_type, best_regressor)
                     if mae < min_mae:
-                        min_mae = mae
-                        best_model_type = model_type
-                        best_regressor = regressor
+                        min_mae, best_model_type, best_regressor = mae, model_type, regressor
                 print('Best model with mean absolute error: {}'.format(min_mae))
                 if best_regressor is not None:
-                    utility.save_model(athletes_name, activity, best_model_type, best_regressor)
                     best_model_dict[activity] = best_model_type
 
             select_best_model()
