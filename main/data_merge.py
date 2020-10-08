@@ -32,7 +32,6 @@ def _save_merged_df(file_name, merged_dataframe: pd.DataFrame, verbose):
 
 
 def _add_rolling_tss(spreadsheet):
-    # TODO: Use previous TSS rather than including current
     spreadsheet['ROLL TSS SUM'] = spreadsheet.rolling('14d', min_periods=1, on='Date')['Training Stress Score®'].sum()
 
 
