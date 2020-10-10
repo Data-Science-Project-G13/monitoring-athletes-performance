@@ -40,9 +40,9 @@
             "cycling": null
         },
         "training load best models": {
-            "running": "XGBoost",
+            "running": "RandomForest",
             "swimming": null,
-            "cycling": "RandomForest",
+            "cycling": "XGBoost",
             "strength_training": null,
             "others": null
         }
@@ -184,7 +184,7 @@
             "cycling": null
         },
         "training load best models": {
-            "running": null,
+            "running": "random_forest",
             "swimming": null,
             "cycling": null,
             "strength_training": null,
@@ -208,7 +208,7 @@
             "cycling": null
         },
         "training load best models": {
-            "running": null,
+            "running": "random_forest",
             "swimming": null,
             "cycling": null,
             "strength_training": null,
@@ -232,7 +232,7 @@
             "cycling": null
         },
         "training load best models": {
-            "running": "XGBoost",
+            "running": "RandomForest",
             "swimming": null,
             "cycling": "XGBoost",
             "strength_training": null,
@@ -256,9 +256,9 @@
             "cycling": null
         },
         "training load best models": {
-            "running": "XGBoost",
+            "running": "RandomForest",
             "swimming": null,
-            "cycling": null,
+            "cycling": "random_forest",
             "strength_training": null,
             "others": null
         }

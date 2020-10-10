@@ -243,12 +243,29 @@ class ModelXGBoost(TrainLoadModelBuilder):
         super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
-        xgb_reg = xgb.XGBRegressor(learning_rate=0.01,colsample_bytree = 0.4,subsample = 0.2,n_estimators=1000,reg_alpha = 0.3,
-                                     max_depth=3,min_child_weight=3,gamma=0,objective ='reg:squarederror')
-        xgb_reg.fit(X_train, y_train)
+        param_grid = {  
+                      'objective' : ['reg:squarederror'],
+                      'learning_rate' : [ 0.01,  0.05,0.07,0.09],  # so called `eta` value
+                      'max_depth' : [3, 4, 5],
+                      # 'min_child_weight' : [1, 5],
+                      'reg_alpha' : [0.2,0.3],
+                      'subsample' : [0.2,0.4],
+                      # 'colsample_bytree' : [0.4,0.6],
+                      'n_estimators' : [100,500]}
+        xgb_reg = xgb.XGBRegressor()
+        xgb_grid = GridSearchCV(estimator = xgb_reg,param_grid = param_grid,
+                                cv=3,n_jobs=-1,
+                                # n_jobs=5,n_jobs=5
+                                verbose=True)
+        xgb_grid.fit(X_train,y_train)
+        best_grid = xgb_grid.best_estimator_
+        return best_grid
+        # xgb_reg = xgb.XGBRegressor(learning_rate=0.01,colsample_bytree = 0.4,subsample = 0.2,n_estimators=1000,reg_alpha = 0.3,
+        #                              max_depth=3,min_child_weight=3,gamma=0,objective ='reg:squarederror')
+        # xgb_reg.fit(X_train, y_train)
         # scores = cross_val_score(xgb_reg, X_train, y_train, cv=4)
         # print("Cross - validated scores:", scores)
-        return xgb_reg
+        # return xgb_reg
 
 
     def process_modeling(self):
