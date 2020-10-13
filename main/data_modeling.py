@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import joblib
 from sklearn.tree import DecisionTreeRegressor
-from tensorflow.keras import Sequential, layers
+from tensorflow.keras import Sequential, layers, optimizers
 from tensorflow.keras.losses import mean_squared_error
 from tensorflow.keras.utils import to_categorical
 from sklearn import svm
@@ -49,15 +49,15 @@ class TrainLoadModelBuilder():
         features = [feature for feature in activity_features
                     if feature != TSS
                     and not dataframe[feature].isnull().any()]
-        print('Features used for modeling: ', features)
+        # print('Features used for modeling: ', features)
         self.num_features = len(features)
         self.X = dataframe[features]
         self.y = dataframe[TSS]
 
     def _split_train_validation(self):
         X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size = 0.2, random_state = 25)
-        print('Shapes:  X_train: {}, y_train: {}, X_test: {}, y_test: {}'
-            .format(X_train.shape, y_train.shape, X_test.shape, y_test.shape))
+        # print('Shapes:  X_train: {}, y_train: {}, X_test: {}, y_test: {}'
+        #     .format(X_train.shape, y_train.shape, X_test.shape, y_test.shape))
         return X_train, X_test, y_train, y_test
 
     def _validate_model_regression(self, X_test, y_test, learner):
@@ -69,7 +69,7 @@ class TrainLoadModelBuilder():
         return mae, rmse,rsquared
 
     def _display_performance_results_regression(self, model_name, mae, rmse, rsquared):
-        print('Regressor: {}'.format(model_name))
+        # print('Regressor: {}'.format(model_name))
         print('Mean Absolute Error: {}, Root Mean Squared Error: {}, R-squared: {}'
               .format(round(mae, 3), round(rmse, 3), round(rsquared, 3)))
 
@@ -135,7 +135,7 @@ class ModelLinearRegression(TrainLoadModelBuilder):
         ##########
         self._display_performance_results_regression('Linear Regression', mae, rmse,rsquared)
 
-        return rmse, regressor
+        return mae, regressor
 
 
 class ModelSVM(TrainLoadModelBuilder):
@@ -162,23 +162,24 @@ class ModelNeuralNetwork(TrainLoadModelBuilder):
 
     def _build_model(self, X_train, X_test, y_train, y_test):
         X_train, y_train, X_test, y_test = np.array(X_train), np.array(y_train), np.array(X_test), np.array(y_test)
-        print(X_train)
         X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
         X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
         verbose, epochs, batch_size = 0, 30, 4
         neural_network = Sequential()
-        neural_network.add(layers.Bidirectional(layers.LSTM(units = 32, input_shape = (X_train.shape[1], 1), return_sequences=True)))
-        neural_network.add(layers.Dense(256, activation='relu'))
-        neural_network.add(layers.Dropout(0.2))
+        neural_network.add(layers.LSTM(units = 32, input_shape = (X_train.shape[1], 1), return_sequences=True))
+        # neural_network.add(layers.Dense(256, activation='relu'))
+        # neural_network.add(layers.Dropout(0.2))
         neural_network.add(layers.BatchNormalization())
-        neural_network.add(layers.Dense(64, activation='relu'))
+        # neural_network.add(layers.Dense(32, activation='relu'))
         neural_network.add(layers.Dense(1, kernel_initializer='normal', activation='linear'))
-        neural_network.compile(loss='mean_absolute_error', optimizer='adam', metrics=['mean_absolute_error'])
+        opt = optimizers.Adam(learning_rate=0.01)
+        neural_network.compile(loss='mean_absolute_error', optimizer=opt, metrics=['mean_absolute_error'])
+
         neural_network.fit(X_train, y_train,  validation_data=(X_test, y_test),
-                           epochs=epochs, batch_size=batch_size, shuffle=True)
-        print('Prediction Overview: ', np.reshape(neural_network.predict(X_test), (X_test.shape[0], X_test.shape[1])))
-        train_mae = neural_network.evaluate(X_train, y_train, verbose=0)[1]
-        test_mae = neural_network.evaluate(X_test, y_test, verbose=0)[1]
+                           epochs=epochs, batch_size=batch_size, shuffle=True, verbose=verbose)
+        # print('Prediction Overview: ', np.reshape(neural_network.predict(X_test), (X_test.shape[0], X_test.shape[1])))
+        train_mae = neural_network.evaluate(X_train, y_train, verbose=verbose)[1]
+        test_mae = neural_network.evaluate(X_test, y_test, verbose=verbose)[1]
         print('Training Set MAE: {}, Test Set MAE: {}'.format(train_mae, test_mae))
         return test_mae, neural_network
 
@@ -202,10 +203,9 @@ class ModelRandomForest(TrainLoadModelBuilder):
             'min_samples_split': [2, 3],
             'n_estimators': [100, 500]}
         rf = RandomForestRegressor()
-#       rfc = DecisionTreeRegressor(max_depth=5, min_weight_fraction_leaf= 1e-5, min_impurity_decrease = 1, min_samples_split=2)
+        # rfc = DecisionTreeRegressor(max_depth=5, min_weight_fraction_leaf= 1e-5, min_impurity_decrease = 1, min_samples_split=2)
         grid_search = GridSearchCV(estimator = rf, param_grid = param_grid,
                                    cv = 3, n_jobs = -1, verbose=0)
-#       rfc = RandomForestRegressor(max_depth=10,max_features=10,n_estimators=50,random_state=0)
         grid_search.fit(X_train, y_train)
         best_grid = grid_search.best_estimator_
         return best_grid
@@ -217,7 +217,7 @@ class ModelRandomForest(TrainLoadModelBuilder):
         self._display_performance_results_regression('Random Forest', mae, rmse,rsquared)
 #       self._display_performance_results_regression('Decision Tree', mae, rmse,rsquared)
 
-        return rmse, regressor
+        return mae, regressor
 
 
 class TestModel(TrainLoadModelBuilder):
@@ -243,8 +243,7 @@ class ModelXGBoost(TrainLoadModelBuilder):
         super().__init__(dataframe, activity_features)
 
     def _build_model(self, X_train, y_train):
-        param_grid = {  
-                      'objective' : ['reg:squarederror'],
+        param_grid = {'objective' : ['reg:squarederror'],
                       'learning_rate' : [ 0.01,  0.05,0.07,0.09],  # so called `eta` value
                       'max_depth' : [3, 4, 5],
                       # 'min_child_weight' : [1, 5],
@@ -256,7 +255,7 @@ class ModelXGBoost(TrainLoadModelBuilder):
         xgb_grid = GridSearchCV(estimator = xgb_reg,param_grid = param_grid,
                                 cv=3,n_jobs=-1,
                                 # n_jobs=5,n_jobs=5
-                                verbose=True)
+                                verbose=False)
         xgb_grid.fit(X_train,y_train)
         best_grid = xgb_grid.best_estimator_
         return best_grid
@@ -273,7 +272,7 @@ class ModelXGBoost(TrainLoadModelBuilder):
         regressor = self._build_model(X_train, y_train)
         mae, rmse,rsquared = self._validate_model_regression(X_test, y_test, regressor)
         self._display_performance_results_regression('XGBoost', mae, rmse,rsquared)
-        return rmse, regressor
+        return mae, regressor
 
 
 class ModelStacking(TrainLoadModelBuilder):
@@ -357,7 +356,7 @@ class ModelAdaBoost(TrainLoadModelBuilder):
         regressor = self._build_model(X_train, y_train)
         mae, rmse,rsquared = self._validate_model_regression(X_test, y_test, regressor)
         self._display_performance_results_regression('AdaBoost', mae, rmse,rsquared)
-        return rmse, regressor
+        return mae, regressor
 
 
 class PerformanceModelBuilder():
@@ -371,10 +370,11 @@ def process_train_load_modeling(athletes_name):
     data_set = loader.load_merged_data(athletes_name=athletes_name)
     sub_dataframe_dict = utility.split_dataframe_by_activities(data_set)
     best_model_dict = {}
+
     for activity, sub_dataframe in sub_dataframe_dict.items():
         utility.SystemReminder().display_activity_modeling_start(activity)
         sub_dataframe_for_modeling = sub_dataframe[sub_dataframe['Training Stress Score®'].notnull()]
-        if sub_dataframe_for_modeling.shape[0] > 10:
+        if sub_dataframe_for_modeling.shape[0] > 20:
             general_features = utility.FeatureManager().get_common_features_among_activities()
             activity_specific_features = utility.FeatureManager().get_activity_specific_features(activity)
             features = [feature for feature in general_features + activity_specific_features
@@ -383,15 +383,17 @@ def process_train_load_modeling(athletes_name):
 
             def select_best_model():
                 min_mae, best_model_type, best_regressor = float('inf'), '', None
-                for model_class in [ModelLinearRegression, ModelRandomForest, ModelXGBoost]:
+                for model_class in [ModelLinearRegression, ModelRandomForest, ModelXGBoost, ModelNeuralNetwork]:
                     model_type = model_class.__name__[5:]
                     print('\nBuilding {}...'.format(model_type))
                     builder = model_class(sub_dataframe_for_modeling, features)
                     mae, regressor = builder.process_modeling()
-                    utility.save_model(athletes_name, activity, model_type, regressor)
-                    if mae < min_mae:
-                        min_mae, best_model_type, best_regressor = mae, model_type, regressor
-                print('Best model with mean absolute error: {}'.format(min_mae))
+                    if model_type != 'NeuralNetwork':
+                        utility.save_model(athletes_name, activity, model_type, regressor)
+                        if mae < min_mae:
+                            min_mae, best_model_type, best_regressor = mae, model_type, regressor
+                    print("\n***Best model for activity '{}' is {} with mean absolute error: {}***"
+                      .format(activity, best_model_type, min_mae))
                 if best_regressor is not None:
                     best_model_dict[activity] = best_model_type
 
