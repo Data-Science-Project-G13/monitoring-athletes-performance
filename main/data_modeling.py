@@ -383,7 +383,7 @@ def process_train_load_modeling(athletes_name):
 
             def select_best_model():
                 min_mae, best_model_type, best_regressor = float('inf'), '', None
-                for model_class in [ModelLinearRegression, ModelRandomForest, ModelXGBoost, ModelNeuralNetwork]:
+                for model_class in [ModelLinearRegression, ModelNeuralNetwork, ModelRandomForest, ModelXGBoost, ModelAdaBoost]:
                     model_type = model_class.__name__[5:]
                     print('\nBuilding {}...'.format(model_type))
                     builder = model_class(sub_dataframe_for_modeling, features)
@@ -392,8 +392,8 @@ def process_train_load_modeling(athletes_name):
                         utility.save_model(athletes_name, activity, model_type, regressor)
                         if mae < min_mae:
                             min_mae, best_model_type, best_regressor = mae, model_type, regressor
-                    print("\n***Best model for activity '{}' is {} with mean absolute error: {}***"
-                      .format(activity, best_model_type, min_mae))
+                print("\n***Best model for activity '{}' is {} with mean absolute error: {}***"
+                  .format(activity, best_model_type, min_mae))
                 if best_regressor is not None:
                     best_model_dict[activity] = best_model_type
 
