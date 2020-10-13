@@ -91,12 +91,12 @@ def run_system(athletes_name: str, cleaning: bool=True, feature_engineering: boo
 
 if __name__ == '__main__':
     # For Users
-    main()
+    # main()
 
     # For Developers. Uncomment the following lines if you would like test the system.
-    # athletes_names = ['eduardo_oliveira', 'xu_chen', 'carly_hart']
-    # internal_args = ['--athletes-names={}'.format(' '.join(athletes_names)),
-    #                  '--initialize-system=False', '--clean-data=False', '--process-feature-engineering=False',
-    #                  '--build-model=True', '--generate-pmc=True']
-    # main(internal_args)
+    athletes_names = ['eduardo_oliveira', 'xu_chen', 'carly_hart']
+    internal_args = ['--athletes-names={}'.format(' '.join(athletes_names)),
+                     '--initialize-system=False', '--clean-data=False', '--process-feature-engineering=False',
+                     '--build-model=False', '--generate-pmc=True']
+    main(internal_args)
 
