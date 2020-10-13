@@ -97,12 +97,12 @@ class ModelLinearRegression(TrainLoadModelBuilder):
         #print(X_train.isnull().values.any())
         #print(np.isnan(X_train.values.any()))
         #print(X_train)
-        regressor=LinearRegression()
+        #regressor=LinearRegression()
         ###This works
         #regressor = Ridge(alpha=0.04, normalize=True)
         ####
         #print(min(y_train),max(y_train))
-        #regressor=Lasso(alpha=0.04, normalize=True)
+        regressor=Lasso(alpha=0.04, normalize=True)
         regressor.fit(X_train, y_train)
         #scores = cross_val_score(regressor, X_train, y_train, cv=3)
         #print("Cross - validated scores:", scores)
@@ -126,12 +126,12 @@ class ModelLinearRegression(TrainLoadModelBuilder):
                   cv=3)
         sfs1 = sfs.fit(X_train, y_train)
         feat_cols = list(sfs1.k_feature_names_)
-        print(feat_cols)
-        regressor = self._build_model(X_train[feat_cols], y_train)
-        mae, rmse, rsquared = self._validate_model_regression(X_test[feat_cols], y_test, regressor)
+        print("The most important features are",feat_cols)
+        #regressor = self._build_model(X_train[feat_cols], y_train)
+        #mae, rmse, rsquared = self._validate_model_regression(X_test[feat_cols], y_test, regressor)
         ##########
-        # regressor = self._build_model(X_train, y_train)
-        # mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
+        regressor = self._build_model(X_train, y_train)
+        mae, rmse, rsquared = self._validate_model_regression(X_test, y_test, regressor)
         ##########
         self._display_performance_results_regression('Linear Regression', mae, rmse,rsquared)
 
@@ -383,7 +383,7 @@ def process_train_load_modeling(athletes_name):
 
             def select_best_model():
                 min_mae, best_model_type, best_regressor = float('inf'), '', None
-                for model_class in [ModelRandomForest, ModelXGBoost, ModelAdaBoost]:
+                for model_class in [ModelLinearRegression, ModelRandomForest, ModelXGBoost]:
                     model_type = model_class.__name__[5:]
                     print('\nBuilding {}...'.format(model_type))
                     builder = model_class(sub_dataframe_for_modeling, features)

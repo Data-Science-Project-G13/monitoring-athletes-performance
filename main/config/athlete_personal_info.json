@@ -40,7 +40,7 @@
             "cycling": null
         },
         "training load best models": {
-            "running": "RandomForest",
+            "running": "XGBoost",
             "swimming": null,
             "cycling": "XGBoost",
             "strength_training": null,
@@ -234,7 +234,7 @@
         "training load best models": {
             "running": "RandomForest",
             "swimming": null,
-            "cycling": "XGBoost",
+            "cycling": "LinearRegression",
             "strength_training": null,
             "others": null
         }
@@ -256,7 +256,7 @@
             "cycling": null
         },
         "training load best models": {
-            "running": "RandomForest",
+            "running": "XGBoost",
             "swimming": null,
             "cycling": "random_forest",
             "strength_training": null,
