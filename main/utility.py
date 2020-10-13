@@ -342,13 +342,16 @@ class SystemReminder():
         print("\n{} modeling on {} data is done.".format(model_type, athletes_name.title()))
 
     def display_activity_modeling_start(self, activity):
-        print("\nBuilding Model on activity '{}'...".format(activity))
+        print('\n{}'.format('-'*100))
+        print("Building Model on activity '{}'...".format(activity))
 
     def display_activity_modeling_end(self, activity, success=False):
         if success:
-            print("Modeling on activity '{}' is done.".format(activity))
+            print("\nModeling on activity '{}' is done.".format(activity))
+            print('{}'.format('-' * 100))
         else:
-            print("Couldn't process modeling on activity '{}' because there's no enough valid data.".format(activity))
+            print("\nCouldn't process modeling on activity '{}' because there's no enough valid data.".format(activity))
+            print('{}'.format('-' * 100))
 
     def display_pmc_generation_start(self, athletes_name):
         print("\nGenerating {}'s PMC...".format(athletes_name.title()))
