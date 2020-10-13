@@ -28,8 +28,10 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import statistics
 import numpy as np
+from collections import Counter
 from data_loader import DataLoader
 from data_preprocess import DataPreprocessor
+
 
 
 # Set the data frame display option
@@ -336,6 +338,28 @@ class MultipleAtheletesDataPlotter():
                 self.plt.show()
 
 
+def plot_additional_activity_tendency_bar(athletes_names, save=False):
+
+    loader = DataLoader(data_type='additional')
+    athletes_dict = {}
+    for athletes_name in athletes_names:
+        file_names = loader.load_additional_data(athletes_name)
+        activities = [file_name.split('/')[-1].split('_')[0] for file_name in file_names]
+        temp_dict = Counter(activities)
+        athletes_dict[athletes_name.title()] = {'Running': temp_dict['running'], 'Cycling': temp_dict['cycling'],
+                                        'Swimming': temp_dict['swimming'], 'Training': temp_dict['training']}
+
+    plt.rcParams["figure.figsize"] = (10, 5)
+    pd.DataFrame(athletes_dict).T.plot(kind='bar') #, color=('steelblue', 'skyblue', 'lightgrey'))
+    plt.xticks(rotation=30, ha='right')
+    plt.title('Athlete Fit File Data Overview')
+    plt.ylabel('Fit File Counts')
+    if save:
+        plt.savefig('{}/plots/athlete_fit_file_data_overview.jpg'.format(os.path.pardir), format='jpg', dpi=1200)
+    else:
+        plt.show()
+
+
 if __name__ == '__main__':
     # create_plot_folder()
     # single_plotter = SingleAthleteDataPlotter('Ollie Allan (Advance).csv')
@@ -343,10 +367,7 @@ if __name__ == '__main__':
 
     # Note functions in MultipleAtheletesDataPlotter() and functions in SingleAthleteDataPlotter()
     # cannot run at the same time because of the characteristic of matplotlib.pyplot
-    multi_plotter = MultipleAtheletesDataPlotter()
-    multi_plotter.plot_valid_TSS_pie()
-    multi_plotter.plot_athlete_level_pie()
-    multi_plotter.plot_activity_tendency_bar(save=True)
-    multi_plotter.plot_frequency(save=True)
+    athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
+    plot_additional_activity_tendency_bar(athletes_names, save=True)
 
 
