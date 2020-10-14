@@ -14,7 +14,7 @@ merged with Garmin data to:
 ### Prerequisites
 
 #### Python Version
-`Python 3.6` is preferred
+`Python 3.6` is preferred. Other Python versions should also work, if there are no library conflictions between versions.
 
 #### Envoirment Setup
 1. Open the project `monitoring-athletes-performance` with IDE.
