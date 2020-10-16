@@ -141,6 +141,8 @@ optional arguments:
                     whether process modeling, default is True  
   --generate-pmc  GENERATE_PMC
                     whether generate PMC, default is True  
+  --display-tss-in-pmc  DISPLAY_TSS_IN_PMC
+                    whether display TSS points in PMC, default is True  
   --athletes-names  ATHLETES_NAME
                     the athletes' names split by spaces, this is a require field
 ```
