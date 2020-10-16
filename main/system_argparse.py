@@ -18,6 +18,9 @@ def parse_options(internal_args: []):
     parser.add_argument('--generate-pmc', dest='do_pmc_generating', required=False,
                         type=lambda x: (str(x).lower() == 'true'),
                         default=True, help='whether generate pmc')
+    parser.add_argument('--display-tss-in-pmc', dest='do_display_tss', required=False,
+                        type=lambda x: (str(x).lower() == 'true'),
+                        default=True, help='whether display TSS points in pmc')
     parser.add_argument('--athletes-names', nargs='+', dest='athletes_names', required=True,
                         help='whether generate pmc')
     if internal_args:
@@ -30,5 +33,5 @@ def parse_options(internal_args: []):
 
 
 if __name__ == '__main__':
-    # print(parse_options([]))  # For testing the way of using command-line/Terminal
+    # For testing the way of using command-line/Terminal
     print(parse_options(["--initialize-system=False", '--clean-data=False', "--athletes-names=xu_chen eduardo_oliveira carly_hart"]))
