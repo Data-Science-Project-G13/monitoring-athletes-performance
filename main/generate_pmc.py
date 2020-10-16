@@ -35,7 +35,7 @@ def _label_data_record(spreadsheet):
     spreadsheet['Training Load Indicator'] = pd.Series(indicators, index=spreadsheet.index)
 
 
-def _generate_pmc(athletes_name, dataframe, save=True):
+def _generate_pmc(athletes_name, dataframe, display_tss=True, save=True):
     fig, ax = plt.subplots()
     ax2 = ax.twinx()
     dates = dataframe['Date']
@@ -72,10 +72,11 @@ def _generate_pmc(athletes_name, dataframe, save=True):
         for params in text_params:
             plt.text(x=end_date, y=params[0], s=params[2], horizontalalignment='right',
                      color=params[1], fontsize=font_size)
-    plot_TSS()
+
+    if display_tss:
+        plot_TSS()
     plot_fatigue_and_fitness()
     plot_zones()
-
     plt.title('Performance Management Chart - {}'.format(athletes_name.title()))
     plt.legend()
     plt.savefig('{}/plots/PMC - {}.jpg'.format(os.path.pardir, athletes_name.title()),
@@ -108,14 +109,14 @@ def get_tss_estimated_data(athletes_name):
     return original_merged_data
 
 
-def process_pmc_generation(athletes_name, save_pmc_figure=True):
+def process_pmc_generation(athletes_name, display_tss=True, save_pmc_figure=True):
     dataframe_for_pmc = get_tss_estimated_data(athletes_name)
     _add_fitness_fatigue(dataframe_for_pmc)
     _add_form(dataframe_for_pmc)
-    _generate_pmc(athletes_name, dataframe_for_pmc, save=save_pmc_figure)
+    _generate_pmc(athletes_name, dataframe_for_pmc, display_tss=display_tss, save=save_pmc_figure)
 
 
 if __name__ == '__main__':
     athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
     for athletes_name in athletes_names:
-        process_pmc_generation(athletes_name)
+        process_pmc_generation(athletes_name, display_tss=True)
