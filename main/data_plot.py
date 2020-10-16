@@ -349,8 +349,8 @@ def plot_additional_activity_tendency_bar(athletes_names, save=False):
         athletes_dict[athletes_name.title()] = {'Running': temp_dict['running'], 'Cycling': temp_dict['cycling'],
                                         'Swimming': temp_dict['swimming'], 'Training': temp_dict['training']}
 
-    plt.rcParams["figure.figsize"] = (10, 5)
-    pd.DataFrame(athletes_dict).T.plot(kind='bar') #, color=('steelblue', 'skyblue', 'lightgrey'))
+    plt.rcParams["figure.figsize"] = (14, 5)
+    pd.DataFrame(athletes_dict).T.plot(kind='bar', color=('steelblue', 'skyblue', 'lightgrey', 'lightskyblue'))
     plt.xticks(rotation=30, ha='right')
     plt.title('Athlete Fit File Data Overview')
     plt.ylabel('Fit File Counts')
@@ -368,6 +368,6 @@ if __name__ == '__main__':
     # Note functions in MultipleAtheletesDataPlotter() and functions in SingleAthleteDataPlotter()
     # cannot run at the same time because of the characteristic of matplotlib.pyplot
     athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
-    plot_additional_activity_tendency_bar(athletes_names, save=True)
+    plot_additional_activity_tendency_bar(athletes_names, save=False)
 
 
