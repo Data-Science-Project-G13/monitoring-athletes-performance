@@ -4,9 +4,8 @@ merged with Garmin data to:
  - Assess if athletes are training as they should (Is the athlete training as suggested?).
  - Assess if athletes are training more or less than what they should (Is the athlete over-training?).
  - Predict/anticipate athlete risk fatigue levels (to avoid injuries).
- - Predict performance (If the athlete keep training in a particular way, how his/her fitness and form levels will increase?
-   Can this athlete make a podium in a particular event in 6 months time, for example?)
- - Look at race performance data to compare predictabilities. 
+ - Predict performance (There's a place holder for future developers, 
+ please refer to the `PerformanceModelBuilder` class in `data_modeling.py` module).
 
 
 ## Guidelines
@@ -14,13 +13,13 @@ merged with Garmin data to:
 ### Prerequisites
 
 #### Python Version
-`Python 3.6` is preferred. Other Python versions should also work, if there are no library conflictions between versions.
+`Python 3.6` is preferred. Other Python versions should also work if there are no library conflicts between versions.
 
 #### Envoirment Setup
 1. Open the project `monitoring-athletes-performance` with IDE.
 2. Use `the monitoring-athletes-performance/main` as the content root.
-3. Setup Python Interpreter. Virtual environment is suggested.
-4. Run the following commannd to install the required packages.
+3. Setup Python Interpreter. A virtual environment is suggested.
+4. Run the following command to install the required packages.
     ```
     pip3 install -r requirements.txt
     ```
@@ -51,7 +50,7 @@ but you do want Performance Management Charts for Xu Chen and Eduardo Oliveira (
 Please refer to [Additional Help](#additional-help) for more options.
 
 #### Developer's Option
-For the developers work further based on this system, we recommand changing options in `main.py` for test, and 
+For the developers who work further based on this system, we recommend changing options in `main.py` for tests, and 
 here's an overview.
 ```Python
 if __name__ == '__main__':
