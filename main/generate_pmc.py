@@ -37,6 +37,7 @@ def _label_data_record(spreadsheet):
 
 def _generate_pmc(athletes_name, dataframe, display_tss=True, save=True):
     fig, ax = plt.subplots()
+    fig.autofmt_xdate()
     ax2 = ax.twinx()
     dates = dataframe['Date']
     TSS, ATL, CTL, TSB = 'Training Stress Score®', 'Fatigue (ATL)', 'Fitness (CTL)', 'Form (TSB)'
@@ -46,7 +47,6 @@ def _generate_pmc(athletes_name, dataframe, display_tss=True, save=True):
         ax.plot(dates, tss, '.', label='TSS', color='lightskyblue')
         ax.legend(loc=2)
         # rotate and align the tick labels so they look better
-        fig.autofmt_xdate()
         ax.yaxis.set_label_position("left")
         # ax.set_xlabel('Dates')
         ax.set_ylabel('TSS')
