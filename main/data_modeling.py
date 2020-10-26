@@ -174,13 +174,13 @@ class ModelNeuralNetwork(TrainLoadModelBuilder):
         neural_network.add(layers.Dense(1, kernel_initializer='normal', activation='linear'))
         opt = optimizers.Adam(learning_rate=0.01)
         neural_network.compile(loss='mean_absolute_error', optimizer=opt, metrics=['mean_absolute_error'])
-
         neural_network.fit(X_train, y_train,  validation_data=(X_test, y_test),
                            epochs=epochs, batch_size=batch_size, shuffle=True, verbose=verbose)
         # print('Prediction Overview: ', np.reshape(neural_network.predict(X_test), (X_test.shape[0], X_test.shape[1])))
         train_mae = neural_network.evaluate(X_train, y_train, verbose=verbose)[1]
         test_mae = neural_network.evaluate(X_test, y_test, verbose=verbose)[1]
-        print('Training Set MAE: {}, Test Set MAE: {}'.format(train_mae, test_mae))
+        # r_square = r2_score(y_pred, y_test)
+        print('Training MAE: {}, Test MAE: {}'.format(train_mae, test_mae))
         return test_mae, neural_network
 
     def process_modeling(self):
