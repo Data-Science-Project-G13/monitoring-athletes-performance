@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
 ### System Sketch Map and Output Preview
 <p align="center"> 
-    <img src="presentations/system_sketch_map_2020-10-14.png" alt="system sketch map" width="800">
+    <img src="presentations/system_sketch_map.png" alt="system sketch map" width="800">
  </p>
  <p align="center"> 
     <img src="presentations/pmc_for_presentation_1.jpg" alt="pmc preview 1" width="400">
