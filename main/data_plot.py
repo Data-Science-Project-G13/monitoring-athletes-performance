@@ -255,14 +255,18 @@ class MultipleAtheletesDataPlotter():
                 athlete_dataframe = DataLoader().load_spreadsheet_data(file_name)
                 athlete_name = file_name.split(' ')[0]
                 activity_counts = athlete_dataframe['Activity Type'].value_counts()
-                self.athletes_dict[athlete_name] = {'Running': activity_counts['Running'],
-                                               'Cycling': activity_counts['Cycling'],
-                                               'Swimming': activity_counts['Pool Swimming']}
-                for activity in ['Indoor Cycling', 'Road Cycling', 'Swimming', 'Open Water Swimming']:
-                    try:
-                        self.athletes_dict[athlete_name][activity.split(' ')[1]] += activity_counts[activity]
-                    except:
-                        pass
+                running_count, cycling_count, swimming_count = 0, 0, 0
+                for key, val in activity_counts.items():
+                    if 'Running' in key:
+                        running_count += val
+                    elif 'Cycling' in key:
+                        cycling_count += val
+                    elif 'Swimming' in key:
+                        swimming_count += val
+
+                self.athletes_dict[athlete_name] = {'Running': running_count,
+                                               'Cycling': cycling_count,
+                                               'Swimming': swimming_count}
                 if 'Novice' in file_name:
                     fill_out_level_dicts(self.novice_dict, activity_counts)
                 if 'Intermediate' in file_name:
@@ -368,7 +372,10 @@ if __name__ == '__main__':
 
     # Note functions in MultipleAtheletesDataPlotter() and functions in SingleAthleteDataPlotter()
     # cannot run at the same time because of the characteristic of matplotlib.pyplot
-    athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
-    plot_additional_activity_tendency_bar(athletes_names, save=False)
+    multi_plotter = MultipleAtheletesDataPlotter()
+    multi_plotter.plot_activity_tendency_bar(save=False)
+
+    # athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
+    # plot_additional_activity_tendency_bar(athletes_names, save=False)
 
 
