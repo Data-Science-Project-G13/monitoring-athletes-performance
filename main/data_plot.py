@@ -22,6 +22,7 @@ functions:
 import os
 import sys
 import re
+import json
 import datetime
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -32,6 +33,7 @@ from collections import Counter
 from data_loader import DataLoader
 from data_preprocess import DataPreprocessor
 
+import utility
 
 
 # Set the data frame display option
@@ -250,6 +252,9 @@ class MultipleAtheletesDataPlotter():
             dict['Swimming'].append(activity_counts['Pool Swimming'])
         data_path = '{}/data'.format(os.path.pardir)
         dirs = os.listdir(data_path)
+        athlete_info_json_path = utility.get_athlete_info_path()
+        with open(athlete_info_json_path, 'r') as file:
+            athletes_info_json = json.load(file)
         for file_name in dirs:
             if file_name.endswith(".csv"):
                 athlete_dataframe = DataLoader().load_spreadsheet_data(file_name)
@@ -263,16 +268,17 @@ class MultipleAtheletesDataPlotter():
                         cycling_count += val
                     elif 'Swimming' in key:
                         swimming_count += val
-
                 self.athletes_dict[athlete_name] = {'Running': running_count,
                                                'Cycling': cycling_count,
                                                'Swimming': swimming_count}
-                if 'Novice' in file_name:
-                    fill_out_level_dicts(self.novice_dict, activity_counts)
-                if 'Intermediate' in file_name:
-                    fill_out_level_dicts(self.intermediate_dict, activity_counts)
-                if 'Advance' in file_name:
-                    fill_out_level_dicts(self.advance_dict, activity_counts)
+                athlete_type = athletes_info_json[file_name.split('.')[0]]["athlete type"]
+                if athlete_type:
+                    if 'novice' in athlete_type:
+                        fill_out_level_dicts(self.novice_dict, activity_counts)
+                    elif 'intermediate' in athlete_type:
+                        fill_out_level_dicts(self.intermediate_dict, activity_counts)
+                    elif 'advance' in athlete_type:
+                        fill_out_level_dicts(self.advance_dict, activity_counts)
 
 
     def plot_activity_tendency_bar(self, save=False):
@@ -374,6 +380,7 @@ if __name__ == '__main__':
     # cannot run at the same time because of the characteristic of matplotlib.pyplot
     multi_plotter = MultipleAtheletesDataPlotter()
     multi_plotter.plot_activity_tendency_bar(save=False)
+    multi_plotter.plot_athlete_level_pie(save=False)
 
     # athletes_names = ['eduardo oliveira', 'xu chen', 'carly hart']
     # plot_additional_activity_tendency_bar(athletes_names, save=False)
