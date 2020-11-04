@@ -215,6 +215,30 @@
             "others": null
         }
     },
+    "Michelle Allan": {
+        "athlete type": "advance",
+        "gender": "female",
+        "age": null,
+        "height": null,
+        "pre weight": null,
+        "post weight": null,
+        "injuries": null,
+        "critical swim speed": null,
+        "joe freil lactate threshold": null,
+        "andy coogan lactate threshold": null,
+        "performance best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null
+        },
+        "training load best models": {
+            "running": null,
+            "swimming": null,
+            "cycling": null,
+            "strength_training": null,
+            "others": null
+        }
+    },
     "Xu Chen": {
         "athlete type": null,
         "gender": "male",
