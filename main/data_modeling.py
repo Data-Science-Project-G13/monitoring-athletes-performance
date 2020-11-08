@@ -164,9 +164,10 @@ class ModelNeuralNetwork(TrainLoadModelBuilder):
         X_train, y_train, X_test, y_test = np.array(X_train), np.array(y_train), np.array(X_test), np.array(y_test)
         X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
         X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
+        X, y = np.concatenate((X_train, X_test), axis=0), np.concatenate((y_train, y_test), axis=0)
         verbose, epochs, batch_size = 0, 30, 4
         neural_network = Sequential()
-        neural_network.add(layers.LSTM(units = 32, input_shape = (X_train.shape[1], 1), return_sequences=True))
+        neural_network.add(layers.LSTM(units = 32, input_shape = (X_train.shape[1], 1), return_sequences=False))
         # neural_network.add(layers.Dense(256, activation='relu'))
         # neural_network.add(layers.Dropout(0.2))
         neural_network.add(layers.BatchNormalization())
@@ -176,12 +177,13 @@ class ModelNeuralNetwork(TrainLoadModelBuilder):
         neural_network.compile(loss='mean_absolute_error', optimizer=opt, metrics=['mean_absolute_error'])
         neural_network.fit(X_train, y_train,  validation_data=(X_test, y_test),
                            epochs=epochs, batch_size=batch_size, shuffle=True, verbose=verbose)
-        # print('Prediction Overview: ', np.reshape(neural_network.predict(X_test), (X_test.shape[0], X_test.shape[1])))
-        train_mae = neural_network.evaluate(X_train, y_train, verbose=verbose)[1]
-        test_mae = neural_network.evaluate(X_test, y_test, verbose=verbose)[1]
-        # r_square = r2_score(y_pred, y_test)
-        print('Training MAE: {}, Test MAE: {}'.format(train_mae, test_mae))
-        return test_mae, neural_network
+        y_preds = np.reshape(neural_network.predict(X), (X.shape[0],))
+        mae = mean_absolute_error(y, y_preds)
+        rmse = np.sqrt(mean_squared_error(y, y_preds))
+        rsquared = r2_score(y, y_preds)
+        self._display_performance_results_regression('LSTM', mae, rmse, rsquared)
+        # test_mae = neural_network.evaluate(X_test, y_test, verbose=verbose)[1]
+        return mae, neural_network
 
     def process_modeling(self):
         X_train, X_test, y_train, y_test = self._split_train_validation()
@@ -390,8 +392,7 @@ def process_train_load_modeling(athletes_name):
                     mae, regressor = builder.process_modeling()
                     if model_type != 'NeuralNetwork':
                         utility.save_model(athletes_name, activity, model_type, regressor)
-                        if mae < min_mae:
-                            min_mae, best_model_type, best_regressor = mae, model_type, regressor
+                        if mae < min_mae: min_mae, best_model_type, best_regressor = mae, model_type, regressor
                 print("\n***Best model for activity '{}' is {} with mean absolute error: {}***"
                   .format(activity, best_model_type, min_mae))
                 if best_regressor is not None:
