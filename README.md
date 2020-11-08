@@ -1,11 +1,11 @@
 # Monitoring Athletes Performance
 A CoachingMate analytical module to generate and deliver personalized feedback to coaches and athletes. Training sessions' descriptions could be 
 merged with Garmin data to:
- - Assess if athletes are training as they should (Is the athlete training as suggested?).
- - Assess if athletes are training more or less than what they should (Is the athlete over-training?).
+ - Assess if athletes are training as they should (Are the athletes training as suggested?).
+ - Assess if athletes are training more or less than what they should (Are the athletes over-training or under-training?).
  - Predict/anticipate athlete risk fatigue levels (to avoid injuries).
- - Predict performance (There's a place holder for future developers, 
- please refer to the `PerformanceModelBuilder` class in `data_modeling.py` module).
+ - Predict performance (We didn't focus on this task, but there's a place holder for future developers, 
+ please see the `PerformanceModelBuilder` class in `data_modeling.py` module. Also cleaned data and extracted features are available if needed).
 
 
 ## Guidelines
@@ -15,10 +15,10 @@ merged with Garmin data to:
 #### Python Version
 `Python 3.6` is preferred. Other Python versions should also work if there are no library conflicts between versions.
 
-#### Envoirment Setup
+#### Environment Setup
 1. Open the project `monitoring-athletes-performance` with IDE.
-2. Use `the monitoring-athletes-performance/main` as the content root.
-3. Setup Python Interpreter. A virtual environment is suggested.
+2. Use `the monitoring-athletes-performance/main` as the **content root**.
+3. Setup the Python Interpreter. A virtual environment is suggested.
 4. Run the following command to install the required packages.
     ```
     pip3 install -r requirements.txt
@@ -26,7 +26,7 @@ merged with Garmin data to:
 5. Put the spreadsheet data (eg. `Eduardo Oliveira.csv`) in the `data` directory.
 6. Put the folder (eg. `fit_eduardo_oliveira`) contains `.fit` files in the `data` directory.
 
-    **Optional:** What's more, our system supports you to simply convert `.fit` files.
+    **Optional:** What's more, our system supports you to simply convert `.fit` files in a separate module.
     Similarly, put the folder contains `.fit` files in the `data` directory, 
     for example athlete `fit_eduardo_oliveira`, `fit_xu_chen` and `fit_carly_hart`, 
     in your Terminal go to the `main` directory, and run the following commands. 
@@ -42,15 +42,15 @@ merged with Garmin data to:
 #### User's Option
 Open the system built-in command-line tools or Terminal in a Python IDE, you can go to the main folder of the project,
 and run the following command. 
-```angular2
+```
 python main.py --athletes-names xu_chen eduardo_oliveira --initialize-system=False --generate-pmc=True
 ```
 The example above means you don't want to initialize the system (say it's your second time running this system),
-but you do want Performance Management Charts for Xu Chen and Eduardo Oliveira (say you have updated the fit files).
+but you do want to generate the Performance Management Charts for Xu Chen and Eduardo Oliveira (say you have updated the fit files).
 Please refer to [Additional Help](#additional-help) for more options.
 
 #### Developer's Option
-For the developers who work further based on this system, we recommend changing options in `main.py` for tests, and 
+For the developers who will work further based on this system, we recommend changing options in `main.py` for tests, and 
 here's an overview.
 ```Python
 if __name__ == '__main__':
@@ -72,7 +72,7 @@ if __name__ == '__main__':
  
 
 ### System Structure
-```angular2
+```
 monitoring-athletes-performance
    ├── main
    │   ├── main.py
